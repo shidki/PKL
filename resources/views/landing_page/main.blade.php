@@ -107,7 +107,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="img-box">
-                    <img src="assets/landing_page/images/logo_jogja.png" height="600px" alt="">
+                    <img src="assets/landing_page/images/logo_jogja.png" height="500px" width="500px" alt="">
                   </div>
                 </div>
               </div>
@@ -280,7 +280,7 @@
                   <h5>
                       {{ $namaGedung->nama }}
                   </h5>
-                  <a href="" class="d-inline-block mt-2">
+                  <a href="/detail/{{ $namaGedung->id }}" class="d-inline-block mt-2">
                     Detail <i class="fa fa-arrow-left"></i>
                   </a>
                 </div>

@@ -295,7 +295,7 @@ a:focus {
 }
 
 .slider_section .detail-box h1 {
-    font-size: 3rem;
+    font-size: 5rem;
     font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 15px;
@@ -352,11 +352,12 @@ a:focus {
 }
 
 .slider_section .img-box {
-    margin: 45px 0;
+    /* margin: 15px 0; */
+    margin-right: 300px;
 }
 
 .slider_section .img-box img {
-    width: 100%;
+    /* width: 100%; */
     -webkit-animation: upDown 5s infinite;
     animation: upDown 5s infinite;
 }

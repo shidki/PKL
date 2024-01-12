@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{LOCALE}">
-<head>
+<head> 
     <title>Untitled 1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" id="metaViewport" content="user-scalable=no, initial-scale=1, width=device-width, viewport-fit=cover" data-tdv-general-scale="0.5"/>

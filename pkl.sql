@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 11 Jan 2024 pada 07.25
+-- Waktu pembuatan: 12 Jan 2024 pada 07.13
 -- Versi server: 10.4.28-MariaDB
 -- Versi PHP: 8.2.4
 
@@ -20,20 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `pkl`
 --
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `akun`
---
-
-CREATE TABLE `akun` (
-  `id` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(25) NOT NULL DEFAULT 'admin'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -69,15 +55,31 @@ CREATE TABLE `layanan` (
   `id_gedung` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` varchar(25) NOT NULL DEFAULT 'admin'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `username`, `password`, `role`) VALUES
+(1, 'shid@gmail.com', 'shid', '$2y$10$toxBR6H98jr36.DqG2uWBey.xEV3OMHxHjmEHIxuplWCd8VTSrLhG', 'admin'),
+(4, 'shidkigaming7@gmail.com', 'veldddd', '$2y$12$ZonEUTqXRIHChiKg5Xm.G..u6IxC1Ebx3/pbeFLQMlUjN4bto22CS', 'admin');
+
 --
 -- Indexes for dumped tables
 --
-
---
--- Indeks untuk tabel `akun`
---
-ALTER TABLE `akun`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `gedung`
@@ -92,14 +94,14 @@ ALTER TABLE `layanan`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- Indeks untuk tabel `users`
 --
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel `akun`
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
-ALTER TABLE `akun`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `gedung`
@@ -112,6 +114,12 @@ ALTER TABLE `gedung`
 --
 ALTER TABLE `layanan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

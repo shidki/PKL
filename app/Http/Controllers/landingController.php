@@ -12,9 +12,10 @@ class landingController extends Controller
 {
     //
     public function makeGedung(){
-        $gedung = Gedung::select("nama")
+        $gedung = Gedung::select("*")
         ->from("gedung")
         ->get();
+        
         $jmlGedung = Gedung::select("nama")
         ->from("gedung")
         ->count();

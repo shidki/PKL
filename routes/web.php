@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\landingController;
 use App\Http\Controllers\akunController;
-
+use App\Http\Controllers\GedungController;
 
 // tampilan awal web
 Route::get('/',[landingController::class,'makeGedung']);
@@ -33,3 +33,5 @@ Route::get('/logout',[akunController::class,'logout'])->middleware("isAdmin");
 Route::get('/signup',[akunController::class,'signup1'])->middleware("guest");
 Route::post('/signup',[akunController::class,'signup'])->middleware("guest");
 
+//  ============== DETAIL ===========
+Route::get('/detail/{id}',[GedungController::class,'showDetail']);
