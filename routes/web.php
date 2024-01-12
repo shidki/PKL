@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\landingController;
 use App\Http\Controllers\akunController;
 use App\Http\Controllers\GedungController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Crypt;
 
 // tampilan awal web
@@ -36,3 +37,6 @@ Route::post('/signup',[akunController::class,'signup'])->middleware("guest");
 
 //  ============== DETAIL ===========
 Route::get('/detail/{id}',[GedungController::class,'showDetail']);
+
+//  ============== SISTEM INFORMASI ===========
+Route::get('/administrator',[AdminController::class,'viewpage'])->middleware('isAdmin');

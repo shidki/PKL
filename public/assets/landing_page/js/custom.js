@@ -14,18 +14,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Menambahkan event listener untuk setiap tautan
     links.forEach(function(link, i) {
         // Mencegah class nav-link yang terakhir tidak ikut
-        if (i != links.length - 1) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Mencegah perilaku default dari tautan
-                var targetId = this.getAttribute('href').substring(1); // Mendapatkan ID target dari atribut href
-                var targetElement = document.getElementById(targetId); // Mendapatkan elemen target
-                if (targetElement) {
-                    // Menggunakan smooth scrolling untuk scroll ke elemen target
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
+        if (links.length == 5) {
+            if (i != links.length - 1) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // Mencegah perilaku default dari tautan
+                    var targetId = this.getAttribute('href').substring(1); // Mendapatkan ID target dari atribut href
+                    var targetElement = document.getElementById(targetId); // Mendapatkan elemen target
+                    if (targetElement) {
+                        // Menggunakan smooth scrolling untuk scroll ke elemen target
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+        } else {
+            if (links.length == 6) {
+                if (i != links.length - 1 && i != links.length - 2) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); // Mencegah perilaku default dari tautan
+                        var targetId = this.getAttribute('href').substring(1); // Mendapatkan ID target dari atribut href
+                        var targetElement = document.getElementById(targetId); // Mendapatkan elemen target
+                        if (targetElement) {
+                            // Menggunakan smooth scrolling untuk scroll ke elemen target
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
                     });
                 }
-            });
+            }
         }
     });
 });

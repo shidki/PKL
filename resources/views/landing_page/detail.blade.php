@@ -62,7 +62,7 @@
                 <img src="{{ asset('assets/landing_page/images/rimuru_nikki.jpg')}}" alt="" style="max-width: 100px;">
               </div>
               <h4>{{ $gedungDetails->nama }}</h4>
-              <p class="mt-5 text-left">{{ $gedungDetails->deskripsi }}</p>
+              <p class="mt-5 text-justify">{{ $gedungDetails->deskripsi }}</p>
             </div>
           </a>
         </div>

@@ -74,7 +74,7 @@
               </li>
               @auth
                   <li class="nav-item">
-                    <a class="nav-link" href="#lokasi">Dashboard</a>
+                    <a class="nav-link" href="/administrator">Dashboard</a>
                   </li>
                   <li class="nav-item" id="login">
                     <a class="nav-link logout" href="/logout"> <i class="fa fa-user" aria-hidden="false"></i>Logout</a>
@@ -332,7 +332,7 @@
             <div class="contact_link_box">
               <a href="https://maps.app.goo.gl/9UkUm6moGgNz1wmp9" target="_blank">
                 <i class="fa fa-map-marker" aria-hidden="true"></i>
-                <span>
+                <span class="font-weight-bold">
                   Location
                 </span>
               </a>
@@ -342,9 +342,22 @@
                   kominfosandi@jogjakota.go.id
                 </span>
               </span>
+              <span>
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                <span>
+                  kominfosandi@jogjakota.go.id
+                </span>
+              </span>
             </div>
           </div>
         </div>
+        <div class="col-md-6 col-lg-3 info_col font-weight-bold">
+          SIS
+          <div class="font-weight-normal">
+            SIS merupakan ayam goreng.
+          </div>
+        </div>
+
         <div class="col-md-6 col-lg-2 mx-auto info_col">
           <span id="displayYear" style="display: none;"></span>
         </div>
