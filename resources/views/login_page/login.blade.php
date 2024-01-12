@@ -43,7 +43,7 @@
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
-                    <h1>Sudah Punya Akun?</h1>
+                    <h1>Sudah Punya Akun??</h1>
                     <p>Klik tombol untuk Login</p>
                     <button class="hidden" id="login">Log In</button>
                 </div>
