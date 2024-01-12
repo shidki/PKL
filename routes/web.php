@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\landingController;
 use App\Http\Controllers\akunController;
 use App\Http\Controllers\GedungController;
+use Illuminate\Support\Facades\Crypt;
 
 // tampilan awal web
 Route::get('/',[landingController::class,'makeGedung']);

@@ -42,6 +42,23 @@ document.getElementById('btn_email').addEventListener('click', function() {
     // Membuka klien email default dengan pesan yang ditentukan
     window.location.href = mailtoLink;
 });
+// SCROLL NAVBAR
+$(window).scroll(function() {
+    var links = $('#navbarSupportedContent');
+    var scroll = $(window).scrollTop();
+    var box = $('.client_section').height();
+    var header = $('header').height();
+
+    if (scroll >= box - header) {
+        $("header").addClass("background-header");
+        links.addClass("scroll_nav_link");
+    } else {
+        $("header").removeClass("background-header");
+        links.removeClass("scroll_nav_link");
+
+    }
+});
+
 // client section owl carousel
 $(".client_owl-carousel").owlCarousel({
     loop: true,

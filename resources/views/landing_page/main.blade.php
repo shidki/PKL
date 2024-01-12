@@ -60,8 +60,8 @@
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav  ">
-              <li class="nav-item active">
-                <a class="nav-link" href="customCarousel1">Home <span class="sr-only">(current)</span></a>
+              <li class="nav-item">
+                <a class="nav-link" href="#atas">Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#layanan">Layanan</a>
@@ -91,7 +91,7 @@
     </header>
 
     <!-- Judul section -->
-    <section class="slider_section ">
+    <section class="slider_section " id="atas">
       <div id="customCarousel1" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active">
@@ -107,7 +107,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="img-box">
-                    <img src="assets/landing_page/images/logo_jogja.png" height="500px" width="500px" alt="">
+                    <img src="assets/landing_page/images/logo_jogja.png" alt="">
                   </div>
                 </div>
               </div>
@@ -280,7 +280,7 @@
                   <h5>
                       {{ $namaGedung->nama }}
                   </h5>
-                  <a href="/detail/{{ $namaGedung->id }}" class="d-inline-block mt-2">
+                  <a href="{{ url('/detail', ['id' => Crypt::encrypt($namaGedung->id)]) }}" class="d-inline-block mt-2">
                     Detail <i class="fa fa-arrow-left"></i>
                   </a>
                 </div>
