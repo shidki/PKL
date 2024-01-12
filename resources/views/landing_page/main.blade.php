@@ -366,6 +366,7 @@
 
   <!-- end info section -->
 
+
   <!-- jQery -->
   <script type="text/javascript" src="assets/landing_page/js/jquery-3.4.1.min.js"></script>
   <!-- popper js -->

@@ -25,12 +25,11 @@ class akunController extends Controller
             ->from("users")
             ->where("email",'=',$request->email)
             ->first();
-
-            return redirect()->intended('/')->with(["name" => $getname]);
+            return redirect()->intended('/')->with(["name" => $getname->username]);
         }
 
         return back()->with([
-            'login_error' => 'akun salah',
+            'login_error' => 'LOGIN GAGAL',
         ])->onlyInput('email');
     }
     public function logout(){
@@ -72,7 +71,7 @@ class akunController extends Controller
             "password" => $password,
         ]);
         if($insertData){
-            return redirect()->intended('/login')->with(["email" => $email,"password" => $request->password,"sukses" => "Pendaftaran Berhasil, Silahkan login"]);
+            return redirect()->intended('/login')->with(["email" => $email,"password" => $request->password,"sukses_daftar" => "Pendaftaran Berhasil, Silahkan login"]);
         }else{
             return back()->with([
                 'signup_error' => 'Gagal Melakukan Pendaftaran',

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="assets/login/style.css">
+    <script src="https://kit.fontawesome.com/c4254e24a8.js" crossorigin="anonymous"></script>
     <title>LOGIN</title>
 </head>
 
@@ -55,14 +56,62 @@
             </div>
         </div>
     </div>
+    <div id="toastBox">
 
+    </div>
     <script src="assets/login/script.js"></script>
-    <script>
-        var signupError = '{{ session("signup_error") }}';
-        if (signupError.trim() !== '') {
-            alert(signupError);
-        }
-    </script>
+
+
+    {{-- UNTUK MENAMPILKAN TOAST YANG MENUNJUKKAN KONDISI SIGN UP DAN LOGIN --}}
+
+    @if ($massage = Session::get('signup_error'))
+        <script>
+            let box = document.getElementById('toastBox');
+            let toast = document.createElement('div');
+
+            let icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+            toast.classList.add('toastt');
+            toast.innerHTML = icon + "{{ $massage }}";
+            box.appendChild(toast);
+
+            toast.classList.add("errortoast");
+            setTimeout(() => {
+                toast.remove();
+            }, 3500);
+        </script>
+    @endif
+    @if ($massage = Session::get('login_error'))
+        <script>
+            let box = document.getElementById('toastBox');
+            let toast = document.createElement('div');
+
+            let icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+            toast.classList.add('toastt');
+            toast.innerHTML = icon + "{{ $massage }}";
+            box.appendChild(toast);
+
+            toast.classList.add("errortoast");
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        </script>
+    @endif
+    @if ($massage = Session::get('sukses_daftar'))
+        <script>
+            let box = document.getElementById('toastBox');
+            let toast = document.createElement('div');
+
+            let icon = '<i class="fa-solid fa-check"></i>';
+            toast.classList.add('toastt');
+            toast.innerHTML = icon + "{{ $massage }}";
+            box.appendChild(toast);
+
+            toast.classList.add("sukses");
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        </script>
+    @endif
 </body>
 
 </html>

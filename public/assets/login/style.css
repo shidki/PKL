@@ -209,3 +209,59 @@ body {
 .container.active .toggle-right {
     transform: translateX(200%);
 }
+
+#toastBox {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.toastt {
+    width: 300px;
+    height: 80px;
+    background: #fff;
+    font-weight: 500;
+    font-size: 12px;
+    box-shadow: 0 0 20px rgb(0, 0, 0, .6);
+    display: flex;
+    align-items: center;
+}
+
+.toastt i {
+    margin: 0 20px;
+    font-size: 35px;
+    color: red;
+}
+
+.toastt.errortoast i {
+    margin: 0 20px;
+    font-size: 22px;
+    color: red;
+}
+
+.toastt.sukses i {
+    margin: 0 20px;
+    font-size: 22px;
+    color: green;
+}
+
+.toastt::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5px;
+    background: red;
+    animation: anim 5s linear forwards;
+}
+
+@keyframes anim {
+    100% {
+        width: 0;
+    }
+}
