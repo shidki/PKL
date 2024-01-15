@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>Table 03</title>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -26,7 +26,7 @@
     
     .toastt {
     width: 300px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     height: 80px;
     font-weight: bold;
     background: #38ff5d;
@@ -96,7 +96,7 @@
                                             <th>Nama</th>
                                             <th>Deskripsi</th>
                                             <th>Layanan</th>
-                                            <th>Action</th>
+                                            <th>#</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -114,10 +114,10 @@
                                                 </ol>
                                             </td>
                                             <td style="width: 200px">
-                                                <a href={{ route('delete', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
+                                                <a href={{ route('delete_dinas', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
                                                     <i style="font-size: 20px" class="fa fa-trash"></i>
                                                 </a>
-                                                <a href={{ route('edit' ,['id' => $dinas->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
+                                                <a href={{ route('edit_dinas' ,['id' => $dinas->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
                                                     <i class="fa fa-pencil" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            

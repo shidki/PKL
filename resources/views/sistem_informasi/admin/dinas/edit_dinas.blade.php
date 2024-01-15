@@ -38,7 +38,7 @@
                       value="{{ $dinas->id }}"
                       id="id"
                       class="formbold-form-input"
-                      disabled
+                      readonly
                       />
                   </div>
                   <div>

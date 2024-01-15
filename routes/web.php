@@ -40,16 +40,31 @@ Route::get('/detail/{id}',[GedungController::class,'showDetail']);
 
 //  ============== SISTEM INFORMASI ===========
 Route::get('/administrator',[AdminController::class,'viewpage'])->middleware('isAdmin');
+
+//  ============== DINAS ===========
 // ke halaman info dinas
 Route::get('/dinas',[AdminController::class,'info_gedung'])->middleware('isAdmin');
-// menghapus gedung
-Route::get('/delete/{id}',[AdminController::class,'delete_gedung'])->name('delete')->middleware('isAdmin');
+// menghapus dinas
+Route::get('/delete/dinas/{id}',[AdminController::class,'delete_gedung'])->name('delete_dinas')->middleware('isAdmin');
 
-// utk mengedit gedung
-Route::get('/edit/{id}',[AdminController::class,'edit_gedung'])->name('edit')->middleware('isAdmin');
+// utk mengedit dinas
+Route::get('/edit/dinas/{id}',[AdminController::class,'edit_gedung'])->name('edit_dinas')->middleware('isAdmin');
 Route::post('/submit_edit_dinas',[AdminController::class,'submit_edit_dinas'])->middleware('isAdmin');
+
 // menghapus layanan
 Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'])->name('hapus_layanan')->middleware('isAdmin');
+
 // menambah dinas
 Route::get('/add_dinas',[AdminController::class,'add_dinas'])->middleware('isAdmin');
 Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->middleware('isAdmin');
+
+//  ============== PENGUNJUNG ===========
+Route::get('/pengunjung',[AdminController::class,'info_pengunjung'])->middleware('isAdmin');
+// menghapus pengunjung
+Route::get('/delete/pengunjung/{id}',[AdminController::class,'delete_pengunjung'])->name('delete_pengunjung')->middleware('isAdmin');
+// mengedit pengunjung
+Route::get('/edit/pengunjung/{id}',[AdminController::class,'edit_pengunjung'])->name('edit_pengunjung')->middleware('isAdmin');
+// confirm pengunjung
+Route::get('/confirm/pengunjung/{id}',[AdminController::class,'confirm_pengunjung'])->name('confirm_pengunjung')->middleware('isAdmin');
+Route::post('/add/pengunjung',[AdminController::class,'add_pengunjung'])->name('add_pengunjung')->middleware('isAdmin');
+Route::post('/submit_edit_pengunjung',[AdminController::class,'submit_edit_pengunjung'])->middleware('isAdmin');

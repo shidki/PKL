@@ -29,10 +29,10 @@
             <!-- Yearly Breakup -->
             <div class="card overflow-hidden">
               <div class="card-body p-4">
-                <h5 class="card-title mb-9 fw-semibold">Total Pengunjung</h5>
+                <h5 class="card-title mb-9 fw-semibold">Jumlah Pengguna</h5>
                 <div class="row align-items-center">
                   <div class="col-8">
-                    <h4 class="fw-semibold mb-3">9999</h4>
+                    <h4 class="fw-semibold mb-3">{{ $jml_pengguna }}</h4>
                   </div>
                   <div class="col-4">
                     <div class="d-flex justify-content-center">
@@ -43,24 +43,28 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-12">
+          {{-- <div class="col-lg-12">
             <!-- Monthly Earnings -->
             <div class="card">
               <div class="card-body">
                 <div class="row alig n-items-start">
                   <div class="col-8">
                     <h5 class="card-title mb-9 fw-semibold"> Jumlah User </h5>
-                    <h4 class="fw-semibold mb-3">9999</h4>
+                    <h4 class="fw-semibold mb-3">{{ $jml_user }}</h4>
                   </div>
                 </div>
               </div>
               <div id="earning"></div>
             </div>
-          </div>
+          </div> --}}
         </div>
       </div>
     </div>
   </div>
 </div>
 </div>
+<script>
+  var jmlAdmin = {{ $jml_admin }};
+  var jmlUser = {{ $jml_user }};
+</script>
 @endsection

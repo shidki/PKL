@@ -8,6 +8,8 @@
   <link rel="shortcut icon" type="image/png" href="{{ asset('assets/sistem_informasi/logos/favicon.png')}}" />
   <link rel="stylesheet" href="{{ asset('assets/sistem_informasi/css/styles.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     #toastBox {
 position: absolute;

@@ -106,10 +106,14 @@ $(function() {
     // =====================================
     // Breakup
     // =====================================
+
+
+
+
     var breakup = {
         color: "#adb5bd",
-        series: [38, 40, 25],
-        labels: ["2022", "2021", "2020"],
+        series: [jmlAdmin, jmlUser],
+        labels: ["admin", "user"],
         chart: {
             width: 180,
             type: "donut",
@@ -175,7 +179,7 @@ $(function() {
         series: [{
             name: "Earnings",
             color: "#49BEFF",
-            data: [25, 66, 20, 40, 12, 58, 20],
+            data: [jmlUser],
         }, ],
         stroke: {
             curve: "smooth",
