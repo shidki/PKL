@@ -269,8 +269,10 @@ class AdminController extends Controller
         return view('sistem_informasi.admin.pengunjung.pengunjung',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
     }
     public function delete_pengunjung($id){
+        $get_id_pengunjung = DB::table('tujuan_kunjungan')->select('id_pengunjung')->where('id','=',$id)->first();
+        
         $tujuan_kunjungan = DB::table('tujuan_kunjungan')->where('id','=',$id)->delete();
-        // dd($id);
+        $delete_pengunjung = DB::table('pengunjung')->where('id','=',$get_id_pengunjung->id_pengunjung)->delete();
         return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
     }
     public function add_pengunjung(Request $request){
