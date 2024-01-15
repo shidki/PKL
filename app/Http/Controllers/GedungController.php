@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gedung;
+use App\Models\Layanan;
 use Illuminate\Support\Facades\Crypt;
 
 class GedungController extends Controller
@@ -13,6 +14,12 @@ class GedungController extends Controller
     {
         $decrypt_id = Crypt::decrypt($id);
         $gedungDetails = Gedung::select('*')->from('gedung')->where('id', $decrypt_id)->first();
-        return view('landing_page.detail', ['gedungDetails' => $gedungDetails]);
+
+        $layanan = Layanan::select("nama")
+        ->from("layanan")
+        ->where('id_gedung','=',$decrypt_id)
+        ->get();
+
+        return view('landing_page.detail', ['gedungDetails' => $gedungDetails,'layanan' => $layanan]);
     }
 }

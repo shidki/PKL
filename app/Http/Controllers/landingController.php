@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Gedung;
 use App\Models\Akun;
-use App\Models\layanan;
+use App\Models\Layanan;
 use Illuminate\Support\Facades\DB;
 
 class landingController extends Controller
@@ -16,10 +16,10 @@ class landingController extends Controller
         ->from("gedung")
         ->get();
         
-        $jmlGedung = Gedung::select("nama")
-        ->from("gedung")
-        ->count();
+        $layanan = Layanan::select("nama")
+        ->from("layanan")
+        ->get();
         
-        return view('landing_page.main',['jml' => $jmlGedung, 'gedung' => $gedung]);
+        return view('landing_page.main',['layanan' => $layanan, 'gedung' => $gedung]);
     }
 }

@@ -5,9 +5,68 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page | Admin</title>
-  <link rel="shortcut icon" type="image/png" href="assets/sistem_informasi/logos/favicon.png" />
-  <link rel="stylesheet" href="assets/sistem_informasi/css/styles.min.css" />
-  <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+  <link rel="shortcut icon" type="image/png" href="{{ asset('assets/sistem_informasi/logos/favicon.png')}}" />
+  <link rel="stylesheet" href="{{ asset('assets/sistem_informasi/css/styles.min.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}">
+  <style>
+    #toastBox {
+position: absolute;
+bottom: 30px;
+right: 30px;
+display: flex;
+align-items: flex-end;
+flex-direction: column;
+overflow: hidden;
+}
+
+.toastt {
+width: 300px;
+color: rgb(0, 0, 0);
+height: 80px;
+font-weight: bold;
+background: #66ff66;
+font-weight: 500;
+font-size: 12px;
+box-shadow: 0 0 20px rgb(0, 0, 0, .6);
+display: flex;
+align-items: center;
+}
+
+.toastt i {
+margin: 0 20px;
+font-size: 35px;
+color: red;
+}
+
+.toastt.errortoast i {
+margin: 0 20px;
+font-size: 22px;
+color: red;
+}
+
+.toastt.sukses i {
+margin: 0 20px;
+font-size: 22px;
+color: green;
+}
+
+.toastt::after {
+content: '';
+position: absolute;
+left: 0;
+bottom: 0;
+width: 100%;
+height: 5px;
+background: red;
+animation: anim 5s linear forwards;
+}
+
+@keyframes anim {
+100% {
+    width: 0;
+}
+}
+</style>
 </head>
 
 <body>
@@ -34,7 +93,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/dashboard" aria-expanded="false">
+              <a class="sidebar-link" href="/administrator" aria-expanded="false">
                 <span>
                   <i class=" fa fa-home"></i>
                 </span>
@@ -53,9 +112,17 @@
                 <span class="hide-menu">Info Dinas</span>
               </a>
             </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/pengunjung" aria-expanded="false">
+                <span>
+                  <i class=" fa fa-users"></i>
+                </span>
+                <span class="hide-menu">Info Pengunjung</span>
+              </a>
+            </li>
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">ADMINISTRATOR</span>
+              <span class="hide-menu">Account</span>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="/admin" aria-expanded="false">
@@ -127,13 +194,15 @@
       {{-- MAIN CONTENT --}}
       @yield("main")
       {{-- END MAIN CONTENT --}}
-  <script src="assets/sistem_informasi/libs/jquery/dist/jquery.min.js"></script>
-  <script src="assets/sistem_informasi/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/sistem_informasi/js/sidebarmenu.js"></script>
-  <script src="assets/sistem_informasi/js/app.min.js"></script>
-  <script src="assets/sistem_informasi/libs/apexcharts/dist/apexcharts.min.js"></script>
-  <script src="assets/sistem_informasi/libs/simplebar/dist/simplebar.js"></script>
-  <script src="assets/sistem_informasi/js/dashboard.js"></script>
+
+      
+  <script src="{{ asset('assets/sistem_informasi/libs/jquery/dist/jquery.min.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/js/sidebarmenu.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/js/app.min.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/libs/simplebar/dist/simplebar.js') }}"></script>
+  <script src="{{ asset('assets/sistem_informasi/js/dashboard.js') }}"></script>
 </body>
 
 </html>

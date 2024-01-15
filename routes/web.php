@@ -29,7 +29,7 @@ Route::get('/login',function(){
 Route::post('/login',[akunController::class,'confirmLogin'])->name('confirm_login')->middleware("guest");
 
 // ============== LOG OUT ===========
-Route::get('/logout',[akunController::class,'logout'])->middleware("isAdmin");
+Route::get('/logout',[akunController::class,'logout']);
 
 //  ============= SIGN UP ============
 Route::get('/signup',[akunController::class,'signup1'])->middleware("guest");
@@ -40,3 +40,16 @@ Route::get('/detail/{id}',[GedungController::class,'showDetail']);
 
 //  ============== SISTEM INFORMASI ===========
 Route::get('/administrator',[AdminController::class,'viewpage'])->middleware('isAdmin');
+// ke halaman info dinas
+Route::get('/dinas',[AdminController::class,'info_gedung'])->middleware('isAdmin');
+// menghapus gedung
+Route::get('/delete/{id}',[AdminController::class,'delete_gedung'])->name('delete')->middleware('isAdmin');
+
+// utk mengedit gedung
+Route::get('/edit/{id}',[AdminController::class,'edit_gedung'])->name('edit')->middleware('isAdmin');
+Route::post('/submit_edit_dinas',[AdminController::class,'submit_edit_dinas'])->middleware('isAdmin');
+// menghapus layanan
+Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'])->name('hapus_layanan')->middleware('isAdmin');
+// menambah dinas
+Route::get('/add_dinas',[AdminController::class,'add_dinas'])->middleware('isAdmin');
+Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->middleware('isAdmin');

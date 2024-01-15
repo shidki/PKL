@@ -172,86 +172,25 @@
       </div>
       <div class="carousel-wrap ">
         <div class="owl-carousel client_owl-carousel">
-          <div class="item">
-            <div class="box">
-              <div class="img-box">
-                <img src="assets/landing_page/images/wifi.png" alt="" class="box-img">
-              </div>
-              <div class="detail-box">
-                <div class="client_id">
-                  <div class="client_info">
-                    <h6>
-                      FREE HOTSPOT
-                    </h6>
-                    <p>
-                        Free Hotspot PEMKOT YOGYAKARTA 
-                    </p>
+          @foreach ($layanan as $layanan )
+            <div class="item">
+              <div class="box">
+                <div class="detail-box">
+                  <div class="client_id">
+                    <div class="client_info">
+                      <h6>
+                        Layanan {{ $loop->iteration }}
+                      </h6>
+                      <p>
+                        {{ $layanan->nama }}
+                      </p>
+                    </div>
+                    <i class="fa fa-tags" aria-hidden="true"></i>
                   </div>
-                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="item">
-            <div class="box">
-              <div class="img-box">
-                <img src="assets/landing_page/images/bank.png" alt="" class="box-img">
-              </div>
-              <div class="detail-box">
-                <div class="client_id">
-                  <div class="client_info">
-                    <h6>
-                        Aset
-                    </h6>
-                    <p>
-                        LAYANAN Pengelolaan Aset
-                    </p>
-                  </div>
-                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="box">
-              <div class="img-box">
-                <img src="assets/landing_page/images/kk.png" alt="" class="box-img">
-              </div>
-              <div class="detail-box">
-                <div class="client_id">
-                  <div class="client_info">
-                    <h6>
-                      Data KK
-                    </h6>
-                    <p>
-                        Layanan Perubahan Data KK
-                    </p>
-                  </div>
-                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="box">
-              <div class="img-box">
-                <img src="assets/landing_page/images/ktp.png" alt="" class="box-img">
-              </div>
-              <div class="detail-box">
-                <div class="client_id">
-                  <div class="client_info">
-                    <h6>
-                      KTP
-                    </h6>
-                    <p>
-                        Layanan Permohonan KTP
-                    </p>
-                  </div>
-                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                </div>
-              </div>
-            </div>
-          </div>
+          @endforeach
         </div>
       </div>
     </div>
@@ -351,13 +290,6 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-lg-3 info_col font-weight-bold">
-          SIS
-          <div class="font-weight-normal">
-            SIS merupakan ayam goreng.
-          </div>
-        </div>
-
         <div class="col-md-6 col-lg-2 mx-auto info_col">
           <span id="displayYear" style="display: none;"></span>
         </div>
