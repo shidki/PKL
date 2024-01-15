@@ -31,7 +31,26 @@ class AdminController extends Controller
         ->where('role','=','user')
         ->count();
 
-        return view('sistem_informasi.admin.dashboard',["jml_pengguna" => $jml_pengguna,"jml_user" => $jml_user,"jml_admin" => $jml_admin]);
+        $data_kunjungan = Pengunjung::select('jadwal_kunjungan')
+        ->from('pengunjung')
+        ->get();
+
+        
+        $tanggal = []; // digunakan untuk menandakan tanggal sudah masuk di looping
+        // menentukan jumlah pengunjung yang hadir pada tanggal yang ada di tabel pengunjung
+        for($i=0; $i<count($data_kunjungan); $i++){
+            $jml = 1;
+            if(!array_key_exists($data_kunjungan[$i]->jadwal_kunjungan, $tanggal)){
+                for($j = $i + 1; $j<count($data_kunjungan); $j++){
+                    if($data_kunjungan[$i]->jadwal_kunjungan === $data_kunjungan[$j]->jadwal_kunjungan){
+                        $jml++;
+                    }
+                }
+                $tanggal[$data_kunjungan[$i]->jadwal_kunjungan] = $jml;
+            }
+        }
+        // dd($tanggal);
+        return view('sistem_informasi.admin.dashboard',["jml_pengguna" => $jml_pengguna,"jml_user" => $jml_user,"jml_admin" => $jml_admin,'tgl_kunjungan' => $tanggal]);
     }
     public function info_gedung(){
         $gedung = Gedung::select('*')

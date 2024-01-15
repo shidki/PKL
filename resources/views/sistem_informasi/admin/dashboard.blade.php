@@ -66,5 +66,9 @@
 <script>
   var jmlAdmin = {{ $jml_admin }};
   var jmlUser = {{ $jml_user }};
+  var tglKunjungan = {!! json_encode($tgl_kunjungan) !!};
+  var get_tanggal_kunjungan = Object.keys(tglKunjungan);
+  var get_jml_kunjungan = Object.values(tglKunjungan);
+
 </script>
 @endsection

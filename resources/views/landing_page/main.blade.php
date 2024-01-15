@@ -268,36 +268,63 @@
       <div class="row">
         <div class="col-md-6 col-lg-3 info_col">
           <div class="info_contact">
+            {{-- <h4>
+              Judul
+            </h4> --}}
             <div class="contact_link_box">
-              <a href="https://maps.app.goo.gl/9UkUm6moGgNz1wmp9" target="_blank">
+              <a href="https://maps.app.goo.gl/xWiBnKzDdnt6AuMv9">
                 <i class="fa fa-map-marker" aria-hidden="true"></i>
-                <span class="font-weight-bold">
+                <span>
                   Location
                 </span>
               </a>
-              <span>
+              <a href="">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+                <span>
+                  +628725617762
+                </span>
+              </a>
+              <a href="">
                 <i class="fa fa-envelope" aria-hidden="true"></i>
                 <span>
-                  kominfosandi@jogjakota.go.id
+                  email@gmail.com
                 </span>
-              </span>
-              <span>
-                <i class="fa fa-envelope" aria-hidden="true"></i>
-                <span>
-                  kominfosandi@jogjakota.go.id
-                </span>
-              </span>
+              </a>
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-lg-2 mx-auto info_col">
-          <span id="displayYear" style="display: none;"></span>
+        {{-- <div class="col-md-6 col-lg-3 info_col">
+          <div class="info_detail">
+            <h4>
+              Info
+            </h4>
+            <p>
+              necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful
+            </p>
+          </div>
+        </div> --}}
+        <div class="col-md-12 col-lg-2 mx-auto info_col">
+          <div class="info_link_box">
+            <h4>
+              Social Media
+            </h4>
+            <div class="info_links">
+              <a class="active" href="">
+                <i class="fa fa-instagram mr-2"></i><span>Instagram</span>
+              </a>
+              <a class="" href="">
+                <i class="fa fa-facebook mr-2"></i><span>Facebook</span>
+              </a>
+              <a class="" href="">
+                <i class="fa fa-twitter mr-2"></i><span>Twitter</span>
+              </a>
+            </div>
+          </div>
         </div>
         <div class="col-md-6 col-lg-3 info_col ">
           <h4>
             Email
           </h4>
-          
           <form action="#">
             <input type="text" placeholder="Enter email" id="msg"/>
             <button type="submit" id="btn_email">
