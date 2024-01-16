@@ -4,7 +4,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -13,7 +12,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    <link rel="stylesheet" href="assets/sistem_informasi/table/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-IYF3A/b5QDsjjr6f5lC7PgeVojOO0GW7R+EiAtkdbY//SWEZDtQqFJ9C1STh0pcHp1K5V02LFQKZ1KGHTtL54A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{asset('assets/sistem_informasi/table/css/style.css') }}">
     <style>
         #toastBox {
     position: fixed;
@@ -82,15 +82,48 @@
     <section class="ftco-section">
         <div class="container">
             <div class="text-right mr-3 mb-3">
-                <a href="/add_dinas" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Dinas</span></a>
+                <button type="submit" class="btn btn-success" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Admin</span></button>
             </div>
-            <div class="col-lg-12 d-flex align-items-strech">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <input type="text" class="form-control text-center" placeholder="Search Dinas" id="searchDinas">
+           {{-- POP UP ADD ADMIN --}}
+           <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Add ADMIN</h5>
                     </div>
+                    <form action="/add/admin" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="username">User Name :</label>
+                                <input id="username" type="text" class="form-control" placeholder="User Name" required name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email :</label>
+                                <input id="email" type="email" class="form-control" placeholder="Email Admin" required name="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password :</label>
+                                <input id="password" type="password" class="form-control" placeholder="Password" required name="password">
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
+
+        {{-- END POP UP --}}
+        <div class="col-lg-12 d-flex align-items-strech">
+            <div class="card w-100">
+                <div class="card-body">
+                    <input type="text" class="form-control text-center" placeholder="Search Email" id="searchEmail">
+                </div>
+            </div>
+        </div>
             <div class="col-lg-12 d-flex align-items-strech">
                 <div class="card w-100">
                   <div class="card-body">
@@ -101,31 +134,25 @@
                                     <thead class="thead-primary">
                                         <tr>
                                             <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
-                                            <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th>
-                                            <th>Deskripsi</th>
-                                            <th>Layanan</th>
+                                            <th>Email</th>
+                                            <th>Username <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th>
+                                            <th>Role<br>
                                             <th>#</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($gedung as $dinas )
+                                        @foreach ($users as $userss )
                                         <tr>
                                             <th scope="row" class="scope" width="100px">{{ $loop->iteration }}</th>
-                                            <td class="text-left" >{{ $dinas->nama }}</td>
-                                            <td class="text-justify" style="width: 400px;">{{ $dinas->deskripsi }}</td>
-                                            <td>
-                                                <ol>
-                                                    @foreach ($layanan[$dinas->id] as $layanans)
-                                                    <li class="text-left">{{ $layanans->nama }}</li>
-                                                    @endforeach
-
-                                                </ol>
-                                            </td>
-                                            <td style="width: 200px">
-                                                <a href={{ route('delete_dinas', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
+                                            <td class="text-center" width="150px">{{ $userss->email }}</td>
+                                            <td class="text-justify" style="width: 200px;">{{ $userss->username }}</td>
+                                            <td class="text-center" style="width: 260px;">{{ $userss->role }}</td>
+                                            {{-- <td class="text-center" style="width: 150px;">{{ $userss->status }}</td> --}}
+                                            <td style="width: 300px">
+                                                <a href={{ route('delete_admin' , ['id' => $userss->id]) }} class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
                                                     <i style="font-size: 20px" class="fa fa-trash"></i>
                                                 </a>
-                                                <a href={{ route('edit_dinas' ,['id' => $dinas->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
+                                                <a href={{route('edit_admin' ,['id' => $userss->id ])}} class="d-inline-block" title="edit" name="edit">
                                                     <i class="fa fa-pencil" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            
@@ -159,6 +186,8 @@
             box.appendChild(toast);
 
             toast.classList.add("errortoast");
+            let toastt = document.querySelector('.toastt');
+            toastt.style.backgroundColor = "red";
             setTimeout(() => {
                 toast.remove();
             }, 3500);
@@ -175,29 +204,23 @@
             box.appendChild(toast);
 
             toast.classList.add("errortoast");
+            let toastt = document.querySelector('.toastt');
+            toastt.style.backgroundColor = "#38ff5d";
             setTimeout(() => {
                 toast.remove();
             }, 3500);
         </script>
     @endif
-
-
-    <script src="assets/sistem_informasi/table/js/jquery.min.js"></script>
-    <script src="assets/sistem_informasi/table/js/popper.js"></script>
-    <script src="assets/sistem_informasi/table/js/bootstrap.min.js"></script>
-    <script src="assets/sistem_informasi/table/js/main.js"></script>
-    <!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    {{-- search Dinas --}}
+    {{-- search email --}}
     <script>
-        // untuk sesuai Dinas
+        // untuk sesuai email
         document.addEventListener('DOMContentLoaded', function () {
-        var searchDinasInput = document.getElementById('searchDinas');
+        var searchEmailInput = document.getElementById('searchEmail');
         var usersTable = document.getElementById('usersTable');
         var rows = usersTable.getElementsByTagName('tr');
 
-        searchDinasInput.addEventListener('input', function () {
-            var filter = searchDinasInput.value.toLowerCase();
+        searchEmailInput.addEventListener('input', function () {
+            var filter = searchEmailInput.value.toLowerCase();
 
             for (var i = 1; i < rows.length; i++) {
                 var emailColumn = rows[i].getElementsByTagName('td')[0];
@@ -214,6 +237,33 @@
             }
         });
     });
+    // search sesuai email dan username
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var searchEmailInput = document.getElementById('searchEmailInput');
+    //     var usersTable = document.getElementById('usersTable');
+    //     var rows = usersTable.getElementsByTagName('tr');
+
+    //     searchEmailInput.addEventListener('input', function () {
+    //         var filter = searchEmailInput.value.toLowerCase();
+
+    //         for (var i = 1; i < rows.length; i++) { // Mulai dari indeks 1 untuk melewati baris header
+    //             var emailColumn = rows[i].getElementsByTagName('td')[1]; // Kolom email
+    //             var usernameColumn = rows[i].getElementsByTagName('td')[2]; // Kolom username
+
+    //             if (emailColumn && usernameColumn) {
+    //                 var emailText = emailColumn.textContent || emailColumn.innerText;
+    //                 var usernameText = usernameColumn.textContent || usernameColumn.innerText;
+
+    //                 // Mencocokkan filter dengan email atau username
+    //                 if (emailText.toLowerCase().indexOf(filter) > -1 || usernameText.toLowerCase().indexOf(filter) > -1) {
+    //                     rows[i].style.display = ''; // Menampilkan baris jika sesuai dengan filter
+    //                 } else {
+    //                     rows[i].style.display = 'none'; // Menyembunyikan baris jika tidak sesuai dengan filter
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
     </script>
     <script>
         let ascendingOrder = true;
@@ -266,6 +316,13 @@
             sortIcon.className = ascendingOrder ? 'fa fa-sort-asc text-light ml-2' : 'fa fa-sort-desc text-light ml-2';
         }
     </script>
+
+    <script src="{{asset('assets/sistem_informasi/table/js/jquery.min.js')}}"></script>
+    <script src="{{asset('assets/sistem_informasi/table/js/popper.js')}}"></script>
+    <script src="{{asset('assets/sistem_informasi/table/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('assets/sistem_informasi/table/js/main.js')}}"></script>
+    <!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function () {
         // Set the number of rows to display per page
@@ -312,7 +369,24 @@
         });
     });
 </script>
-
+<script>
+    var staticBackdrop = document.getElementById('staticBackdrop')
+    staticBackdrop.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget
+        var dataId = button.getAttribute('data-id')
+        // Mengisi placeholder pada data dengan data sesuai dengan ID dari data yang di klik
+        var nama = exampleModal.querySelector('.nama input')
+        var jabatan = exampleModal.querySelector('.jabatan input')
+        var sip = exampleModal.querySelector('.sip input')
+        var tanggal_buat_sip = exampleModal.querySelector('.tanggal_buat_sip input')
+        var exp_sip = exampleModal.querySelector('.exp_sip input')
+        nama.value = dataId.nama
+        jabatan.value = dataId.jabatan
+        sip.value = dataId.sip
+        tanggal_buat_sip.value = dataId.tanggal_buat_sip
+        exp_sip.value = dataId.exp_sip
+    })
+</script>
 
 </body>
 

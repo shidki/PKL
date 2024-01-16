@@ -275,161 +275,218 @@ class AdminController extends Controller
     }
 
     // PENGUNJUNG
-    public function info_pengunjung(){
-        $pengunjung = Pengunjung::select('p.*','t.status','t.id as id_tujuan','t.nama_tujuan','g.nama as lokasi_tujuan')
-        ->from('pengunjung as p')
-        ->join('tujuan_kunjungan as t','t.id_pengunjung','=','p.id')
-        ->join('gedung as g','t.id_lokasi','=','g.id')
+    // public function info_pengunjung(){
+    //     $pengunjung = Pengunjung::select('p.*','t.status','t.id as id_tujuan','t.nama_tujuan','g.nama as lokasi_tujuan')
+    //     ->from('pengunjung as p')
+    //     ->join('tujuan_kunjungan as t','t.id_pengunjung','=','p.id')
+    //     ->join('gedung as g','t.id_lokasi','=','g.id')
+    //     ->get();
+
+    //     // kurei dibawah untuk mengisi input select
+    //     $gedung = Gedung::select('*')->from('gedung')->get();
+
+    //     return view('sistem_informasi.admin.pengunjung.pengunjung',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
+    // }
+    // public function delete_pengunjung($id){
+    //     $get_id_pengunjung = DB::table('tujuan_kunjungan')->select('id_pengunjung')->where('id','=',$id)->first();
+        
+    //     $tujuan_kunjungan = DB::table('tujuan_kunjungan')->where('id','=',$id)->delete();
+    //     $delete_pengunjung = DB::table('pengunjung')->where('id','=',$get_id_pengunjung->id_pengunjung)->delete();
+    //     return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
+    // }
+    // public function add_pengunjung(Request $request){
+        
+    //     //  mengecek apakah nama pengunjung sudah ada di database atau belom
+    //     $cek_pengunjung = Pengunjung::select('id')
+    //     ->from('pengunjung')
+    //     ->where('nama','=',$request->nama)
+    //     ->first();
+    //     if(!$cek_pengunjung){
+    //         $insert_pengunjung = DB::table('pengunjung')
+    //         ->insert([
+    //             "nama" => $request->nama,
+    //             "jadwal_kunjungan" => $request->tgl_kunjungan
+    //         ]);
+    //         if($insert_pengunjung){
+    //             // mengambil id dari data pengunjung yang sudah ditambah sebelumnya
+    //             $cek_id = Pengunjung::select('id')
+    //             ->from('pengunjung')
+    //             ->where('nama','=',$request->nama)
+    //             ->first();
+
+    //             $insert_tujuan = DB::table('tujuan_kunjungan')
+    //             ->insert([
+    //                 "nama_tujuan" => $request->tujuan,
+    //                 "id_lokasi" => $request->dinas,
+    //                 "id_pengunjung" => $cek_id->id
+    //             ]);
+    //             if($insert_tujuan){
+    //                 return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
+    //             }else{
+    //                 return back()->with(['error_toast' => "Gagal menambah tujuan"]);
+    //             }
+    //         }else{
+    //             return back()->with(['error_toast' => "Gagal menambah tujuan"]);
+    //         }
+    //     }else{
+    //         // kondisi ketika nama pengunjung sudah ada di database
+    //         $insert_pengunjung = DB::table('pengunjung')
+    //         ->insert([
+    //             "nama" => $request->nama,
+    //             "jadwal_kunjungan" => $request->tgl_kunjungan
+    //         ]);
+    //         if($insert_pengunjung){
+    //             // mengambil id yang paling banyak pada nama tersebut ( alasan : id yang paling besar berarti data yang paling terakhir kali ditambahkan)
+    //             // artinya id yang masuk ke cek_id adalah id dari pengunjung yang ditambah di insert sebelumnya
+    //             $get_id = DB::table('pengunjung')->where('nama','=',$request->nama)
+    //             ->max('id');
+    //             $insert_tujuan = DB::table('tujuan_kunjungan')
+    //             ->insert([
+    //                 "nama_tujuan" => $request->tujuan,
+    //                 "id_lokasi" => $request->dinas,
+    //                 "id_pengunjung" => $get_id
+    //             ]);
+    //             if($insert_tujuan){
+    //                 return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
+    //             }else{
+    //                 return back()->with(['error_toast' => "Gagal menambah tujuan"]);
+    //             }
+    //         }else{
+    //             return back()->with(['error_toast' => "Gagal menambah tujuan"]);
+    //         }
+    //     }
+    // }
+
+    // public function confirm_pengunjung($id){
+    //     $update_status = DB::table('tujuan_kunjungan')->where('id','=',$id)
+    //     ->update([
+    //         'status' => 'confirmed'
+    //     ]);
+    //     if($update_status){
+    //         return back()->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
+    //     }else{
+    //         return back()->with(['error_toast' => "Gagal mengkonfirmasi Kunjungan"]);
+    //     }
+    // }
+    // public function edit_pengunjung($id){
+    //     //  untuk mengisi di select nya
+    //     $gedung = Gedung::select('*')->from('gedung')->get();
+
+    //     $pengunjung = Tujuan_kunjungan::select('t.*','p.nama','p.jadwal_kunjungan','g.nama as nama_dinas')
+    //     ->from('tujuan_kunjungan as t')
+    //     ->join('pengunjung as p','p.id','=','t.id_pengunjung')
+    //     ->join('gedung as g','g.id','=','t.id_lokasi')
+    //     ->where('t.id','=',$id)
+    //     ->first();
+    //     return view('sistem_informasi.admin.pengunjung.edit_kunjungan',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
+    // }
+    // public function submit_edit_pengunjung(Request $request){
+    //     try {
+    //         $this->validate($request, [
+    //             'tgl_kunjungan' => 'required',
+    //             'dinas' => 'required',
+    //         ]);
+    //         $update_pengunjung = DB::table('pengunjung as p')
+    //         ->join('tujuan_kunjungan as t','p.id','=','t.id_pengunjung')
+    //         ->where('t.id','=',$request->id)
+    //         ->update([
+    //             'jadwal_kunjungan' => $request->tgl_kunjungan,
+    //         ]);
+    //         // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
+    //         if($request->tujuan == null){
+    //             $update_kunjungan = DB::table('tujuan_kunjungan')
+    //             ->where('id','=',$request->id)
+    //             ->update([
+    //                 'id_lokasi' => $request->dinas,
+    //             ]);
+    //             if($update_kunjungan){
+    //                 return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
+    //             }else{
+    //                 return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
+    //             }
+    //         }else{
+    //             $update_kunjungan = DB::table('tujuan_kunjungan')
+    //             ->where('id','=',$request->id)
+    //             ->update([
+    //                 'nama_tujuan' => $request->tujuan,
+    //                 'id_lokasi' => $request->dinas
+    //             ]);
+    //             if($update_kunjungan){
+    //                 return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
+    //             }else{
+    //                 return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
+    //             }
+    //         }
+    //     }catch (ValidationException $e) {
+    //         // Validation failed
+    //         $errors = $e->errors();
+
+    //         // Check specific fields
+    //         if (isset($errors['dinas'])) {
+    //             return back()->with(["error_input_dinas" => 'dinas harus di isi']);
+    //         }
+    //         if (isset($errors['tgl_kunjungan'])) {
+    //             return back()->with(["error_input_dinas" => 'Tanggal kunjungan harus di isi']);
+    //         }
+    //     }
+    // }
+    
+    
+    // ADMIN
+    public function info_admin(){
+        $users = Users::select('u.*')
+        ->from('users as u')
         ->get();
-
-        // kurei dibawah untuk mengisi input select
-        $gedung = Gedung::select('*')->from('gedung')->get();
-
-        return view('sistem_informasi.admin.pengunjung.pengunjung',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
+        return view('sistem_informasi.admin.CRUD_admin.main_admin', ['users' => $users]);
     }
-    public function delete_pengunjung($id){
-        $get_id_pengunjung = DB::table('tujuan_kunjungan')->select('id_pengunjung')->where('id','=',$id)->first();
-        
-        $tujuan_kunjungan = DB::table('tujuan_kunjungan')->where('id','=',$id)->delete();
-        $delete_pengunjung = DB::table('pengunjung')->where('id','=',$get_id_pengunjung->id_pengunjung)->delete();
-        return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
-    }
-    public function add_pengunjung(Request $request){
-        
-        //  mengecek apakah nama pengunjung sudah ada di database atau belom
-        $cek_pengunjung = Pengunjung::select('id')
-        ->from('pengunjung')
-        ->where('nama','=',$request->nama)
-        ->first();
-        if(!$cek_pengunjung){
-            $insert_pengunjung = DB::table('pengunjung')
-            ->insert([
-                "nama" => $request->nama,
-                "jadwal_kunjungan" => $request->tgl_kunjungan
-            ]);
-            if($insert_pengunjung){
-                // mengambil id dari data pengunjung yang sudah ditambah sebelumnya
-                $cek_id = Pengunjung::select('id')
-                ->from('pengunjung')
-                ->where('nama','=',$request->nama)
-                ->first();
 
-                $insert_tujuan = DB::table('tujuan_kunjungan')
-                ->insert([
-                    "nama_tujuan" => $request->tujuan,
-                    "id_lokasi" => $request->dinas,
-                    "id_pengunjung" => $cek_id->id
-                ]);
-                if($insert_tujuan){
-                    return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
-                }else{
-                    return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-                }
-            }else{
-                return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-            }
+    public function add_admin(Request $request) {
+        $pw = Bcrypt($request->password);
+        $exsistingUser = DB::table('users')->where('email', $request->email)->first();
+
+        if($exsistingUser) {
+            return back()->with(["error_toast" => 'Email sudah tersedia']);
         }else{
-            // kondisi ketika nama pengunjung sudah ada di database
-            $insert_pengunjung = DB::table('pengunjung')
-            ->insert([
-                "nama" => $request->nama,
-                "jadwal_kunjungan" => $request->tgl_kunjungan
+            $add_admin = DB::table('users')->insert([
+                "email" => $request->email,
+                "username" => $request->username,
+                "password" => $pw,
             ]);
-            if($insert_pengunjung){
-                // mengambil id yang paling banyak pada nama tersebut ( alasan : id yang paling besar berarti data yang paling terakhir kali ditambahkan)
-                // artinya id yang masuk ke cek_id adalah id dari pengunjung yang ditambah di insert sebelumnya
-                $get_id = DB::table('pengunjung')->where('nama','=',$request->nama)
-                ->max('id');
-                $insert_tujuan = DB::table('tujuan_kunjungan')
-                ->insert([
-                    "nama_tujuan" => $request->tujuan,
-                    "id_lokasi" => $request->dinas,
-                    "id_pengunjung" => $get_id
-                ]);
-                if($insert_tujuan){
-                    return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
-                }else{
-                    return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-                }
-            }else{
-                return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-            }
         }
+        return back()->with(["sukses_toast" => 'Sukses menambahkan admin']);
     }
 
-    public function confirm_pengunjung($id){
-        $update_status = DB::table('tujuan_kunjungan')->where('id','=',$id)
-        ->update([
-            'status' => 'confirmed'
-        ]);
-        if($update_status){
-            return back()->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-        }else{
-            return back()->with(['error_toast' => "Gagal mengkonfirmasi Kunjungan"]);
-        }
+    public function edit_admin($id) {
+        $update = DB::table('users')->select("*")->where('id','=',$id)->first();
+        // dd($update);    
+        return view('sistem_informasi.admin.CRUD_admin.edit_admin',['admin' => $update]);
     }
-    public function edit_pengunjung($id){
-        //  untuk mengisi di select nya
-        $gedung = Gedung::select('*')->from('gedung')->get();
-
-        $pengunjung = Tujuan_kunjungan::select('t.*','p.nama','p.jadwal_kunjungan','g.nama as nama_dinas')
-        ->from('tujuan_kunjungan as t')
-        ->join('pengunjung as p','p.id','=','t.id_pengunjung')
-        ->join('gedung as g','g.id','=','t.id_lokasi')
-        ->where('t.id','=',$id)
-        ->first();
-        return view('sistem_informasi.admin.pengunjung.edit_kunjungan',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
-    }
-    public function submit_edit_pengunjung(Request $request){
+    public function submit_edit_admin(Request $request) {
         try {
             $this->validate($request, [
-                'tgl_kunjungan' => 'required',
-                'dinas' => 'required',
+                'email' => 'required',
+                'nama' => 'required',
             ]);
-
-
-            $update_pengunjung = DB::table('pengunjung as p')
-            ->join('tujuan_kunjungan as t','p.id','=','t.id_pengunjung')
-            ->where('t.id','=',$request->id)
-            ->update([
-                'jadwal_kunjungan' => $request->tgl_kunjungan,
+            $update = DB::table('users')->where('id', '=', $request->id)->update([
+                "email" => $request->email,
+                "username" => $request->nama,
             ]);
-            // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
-            if($request->tujuan == null){
-                $update_kunjungan = DB::table('tujuan_kunjungan')
-                ->where('id','=',$request->id)
-                ->update([
-                    'id_lokasi' => $request->dinas,
-                ]);
-                if($update_kunjungan){
-                    return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-                }else{
-                    return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
-                }
-            }else{
-                $update_kunjungan = DB::table('tujuan_kunjungan')
-                ->where('id','=',$request->id)
-                ->update([
-                    'nama_tujuan' => $request->tujuan,
-                    'id_lokasi' => $request->dinas
-                ]);
-                if($update_kunjungan){
-                    return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-                }else{
-                    return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
-                }
-            }
-        }catch (ValidationException $e) {
-            // Validation failed
+            return back()->with(['sukses_toast' => "berhasil update admin"]);
+        }
+        catch(ValidationException $e){
             $errors = $e->errors();
 
             // Check specific fields
-            if (isset($errors['dinas'])) {
-                return back()->with(["error_input_dinas" => 'dinas harus di isi']);
+            if (isset($errors['email'])) {
+                return back()->with(["error_input_admin" => 'email harus di isi']);
             }
-            if (isset($errors['tgl_kunjungan'])) {
-                return back()->with(["error_input_dinas" => 'Tanggal kunjungan harus di isi']);
+            if (isset($errors['nama'])) {
+                return back()->with(["error_input_admin" => 'nama tidak boleh kosong']);
             }
         }
+    }
+    public function delete_admin($id){
+        DB::table('users')->where('id','=', $id)->delete();
+        return back()->with(['sukses_toast' => "berhasil menghapus admin"]);
     }
 }

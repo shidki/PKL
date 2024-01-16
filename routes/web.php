@@ -58,13 +58,14 @@ Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'
 Route::get('/add_dinas',[AdminController::class,'add_dinas'])->middleware('isAdmin');
 Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->middleware('isAdmin');
 
-//  ============== PENGUNJUNG ===========
-Route::get('/pengunjung',[AdminController::class,'info_pengunjung'])->middleware('isAdmin');
-// menghapus pengunjung
-Route::get('/delete/pengunjung/{id}',[AdminController::class,'delete_pengunjung'])->name('delete_pengunjung')->middleware('isAdmin');
-// mengedit pengunjung
-Route::get('/edit/pengunjung/{id}',[AdminController::class,'edit_pengunjung'])->name('edit_pengunjung')->middleware('isAdmin');
-// confirm pengunjung
-Route::get('/confirm/pengunjung/{id}',[AdminController::class,'confirm_pengunjung'])->name('confirm_pengunjung')->middleware('isAdmin');
-Route::post('/add/pengunjung',[AdminController::class,'add_pengunjung'])->name('add_pengunjung')->middleware('isAdmin');
-Route::post('/submit_edit_pengunjung',[AdminController::class,'submit_edit_pengunjung'])->middleware('isAdmin');
+//  ============== admin ===========
+Route::get('/admin',[AdminController::class,'info_admin'])->middleware('isAdmin');
+
+
+// menghapus admin
+Route::get('/delete/admin/{id}',[AdminController::class,'delete_admin'])->name('delete_admin')->middleware('isAdmin');
+// mengedit admin
+Route::get('/edit/admin/{id}',[AdminController::class,'edit_admin'])->name('edit_admin')->middleware('isAdmin');
+// confirm admin
+Route::post('/add/admin',[AdminController::class,'add_admin'])->name('add_admin')->middleware('isAdmin');
+Route::post('/submit_edit_admin',[AdminController::class,'submit_edit_admin'])->middleware('isAdmin');

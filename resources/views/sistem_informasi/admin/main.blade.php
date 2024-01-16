@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="{{ asset('assets/sistem_informasi/css/styles.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
   <style>
     #toastBox {
@@ -114,14 +116,6 @@ animation: anim 5s linear forwards;
                 <span class="hide-menu">Info Dinas</span>
               </a>
             </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/pengunjung" aria-expanded="false">
-                <span>
-                  <i class=" fa fa-users"></i>
-                </span>
-                <span class="hide-menu">Info Pengunjung</span>
-              </a>
-            </li>
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Account</span>
@@ -132,14 +126,6 @@ animation: anim 5s linear forwards;
                   <i class="fa fa-user-circle"></i>
                 </span>
                 <span class="hide-menu">Admin</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/user" aria-expanded="false">
-                <span>
-                  <i class="fa fa-address-book-o"></i>
-                </span>
-                <span class="hide-menu">User</span>
               </a>
             </li>
             <li class="nav-small-cap">
