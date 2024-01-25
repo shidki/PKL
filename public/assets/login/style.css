@@ -8,7 +8,7 @@
 
 body {
     background-color: #c9d6ff;
-    background: linear-gradient(to right, #3860e4, #1130af);
+    background: linear-gradient(to right, #ffffff, #c2c2c2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,7 +17,7 @@ body {
 }
 
 .container {
-    background-color: #fff;
+    background-color: #fefefe;
     border-radius: 30px;
     box-shadow: 0 10px 55px rgba(0, 0, 0, 0.55);
     position: relative;
@@ -74,6 +74,26 @@ body {
     height: 100%;
 }
 
+#logo_login {
+    -webkit-animation: upDown 5s infinite;
+    animation: upDown ease 5s infinite;
+}
+
+@keyframes upDown {
+    0% {
+        -webkit-transform: translateY(-45px);
+        transform: translateY(-45px);
+    }
+    50% {
+        -webkit-transform: translateY(45px);
+        transform: translateY(45px);
+    }
+    100% {
+        -webkit-transform: translateY(-45px);
+        transform: translateY(-45px);
+    }
+}
+
 .container input {
     background-color: #eee;
     border: none;
@@ -99,7 +119,7 @@ body {
 }
 
 .container.active .sign-in {
-    transform: translateX(100%);
+    /* transform: translateX(100%); */
 }
 
 .sign-up {
@@ -153,19 +173,22 @@ body {
     overflow: hidden;
     transition: all 0.6s ease-in-out;
     border-radius: 150px 0 0 100px;
+    /* background-image: url('assets/landing_page/images/logo_jogja.png'); */
     z-index: 1000;
 }
 
 .container.active .toggle-container {
     transform: translateX(-100%);
     border-radius: 0 150px 100px 0;
+    box-shadow: 10px 0px 10px 10px solid black;
 }
 
 .toggle {
-    background-color: blue;
+    background-color: rgb(27, 227, 64);
     height: 100%;
-    background: linear-gradient(to right, #4d3ad8, #091e68);
-    color: #fff;
+    /* background: linear-gradient(to right, #6554e6, #2f4cb6); */
+    /* background-image: url('assets/landing_page/images/logo_jogja.png'); */
+    color: #ffffff;
     position: relative;
     left: -100%;
     height: 100%;
@@ -263,5 +286,35 @@ body {
 @keyframes anim {
     100% {
         width: 0;
+    }
+}
+
+@media (max-width: 764px) {
+    .toggle-container {
+        display: none;
+    }
+    .container {
+        margin-right: 10px;
+        margin-left: 10px;
+        max-width: 90%;
+    }
+    .container form {
+        /* display: none; */
+        /* background-color: red; */
+        /* width: 100%; */
+        width: 90vw;
+    }
+    input {
+        text-align: center;
+    }
+    .form-container form h1 {
+        margin-bottom: 50px;
+    }
+    #toastBox,
+    .toastt {
+        display: none;
+    }
+    .container button {
+        background-color: rgb(37, 37, 231);
     }
 }

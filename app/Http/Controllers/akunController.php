@@ -25,6 +25,7 @@ class akunController extends Controller
             ->from("users")
             ->where("email",'=',$request->email)
             ->first();
+            session(['email' => $request->email]);
             return redirect()->intended('/')->with(["name" => $getname->username]);
         }
 
@@ -37,7 +38,7 @@ class akunController extends Controller
         
         request()->session()->invalidate();
         request()->session()->regenerateToken();
-
+        session()->forget('email');
         return redirect('/');
     }
     public function signup(Request $request){

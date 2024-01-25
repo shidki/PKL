@@ -22,6 +22,6 @@ class Users extends Model
         'role'
     ] ;
 
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false;  
 }

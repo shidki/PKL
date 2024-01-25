@@ -82,12 +82,12 @@
     <section class="ftco-section">
         <div class="container">
             <div class="text-right mr-3 mb-3">
-                <a href="/add_dinas" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Dinas</span></a>
+                <a href="/add_dinas" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Instansi</span></a>
             </div>
             <div class="col-lg-12 d-flex align-items-strech">
                 <div class="card w-100">
                     <div class="card-body">
-                        <input type="text" class="form-control text-center" placeholder="Search Dinas" id="searchDinas">
+                        <input type="text" class="form-control text-center" placeholder="Search" id="searchDinas">
                     </div>
                 </div>
             </div>

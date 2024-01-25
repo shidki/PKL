@@ -13,25 +13,24 @@
 <body>
 
     <div class="container" id="container">
-        <div class="form-container sign-up">
+        {{-- <div class="form-container sign-up">
             <form method="post" action="/signup">
                 @csrf
                 <h1>SIGN UP</h1>
-                {{-- <span>or use your email for registeration</span> --}}
                 <input type="text" placeholder="Username" required name="username" pattern="[A-Za-z]+">
                 <input type="email" placeholder="Email" required name="email">
                 <input type="password" placeholder="Password" required name="password">
                 <button>Sign Up</button>
             </form>
-        </div>
+        </div> --}}
         <div class="form-container sign-in">
             <form method="POST" action="/login">
                 @csrf
-                <h1>Log In</h1>
+                <h1>Login</h1>
                 {{-- <span>or use your email password</span> --}}
                 <input type="email" placeholder="Email" required name="email" @if (session("email"))
                     value="{{session("email") }}"
-                @endif>
+                @endif class="input_pertama">
                 <input type="password" placeholder="Password" required name="password" @if (session("password"))
                 value="{{session("password") }}"
             @endif>
@@ -43,15 +42,16 @@
         </div>
         <div class="toggle-container">
             <div class="toggle">
-                <div class="toggle-panel toggle-left">
+                {{-- <div class="toggle-panel toggle-left">
                     <h1>Sudah Punya Akun??</h1>
                     <p>Klik tombol untuk Login</p>
                     <button class="hidden" id="login">Log In</button>
-                </div>
+                </div> --}}
                 <div class="toggle-panel toggle-right">
-                    <h1>Belun Punya Akun?</h1>
+                    {{-- <h1>Belun Punya Akun?</h1>
                     <p>Klik tombol untuk Sign up</p>
-                    <button class="hidden" id="register">Sign Up</button>
+                    <button class="hidden" id="register">Sign Up</button> --}}
+                    <img src="{{ asset('assets/landing_page/images/logo_jogja.png') }}" width="200px" height="300px" id="logo_login" alt="">
                 </div>
             </div>
         </div>

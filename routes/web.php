@@ -60,8 +60,6 @@ Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->mi
 
 //  ============== admin ===========
 Route::get('/admin',[AdminController::class,'info_admin'])->middleware('isAdmin');
-
-
 // menghapus admin
 Route::get('/delete/admin/{id}',[AdminController::class,'delete_admin'])->name('delete_admin')->middleware('isAdmin');
 // mengedit admin
@@ -69,3 +67,15 @@ Route::get('/edit/admin/{id}',[AdminController::class,'edit_admin'])->name('edit
 // confirm admin
 Route::post('/add/admin',[AdminController::class,'add_admin'])->name('add_admin')->middleware('isAdmin');
 Route::post('/submit_edit_admin',[AdminController::class,'submit_edit_admin'])->middleware('isAdmin');
+
+//  ============== penginapan ===========
+Route::get('/penginapan',[AdminController::class,'info_penginapan'])->middleware('isAdmin');
+// menghapus admin
+Route::get('/delete/penginapan/{id}',[AdminController::class,'delete_penginapan'])->name('delete_penginapan')->middleware('isAdmin');
+// mengedit admin
+Route::get('/edit/penginapan/{id}',[AdminController::class,'edit_penginapan'])->name('edit_penginapan')->middleware('isAdmin');
+// confirm admin
+Route::get('/add/penginapan',[AdminController::class,'add_penginapan'])->name('add_penginapan')->middleware('isAdmin');
+Route::post('/submit_edit_penginapan',[AdminController::class,'submit_edit_penginapan'])->middleware('isAdmin');
+Route::post('/submit_add_penginapan',[AdminController::class,'submit_add_penginapan'])->middleware('isAdmin');
+Route::get('/hapus_fasilitas/{id_fasilitas}',[AdminController::class,'hapus_fasilitas'])->name('hapus_fasilitas')->middleware('isAdmin');

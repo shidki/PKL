@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Gedung;
 use App\Models\Layanan;
 use App\Models\Users;
-use App\Models\Pengunjung;
-use App\Models\Tujuan_kunjungan;
+use App\Models\Penginapan;
+use App\Models\Wisata;
+use App\Models\Kuliner;
+use App\Models\Menu;
+use App\Models\Fasilitas;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -24,33 +27,17 @@ class AdminController extends Controller
 
         $jml_admin = Users::select("id")
         ->from('users')
-        ->where('role','=','admin')
-        ->count();
-        $jml_user = Users::select("id")
-        ->from('users')
-        ->where('role','=','user')
         ->count();
 
-        $data_kunjungan = Pengunjung::select('jadwal_kunjungan')
-        ->from('pengunjung')
-        ->get();
+        $email = session('email');
+        $getuser = Users::select("*")
+        ->from("users")
+        ->where("email",'=',$email)
+        ->first();
 
-        
-        $tanggal = []; // digunakan untuk menandakan tanggal sudah masuk di looping
-        // menentukan jumlah pengunjung yang hadir pada tanggal yang ada di tabel pengunjung
-        for($i=0; $i<count($data_kunjungan); $i++){
-            $jml = 1;
-            if(!array_key_exists($data_kunjungan[$i]->jadwal_kunjungan, $tanggal)){
-                for($j = $i + 1; $j<count($data_kunjungan); $j++){
-                    if($data_kunjungan[$i]->jadwal_kunjungan === $data_kunjungan[$j]->jadwal_kunjungan){
-                        $jml++;
-                    }
-                }
-                $tanggal[$data_kunjungan[$i]->jadwal_kunjungan] = $jml;
-            }
-        }
-        // dd($tanggal);
-        return view('sistem_informasi.admin.dashboard',["jml_pengguna" => $jml_pengguna,"jml_user" => $jml_user,"jml_admin" => $jml_admin,'tgl_kunjungan' => $tanggal]);
+        // $pw = Crypt::decryptString($getuser->password);
+        // dd($pw);
+        return view('sistem_informasi.admin.dashboard',["jml_pengguna" => $jml_pengguna,"jml_admin" => $jml_admin, 'email' => $email,'name' => $getuser->username ]);
     }
     public function info_gedung(){
         $gedung = Gedung::select('*')
@@ -135,7 +122,7 @@ class AdminController extends Controller
                 // looping buat ngebaca isi file nya
                 for($i = 0; $i < count($data); $i++){
                     // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
-                    if ($data[$i][1] !== null) {
+                    if (isset($data[$i][1])) {
                         return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
                     }else{
                         if($data[$i][0] == null){
@@ -224,7 +211,8 @@ class AdminController extends Controller
                     $data = $sheet->toArray();
                     for($i = 0; $i < count($data); $i++){
                         // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
-                        if ($data[$i][1] !== null) {
+                        if (isset($data[$i][1])) {
+                            // dd(5);
                             return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
                         }else{
                             if($data[$i][0] == null){
@@ -251,7 +239,7 @@ class AdminController extends Controller
                             }
                         }
                     }
-                    File::delete('file_batch_mhs/'.$nama_file);
+                    File::delete('file_layanan/'.$nama_file);
                     return back()->with(['sukses_toast' => 'berhasil Menambah data']);
                 }
             }
@@ -274,162 +262,7 @@ class AdminController extends Controller
         }
     }
 
-    // PENGUNJUNG
-    // public function info_pengunjung(){
-    //     $pengunjung = Pengunjung::select('p.*','t.status','t.id as id_tujuan','t.nama_tujuan','g.nama as lokasi_tujuan')
-    //     ->from('pengunjung as p')
-    //     ->join('tujuan_kunjungan as t','t.id_pengunjung','=','p.id')
-    //     ->join('gedung as g','t.id_lokasi','=','g.id')
-    //     ->get();
 
-    //     // kurei dibawah untuk mengisi input select
-    //     $gedung = Gedung::select('*')->from('gedung')->get();
-
-    //     return view('sistem_informasi.admin.pengunjung.pengunjung',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
-    // }
-    // public function delete_pengunjung($id){
-    //     $get_id_pengunjung = DB::table('tujuan_kunjungan')->select('id_pengunjung')->where('id','=',$id)->first();
-        
-    //     $tujuan_kunjungan = DB::table('tujuan_kunjungan')->where('id','=',$id)->delete();
-    //     $delete_pengunjung = DB::table('pengunjung')->where('id','=',$get_id_pengunjung->id_pengunjung)->delete();
-    //     return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
-    // }
-    // public function add_pengunjung(Request $request){
-        
-    //     //  mengecek apakah nama pengunjung sudah ada di database atau belom
-    //     $cek_pengunjung = Pengunjung::select('id')
-    //     ->from('pengunjung')
-    //     ->where('nama','=',$request->nama)
-    //     ->first();
-    //     if(!$cek_pengunjung){
-    //         $insert_pengunjung = DB::table('pengunjung')
-    //         ->insert([
-    //             "nama" => $request->nama,
-    //             "jadwal_kunjungan" => $request->tgl_kunjungan
-    //         ]);
-    //         if($insert_pengunjung){
-    //             // mengambil id dari data pengunjung yang sudah ditambah sebelumnya
-    //             $cek_id = Pengunjung::select('id')
-    //             ->from('pengunjung')
-    //             ->where('nama','=',$request->nama)
-    //             ->first();
-
-    //             $insert_tujuan = DB::table('tujuan_kunjungan')
-    //             ->insert([
-    //                 "nama_tujuan" => $request->tujuan,
-    //                 "id_lokasi" => $request->dinas,
-    //                 "id_pengunjung" => $cek_id->id
-    //             ]);
-    //             if($insert_tujuan){
-    //                 return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
-    //             }else{
-    //                 return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-    //             }
-    //         }else{
-    //             return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-    //         }
-    //     }else{
-    //         // kondisi ketika nama pengunjung sudah ada di database
-    //         $insert_pengunjung = DB::table('pengunjung')
-    //         ->insert([
-    //             "nama" => $request->nama,
-    //             "jadwal_kunjungan" => $request->tgl_kunjungan
-    //         ]);
-    //         if($insert_pengunjung){
-    //             // mengambil id yang paling banyak pada nama tersebut ( alasan : id yang paling besar berarti data yang paling terakhir kali ditambahkan)
-    //             // artinya id yang masuk ke cek_id adalah id dari pengunjung yang ditambah di insert sebelumnya
-    //             $get_id = DB::table('pengunjung')->where('nama','=',$request->nama)
-    //             ->max('id');
-    //             $insert_tujuan = DB::table('tujuan_kunjungan')
-    //             ->insert([
-    //                 "nama_tujuan" => $request->tujuan,
-    //                 "id_lokasi" => $request->dinas,
-    //                 "id_pengunjung" => $get_id
-    //             ]);
-    //             if($insert_tujuan){
-    //                 return back()->with(['sukses_toast' => "sukses menambah pengunjung"]);
-    //             }else{
-    //                 return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-    //             }
-    //         }else{
-    //             return back()->with(['error_toast' => "Gagal menambah tujuan"]);
-    //         }
-    //     }
-    // }
-
-    // public function confirm_pengunjung($id){
-    //     $update_status = DB::table('tujuan_kunjungan')->where('id','=',$id)
-    //     ->update([
-    //         'status' => 'confirmed'
-    //     ]);
-    //     if($update_status){
-    //         return back()->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-    //     }else{
-    //         return back()->with(['error_toast' => "Gagal mengkonfirmasi Kunjungan"]);
-    //     }
-    // }
-    // public function edit_pengunjung($id){
-    //     //  untuk mengisi di select nya
-    //     $gedung = Gedung::select('*')->from('gedung')->get();
-
-    //     $pengunjung = Tujuan_kunjungan::select('t.*','p.nama','p.jadwal_kunjungan','g.nama as nama_dinas')
-    //     ->from('tujuan_kunjungan as t')
-    //     ->join('pengunjung as p','p.id','=','t.id_pengunjung')
-    //     ->join('gedung as g','g.id','=','t.id_lokasi')
-    //     ->where('t.id','=',$id)
-    //     ->first();
-    //     return view('sistem_informasi.admin.pengunjung.edit_kunjungan',['pengunjung' => $pengunjung ,'gedung' => $gedung ]);
-    // }
-    // public function submit_edit_pengunjung(Request $request){
-    //     try {
-    //         $this->validate($request, [
-    //             'tgl_kunjungan' => 'required',
-    //             'dinas' => 'required',
-    //         ]);
-    //         $update_pengunjung = DB::table('pengunjung as p')
-    //         ->join('tujuan_kunjungan as t','p.id','=','t.id_pengunjung')
-    //         ->where('t.id','=',$request->id)
-    //         ->update([
-    //             'jadwal_kunjungan' => $request->tgl_kunjungan,
-    //         ]);
-    //         // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
-    //         if($request->tujuan == null){
-    //             $update_kunjungan = DB::table('tujuan_kunjungan')
-    //             ->where('id','=',$request->id)
-    //             ->update([
-    //                 'id_lokasi' => $request->dinas,
-    //             ]);
-    //             if($update_kunjungan){
-    //                 return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-    //             }else{
-    //                 return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
-    //             }
-    //         }else{
-    //             $update_kunjungan = DB::table('tujuan_kunjungan')
-    //             ->where('id','=',$request->id)
-    //             ->update([
-    //                 'nama_tujuan' => $request->tujuan,
-    //                 'id_lokasi' => $request->dinas
-    //             ]);
-    //             if($update_kunjungan){
-    //                 return redirect('/pengunjung')->with(['sukses_toast' => "Kunjungan dikonfirmasi"]);
-    //             }else{
-    //                 return back()->with(['error_toast' => "Gagal mengupdate Kunjungan"]);
-    //             }
-    //         }
-    //     }catch (ValidationException $e) {
-    //         // Validation failed
-    //         $errors = $e->errors();
-
-    //         // Check specific fields
-    //         if (isset($errors['dinas'])) {
-    //             return back()->with(["error_input_dinas" => 'dinas harus di isi']);
-    //         }
-    //         if (isset($errors['tgl_kunjungan'])) {
-    //             return back()->with(["error_input_dinas" => 'Tanggal kunjungan harus di isi']);
-    //         }
-    //     }
-    // }
     
     
     // ADMIN
@@ -442,12 +275,21 @@ class AdminController extends Controller
 
     public function add_admin(Request $request) {
         $pw = Bcrypt($request->password);
+        // untuk insert ID admin nya
+        $cek = Users::select('*')
+        ->from('users')
+        ->orderBy('id','desc')
+        ->first();
+        $lastNumber = (int)substr($cek->id, 9);
+        $year = Date('Y');
+        $id = 'admin' . $year . $lastNumber+1;
+        
         $exsistingUser = DB::table('users')->where('email', $request->email)->first();
-
         if($exsistingUser) {
             return back()->with(["error_toast" => 'Email sudah tersedia']);
         }else{
             $add_admin = DB::table('users')->insert([
+                "id" => $id,
                 "email" => $request->email,
                 "username" => $request->username,
                 "password" => $pw,
@@ -488,5 +330,286 @@ class AdminController extends Controller
     public function delete_admin($id){
         DB::table('users')->where('id','=', $id)->delete();
         return back()->with(['sukses_toast' => "berhasil menghapus admin"]);
+    }
+
+
+        // PENGINAPAN
+    public function info_penginapan(){
+        $penginapan = Penginapan::select('p.*')
+        ->from('penginapan as p')
+        ->get();
+
+        $count = count($penginapan);
+        $fasilitasArray = [];
+        for ($i = 0; $i < $count; $i++) {
+            $penginapans = $penginapan[$i];
+            $fasilitas = Fasilitas::select('*')
+            ->from('fasilitas')
+            ->where('id_penginapan','=',$penginapans->id)
+            ->get();
+            $fasilitasArray[$penginapans->id] = $fasilitas;
+        }
+
+        // dd($fasilitas);
+        return view('sistem_informasi.admin.penginapan.penginapan',['penginapan' => $penginapan,'fasilitas' => $fasilitasArray ]);
+    }
+    public function delete_penginapan($id){
+        // dd($id);
+        $delete_fasilitas_penginapan = DB::table('fasilitas')->where('id_penginapan','=',$id)->delete();
+        $delete_penginapan = DB::table('penginapan')->where('id','=',$id)->delete();
+        return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
+    }
+    public function add_penginapan(Request $request){
+        return view('sistem_informasi.admin.penginapan.add_penginapan');
+    }
+
+    public function edit_penginapan($id){
+        //  untuk mengisi di select nya
+        $penginapan = Penginapan::select('*')->from('penginapan')->where('id','=',$id)->first();
+        $fasilitas = Fasilitas::select('nama as nama_fasilitas','id as id_fasilitas')
+        ->from("fasilitas")
+        ->where('id_penginapan','=',$id)
+        ->get();
+        // dd($fasilitas);
+        // dd($penginapan);
+
+        return view('sistem_informasi.admin.penginapan.edit_penginapan',['penginapan' => $penginapan, 'fasilitas' => $fasilitas ]);
+    }
+    public function hapus_fasilitas($id_fasilitas){
+        $delete_fasilitas_penginapan = DB::table('fasilitas')->where('id','=',$id_fasilitas)->delete();
+        if($delete_fasilitas_penginapan){
+            return back()->with(['sukses_toast' => "berhasil menghapus layanan"]);
+        }else{
+            return back()->with(['error_toast' => "gagal menghapus layanan"]);
+        }
+    }
+    public function submit_edit_penginapan(Request $request){
+        try {
+            $this->validate($request, [
+                'penginapan' => 'required',
+                'telp' => 'required',
+                'harga' => 'required',
+                'jarak' => 'required',
+                'file_fasilitas' => 'mimes:xlsx',
+            ]);
+            // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
+            if($request->alamat == null){
+                $update_penginapan = DB::table('penginapan')
+                ->where('id','=',$request->id)
+                ->update([
+                    'nama' => $request->penginapan,
+                    'telp' => $request->telp,
+                    'harga' => $request->harga,
+                    'jarak' => $request->jarak,
+                ]);
+                // dd($request->alamat);
+                if($request->file_fasilitas !== null){
+                    $file = $request->file('file_fasilitas');
+                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
+                    $file->move('file_layanan',$nama_file);
+                    $nama_file_excel = 'file_layanan/'.$nama_file;
+        
+                    $spreadsheet = IOFactory::load($nama_file_excel);
+                    // buat ngebaca sheet pertama
+                    $sheet = $spreadsheet->getActiveSheet();
+                    // ngubah seluruh data ke array
+                    $data = $sheet->toArray();
+                    for($i = 0; $i < count($data); $i++){
+                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
+                        if (isset($data[$i][1])) {
+                            // dd(5);
+                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                        }else{
+                            if($data[$i][0] == null){
+                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                            }else{
+
+                                $insert_fasilitas = DB::table('fasilitas')
+                                ->insert([
+                                    'nama' => $data[$i][0],
+                                    'id_penginapan' => $request->id
+                                ]);
+                                // kondisi jika insert gagal
+                                if(!$insert_fasilitas){
+                                    return back()->with(['error_toast' => 'gagal Menambah data']);
+                                }
+                            }
+                        }
+                    }
+                    File::delete('file_layanan/'.$nama_file);
+                    return redirect('/penginapan')->with(['sukses_toast' => "Fasilitas berhasil di edit"]);
+                }
+            }else{
+                $update_penginapan = DB::table('penginapan')
+                ->where('id','=',$request->id)
+                ->update([
+                    'nama' => $request->penginapan,
+                    'alamat' => $request->alamat,
+                    'telp' => $request->telp,
+                    'harga' => $request->harga,
+                    'jarak' => $request->jarak,
+                ]);
+                if($request->file_fasilitas !== null){
+                    $file = $request->file('file_fasilitas');
+                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
+                    $file->move('file_layanan',$nama_file);
+                    $nama_file_excel = 'file_layanan/'.$nama_file;
+        
+                    $spreadsheet = IOFactory::load($nama_file_excel);
+                    // buat ngebaca sheet pertama
+                    $sheet = $spreadsheet->getActiveSheet();
+                    // ngubah seluruh data ke array
+                    $data = $sheet->toArray();
+                    for($i = 0; $i < count($data); $i++){
+                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
+                        if (isset($data[$i][1])) {
+                            // dd(5);
+                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                        }else{
+                            if($data[$i][0] == null){
+                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                            }else{
+
+                                $insert_fasilitas = DB::table('fasilitas')
+                                ->insert([
+                                    'nama' => $data[$i][0],
+                                    'id_penginapan' => $request->id
+                                ]);
+                                // kondisi jika insert gagal
+                                if(!$insert_fasilitas){
+                                    return back()->with(['error_toast' => 'gagal Menambah data']);
+                                }
+                            }
+                        }
+                    }
+                    File::delete('file_layanan/'.$nama_file);
+                    return redirect('/penginapan')->with(['sukses_toast' => "Fasilitas berhasil di edit"]);
+                }
+            }
+        }catch (ValidationException $e) {
+            // Validation failed
+            $errors = $e->errors();
+
+            // Check specific fields
+            if (isset($errors['nama'])) {
+                return back()->with(["error_input_dinas" => 'nama penginapan harus di isi']);
+            }
+
+            if (isset($errors['file_fasilitas'])) {
+                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / fasilitas harus di isi']);
+            }
+
+            if (isset($errors['alamat'])) {
+                return back()->with(["error_input_dinas" => 'alamat tidak boleh kosong']);
+            }
+            if (isset($errors['telp'])) {
+                return back()->with(["error_input_dinas" => 'telp tidak boleh kosong']);
+            }
+            if (isset($errors['harga'])) {
+                return back()->with(["error_input_dinas" => 'harga tidak boleh kosong']);
+            }
+            if (isset($errors['jarak'])) {
+                return back()->with(["error_input_dinas" => 'jarak tidak boleh kosong']);
+            }
+        }
+    }
+    public function submit_add_penginapan(Request $request){
+        try {
+            $this->validate($request, [
+                'penginapan' => 'required',
+                'alamat' => 'required',
+                'telp' => 'required',
+                'harga' => 'required',
+                'jarak' => 'required',
+                'file_fasilitas' => 'required|mimes:xlsx',
+            ]);
+            $cek_data = Penginapan::select('*')
+            ->from('penginapan')
+            ->where('nama','=',$request->penginapan)
+            ->first();
+            
+            if($cek_data){
+                return back()->with(["error_input_dinas" => 'Dinas sudah tersedia']);
+            }else{
+                $insert_data = DB::table('penginapan')
+                ->insert([
+                    "nama" => $request->penginapan,
+                    "alamat" => $request->alamat,
+                    "telp" => $request->telp,
+                    "harga" => $request->harga,
+                    "jarak" => $request->jarak,
+                ]);
+                if($insert_data){
+                    // membaca isi data file excel nya
+                    $file = $request->file('file_fasilitas');
+                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
+                    $file->move('file_layanan',$nama_file);
+                    $nama_file_excel = 'file_layanan/'.$nama_file;
+        
+                    $spreadsheet = IOFactory::load($nama_file_excel);
+                    // buat ngebaca sheet pertama
+                    $sheet = $spreadsheet->getActiveSheet();
+                    // ngubah seluruh data ke array
+                    $data = $sheet->toArray();
+                    for($i = 0; $i < count($data); $i++){
+                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
+                        if (isset($data[$i][1])) {
+                            // dd(5);
+                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                        }else{
+                            if($data[$i][0] == null){
+                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                            }else{
+                                //  mengecek id penginapan yang sudah ditambah sebelumnya diatas untuk menambah data fasilitas pada penginapan tersebut
+                                $cek_id = Penginapan::select('id')
+                                ->from('penginapan')
+                                ->where('nama','=',$request->penginapan)
+                                ->first();
+
+                                // kondisi jika id ditemukan
+                                if($cek_id){
+                                    $insert_fasilitas = DB::table('fasilitas')
+                                    ->insert([
+                                        'nama' => $data[$i][0],
+                                        'id_penginapan' => $cek_id->id
+                                    ]);
+                                    // kondisi jika insert gagal
+                                    if(!$insert_fasilitas){
+                                        return back()->with(['error_toast' => 'gagal Menambah data']);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    File::delete('file_layanan/'.$nama_file);
+                    return back()->with(['sukses_toast' => 'berhasil Menambah data']);
+                }
+            }
+        }
+        catch(ValidationException $e){
+            $errors = $e->errors();
+
+            // Check specific fields
+            if (isset($errors['nama'])) {
+                return back()->with(["error_input_dinas" => 'nama penginapan harus di isi']);
+            }
+
+            if (isset($errors['file_fasilitas'])) {
+                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / fasilitas harus di isi']);
+            }
+
+            if (isset($errors['alamat'])) {
+                return back()->with(["error_input_dinas" => 'alamat tidak boleh kosong']);
+            }
+            if (isset($errors['telp'])) {
+                return back()->with(["error_input_dinas" => 'telp tidak boleh kosong']);
+            }
+            if (isset($errors['harga'])) {
+                return back()->with(["error_input_dinas" => 'harga tidak boleh kosong']);
+            }
+            if (isset($errors['jarak'])) {
+                return back()->with(["error_input_dinas" => 'jarak tidak boleh kosong']);
+            }
+        }
     }
 }

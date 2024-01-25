@@ -83,7 +83,7 @@ animation: anim 5s linear forwards;
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-center mt-5 font-weight-bold">
           <a href="" class="text-nowrap logo-img">
-            <h3>Administrator</h3>
+            <h3>JCN-GO</h3>
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -113,7 +113,7 @@ animation: anim 5s linear forwards;
                 <span>
                   <i class=" fa fa-building"></i>
                 </span>
-                <span class="hide-menu">Info Dinas</span>
+                <span class="hide-menu">Instansi</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -126,6 +126,34 @@ animation: anim 5s linear forwards;
                   <i class="fa fa-user-circle"></i>
                 </span>
                 <span class="hide-menu">Admin</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Other</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/penginapan" aria-expanded="false">
+                <span>
+                  <i class=" fa fa-hotel"></i>
+                </span>
+                <span class="hide-menu">Penginapan</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/wisata" aria-expanded="false">
+                <span>
+                  <i class=" fa fa-plane"></i>
+                </span>
+                <span class="hide-menu">Wisata</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/kuliner" aria-expanded="false">
+                <span>
+                  <i class=" fa fa-cutlery"></i>
+                </span>
+                <span class="hide-menu">Kuliner</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -165,11 +193,7 @@ animation: anim 5s linear forwards;
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                   <div class="message-body">
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-user fs-6"></i>
-                      <p class="mb-0 fs-3">My Profile</p>
-                    </a>
-                    <a href="/logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <a href="/logout" class="btn btn-outline-primary text-black mx-3 mt-2 d-block">Logout</a>
                   </div>
                 </div>
               </li>

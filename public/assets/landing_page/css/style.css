@@ -90,7 +90,7 @@ a:focus {
 
 @media (min-width: 1000px) {
     .background-header {
-        background-color: #140e6e !important;
+        background-color: rgb(47, 182, 47) !important;
         border-radius: 0px 0px 25px 25px;
         height: 80px!important;
         position: fixed!important;
@@ -144,6 +144,12 @@ a:focus {
     min-height: 100%;
 }
 
+.hero_area .hero_bg_box .bg_img_box svg {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+}
+
 .hero_area .hero_bg_box img {
     min-width: 100%;
     min-height: 100%;
@@ -184,6 +190,7 @@ a:focus {
 .custom_nav-container .navbar-nav .nav-item .nav-link {
     padding: 5px 20px;
     color: #ffffff;
+    font-weight: bold;
     text-align: center;
     text-transform: uppercase;
     border-radius: 5px;
@@ -194,7 +201,7 @@ a:focus {
 .custom_nav-container .navbar-nav .nav-item:hover .nav-link,
 .custom_nav-container .navbar-nav .nav-item.active .nav-link {
     /* font-weight: bold; */
-    color: #6655ff;
+    color: rgb(43, 45, 43);
 }
 
 #login {
