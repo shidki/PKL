@@ -81,7 +81,7 @@ animation: anim 5s linear forwards;
     <aside class="left-sidebar">
       <!-- Sidebar scroll-->
       <div>
-        <div class="brand-logo d-flex align-items-center justify-content-center mt-5 font-weight-bold">
+        <div class="brand-logo d-flex align-items-center justify-content-center mt-4 font-weight-bold">
           <a href="" class="text-nowrap logo-img">
             <h3>JCN-GO</h3>
           </a>
@@ -106,7 +106,7 @@ animation: anim 5s linear forwards;
             </li>
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">DINAS</span>
+              <span class="hide-menu">Instansi</span>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="/dinas" aria-expanded="false">

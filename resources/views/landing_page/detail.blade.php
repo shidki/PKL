@@ -103,6 +103,32 @@
       </div>
     </div>
   </section>
+  <section class="about_section layout_padding" id="lokasi">
+    <div class="container  ">
+      <div class="heading_container heading_center mb-5">
+        <h2>
+          Lokasi
+        </h2>
+      </div>
+      <div class="row">
+        <div class="col-md-12 ">
+          @if ($gedungDetails->maps !== null )
+          <div class="img-box">
+            <iframe src="{{ $gedungDetails->maps }}"
+            width="100%" height="390" frameborder="0" style="border:0" allowfullscreen></iframe>
+          </div>
+          @else
+          <div class="col-md-12 ">
+            <div class="img-box text-center">
+              <i class="fa fa-exclamation-triangle" style="font-size: 150px; color: red;"></i>
+              <h3><strong style="color: red;">Lokasi belum tersedia</strong></h3>
+            </div>
+          </div>
+          @endif
+        </div>
+      </div>
+    </div>
+  </section>
 
 
   <section class="info_section layout_padding2">

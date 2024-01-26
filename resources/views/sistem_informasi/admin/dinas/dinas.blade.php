@@ -84,14 +84,14 @@
             <div class="text-right mr-3 mb-3">
                 <a href="/add_dinas" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Instansi</span></a>
             </div>
-            <div class="col-lg-12 d-flex align-items-strech">
+            <div class="col-lg-25 d-flex align-items-strech">
                 <div class="card w-100">
                     <div class="card-body">
                         <input type="text" class="form-control text-center" placeholder="Search" id="searchDinas">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12 d-flex align-items-strech">
+            <div class="col-lg-25 d-flex align-items-strech">
                 <div class="card w-100">
                   <div class="card-body">
                     <div class="row">
@@ -104,22 +104,30 @@
                                             <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th>
                                             <th>Deskripsi</th>
                                             <th>Layanan</th>
+                                            <th>Maps</th>
                                             <th>#</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($gedung as $dinas )
                                         <tr>
-                                            <th scope="row" class="scope" width="100px">{{ $loop->iteration }}</th>
-                                            <td class="text-left" >{{ $dinas->nama }}</td>
-                                            <td class="text-justify" style="width: 400px;">{{ $dinas->deskripsi }}</td>
-                                            <td>
+                                            <th scope="row" class="scope" width="150px">{{ $loop->iteration }}</th>
+                                            <td class="text-left" width="150px" >{{ $dinas->nama }}</td>
+                                            <td class="text-justify" style="width: 300px;">{{ $dinas->deskripsi }}</td>
+                                            <td style="width: 200px;"> 
                                                 <ol>
                                                     @foreach ($layanan[$dinas->id] as $layanans)
                                                     <li class="text-left">{{ $layanans->nama }}</li>
                                                     @endforeach
 
                                                 </ol>
+                                            </td>
+                                            <td style="width: 400px">
+                                                @if ($dinas->maps !== null)
+                                                    <iframe src="{{ $dinas->maps}}" frameborder="0"></iframe>
+                                                @else
+                                                <strong style="font-size: 50px;">-</strong>
+                                                @endif
                                             </td>
                                             <td style="width: 200px">
                                                 <a href={{ route('delete_dinas', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">

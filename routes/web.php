@@ -36,7 +36,7 @@ Route::get('/signup',[akunController::class,'signup1'])->middleware("guest");
 Route::post('/signup',[akunController::class,'signup'])->middleware("guest");
 
 //  ============== DETAIL ===========
-Route::get('/detail/{id}',[GedungController::class,'showDetail']);
+Route::get('/detail/{nama}',[GedungController::class,'showDetail']);
 
 //  ============== SISTEM INFORMASI ===========
 Route::get('/administrator',[AdminController::class,'viewpage'])->middleware('isAdmin');
@@ -50,6 +50,7 @@ Route::get('/delete/dinas/{id}',[AdminController::class,'delete_gedung'])->name(
 // utk mengedit dinas
 Route::get('/edit/dinas/{id}',[AdminController::class,'edit_gedung'])->name('edit_dinas')->middleware('isAdmin');
 Route::post('/submit_edit_dinas',[AdminController::class,'submit_edit_dinas'])->middleware('isAdmin');
+Route::get('/submit_edit_dinas',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
 // menghapus layanan
 Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'])->name('hapus_layanan')->middleware('isAdmin');
@@ -57,6 +58,7 @@ Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'
 // menambah dinas
 Route::get('/add_dinas',[AdminController::class,'add_dinas'])->middleware('isAdmin');
 Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->middleware('isAdmin');
+Route::get('/submit_add_dinas',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
 //  ============== admin ===========
 Route::get('/admin',[AdminController::class,'info_admin'])->middleware('isAdmin');
@@ -66,16 +68,35 @@ Route::get('/delete/admin/{id}',[AdminController::class,'delete_admin'])->name('
 Route::get('/edit/admin/{id}',[AdminController::class,'edit_admin'])->name('edit_admin')->middleware('isAdmin');
 // confirm admin
 Route::post('/add/admin',[AdminController::class,'add_admin'])->name('add_admin')->middleware('isAdmin');
+Route::get('/add/admin',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
 Route::post('/submit_edit_admin',[AdminController::class,'submit_edit_admin'])->middleware('isAdmin');
+Route::get('/submit_edit_admin',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
 //  ============== penginapan ===========
 Route::get('/penginapan',[AdminController::class,'info_penginapan'])->middleware('isAdmin');
-// menghapus admin
+// menghapus penginapan
 Route::get('/delete/penginapan/{id}',[AdminController::class,'delete_penginapan'])->name('delete_penginapan')->middleware('isAdmin');
-// mengedit admin
+// mengedit penginapan
 Route::get('/edit/penginapan/{id}',[AdminController::class,'edit_penginapan'])->name('edit_penginapan')->middleware('isAdmin');
-// confirm admin
-Route::get('/add/penginapan',[AdminController::class,'add_penginapan'])->name('add_penginapan')->middleware('isAdmin');
+
 Route::post('/submit_edit_penginapan',[AdminController::class,'submit_edit_penginapan'])->middleware('isAdmin');
+Route::get('/submit_edit_penginapan',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
 Route::post('/submit_add_penginapan',[AdminController::class,'submit_add_penginapan'])->middleware('isAdmin');
+Route::get('/submit_add_penginapan',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
 Route::get('/hapus_fasilitas/{id_fasilitas}',[AdminController::class,'hapus_fasilitas'])->name('hapus_fasilitas')->middleware('isAdmin');
+
+
+//  ============== wisata ===========
+Route::get('/wisata',[AdminController::class,'info_wisata'])->middleware('isAdmin');
+// menghapus admin
+Route::get('/delete/wisata/{id}',[AdminController::class,'delete_wisata'])->name('delete_wisata')->middleware('isAdmin');
+// mengedit admin
+Route::get('/edit/wisata/{id}',[AdminController::class,'edit_wisata'])->name('edit_wisata')->middleware('isAdmin');
+// confirm admin
+Route::post('/add/wisata',[AdminController::class,'add_wisata'])->name('add_wisata')->middleware('isAdmin');
+Route::get('/add/wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');
+Route::post('/submit_edit_wisata',[AdminController::class,'submit_edit_wisata'])->middleware('isAdmin');
+Route::get('/submit_edit_wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');

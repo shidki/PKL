@@ -53,7 +53,7 @@
         <nav class="navbar navbar-expand-lg custom_nav-container ">
           <a class="navbar-brand" href="">
             <span>
-              Jogja Smart Service
+              JCN-GO
             </span>
           </a>
 
@@ -156,7 +156,7 @@
           </div> --}}
         </div>
         <ol class="carousel-indicators">
-          <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+          <li data-target="#customCarousel1" data-slide-to="0" class=""></li>
           {{-- <li data-target="#customCarousel1" data-slide-to="1"></li>
           <li data-target="#customCarousel1" data-slide-to="2"></li> --}}
         </ol>
@@ -222,7 +222,7 @@
                   <h5>
                       {{ $namaGedung->nama }}
                   </h5>
-                  <a href="{{ url('/detail', ['id' => Crypt::encrypt($namaGedung->id)]) }}" class="d-inline-block mt-2">
+                  <a href="{{ url('/detail', ['nama' => $namaGedung->nama]) }}" class="d-inline-block mt-2">
                     Detail <i class="fa fa-arrow-left"></i>
                   </a>
                 </div>

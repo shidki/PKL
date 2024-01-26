@@ -1,4 +1,4 @@
-@extends('sistem_informasi.admin.main')
+@extends("sistem_informasi.admin.main")
 @section('main')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8,17 +8,17 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
-          <form action="/submit_add_dinas" method="post" enctype="multipart/form-data">
+          <form action="/submit_edit_wisata" method="post" enctype="multipart/form-data">
             @csrf
               <div class="formbold-steps">
                   <ul>
                       <li class="formbold-step-menu1 active">
                           <span>1</span>
-                          Dinas
+                          Wisata
                       </li>
                       <li class="formbold-step-menu2">
                           <span>2</span>
-                          Deskripsi
+                          Alamat
                       </li>
                       <li class="formbold-step-menu3">
                           <span>3</span>
@@ -30,72 +30,83 @@
               <div class="formbold-form-step-1 active">
                 <div class="mb-3">
                   <div>
-                      <label for="dinas" class="formbold-form-label"> Dinas <strong class="text-danger font-weight-bold">*</strong> </label>
+                    <label for="id" class="formbold-form-label"> ID Wisata </label>
                       <input
                       type="text"
-                      name="dinas"
-                      placeholder="Nama Dinas"
-                      id="dinas"
+                      name="id"
+                      placeholder="Nama id"
+                      value="{{ $wisata->id }}"
+                      id="id"
+                      class="formbold-form-input"
+                      readonly
+                      />
+                  </div>
+                  <div>
+                    <label for="nama" class="formbold-form-label"> Nama Wisata </label>
+                      <input
+                      type="text"
+                      name="nama"
+                      placeholder="Nama nama"
+                      value="{{ $wisata->nama }}"
+                      id="nama"
                       class="formbold-form-input"
                       required
                       />
                   </div>
                   <div>
-                      <label for="maps" class="formbold-form-label mt-2"> Link 3d maps <strong class="text-danger font-weight-bold"></strong> </label>
-                      <input
-                      type="text"
-                      name="maps"
-                      placeholder="Masukkan link 3D maps (opsional)"
-                      id="maps"
+                      <label for="deskripsi" class="formbold-form-label mt-3 mt-3"> Deskripsi Wisata </label>
+                      <p>Deskripsi : {{ $wisata->deskripsi }}</p>
+                      <textarea
+                      rows="6"
+                      name="deskripsi"
+                      id="deskripsi"
+                      placeholder="Masukkan deskripsi baru"
                       class="formbold-form-input"
+                      ></textarea>
+                  </div>
+                  <div>
+                    <label for="jarak" class="formbold-form-label"> Harga Tiket </label>
+                      <input
+                      type="int"
+                      name="harga"
+                      placeholder="Masukkan harga"
+                      value="{{ $wisata->harga_tiket }}"
+                      id="harga"
+                      class="formbold-form-input"
+                      required
+                      />
+                  </div>
+                  <div>
+                    <label for="jarak" class="formbold-form-label"> Jarak dari balaikota </label>
+                      <input
+                      type="int"
+                      name="jarak"
+                      placeholder="Masukkan jarak"
+                      value="{{ $wisata->jarak }}"
+                      id="jarak"
+                      class="formbold-form-input"
+                      required
                       />
                   </div>
                 </div>
-        
-                <div>
-                    <div>
-                      <ul style="list-style-type:circle">
-                        <li type="none" style="border-bottom: 1px solid rgb(129, 129, 129); display:inline-block; padding-bottom:3px; margin-bottom:10px;">Ketentuan Format File</li>
-                        <li>File harus dalam bentuk excel</li>
-                        <li>Hanya Menulis layanan pada satu kolom pertama tiap baris</li>
-                        <li type="none"><img src="{{ asset('assets/sistem_informasi/images/layanan/ketentuan_layanan.png') }}" height="150px" width="100px" alt=""></li>
-                      </ul>
-                    </div>
-                    <label for="layanan" class="formbold-form-label"> Tambah Layanan <strong class="text-danger font-weight-bold">*</strong> </label>
-                    <div class="dropzone-area">
-                      <div class="file-upload-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                              <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                          </svg>
-                      </div>
-                      <p style="font-weight: bold">Masukkan File Untuk Menambah Layanan</p>
-                      <input type="file" id="upload-file" name="file_layanan">
-                      <p class="message">No Files Selected</p>
-                  </div>
-                </div>
-                <div class="text-center mt-5 text-danger">{{ session('error_input_dinas') }}</div>
+                <div class="text-center mt-5 text-danger">{{ session('error_input_admin') }}</div>
               </div>
-      
               <div class="formbold-form-step-2">
                 <div>
-                  <label for="deskripsi" class="formbold-form-label"> Deskripsi <strong class="text-danger font-weight-bold">*</strong> </label>
+                  <label for="alamat" class="formbold-form-label mt-3 mt-3"> Alamat Wisata </label>
+                  <p>Alamat : {{ $wisata->alamat }}</p>
                   <textarea
-                    rows="6"
-                    name="deskripsi"
-                    id="deskripsi"
-                    placeholder="New Deskripsi"
-                    class="formbold-form-input"
-                    required
+                  rows="6"
+                  name="alamat"
+                  id="alamat"
+                  placeholder="Masukkan alamat baru"
+                  class="formbold-form-input"
                   ></textarea>
-                </div>
               </div>
-      
+              </div>
               <div class="formbold-form-step-3">
                 <div class="formbold-form-confirm">
-                  <p>Click SUBMIT jika sudah yakin, jika belum klik <a href="/dinas">Disini</a></p>
+                  <p>Click SUBMIT jika sudah yakin, jika belum klik <a href="/wisata">Disini</a></p>
                   <div>
                   </div>
                 </div>

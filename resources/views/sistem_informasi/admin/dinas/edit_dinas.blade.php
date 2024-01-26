@@ -53,6 +53,18 @@
                       required
                       />
                   </div>
+                  <div>
+                      <label for="maps" class="formbold-form-label"> 3D maps </label>
+                      <input
+                      type="text"
+                      name="maps"
+                      placeholder="Nama maps"
+                      value="{{ $dinas->maps }}"
+                      id="maps"
+                      class="formbold-form-input"
+                      required
+                      />
+                  </div>
                 </div>
         
                 <div>
