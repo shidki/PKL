@@ -445,10 +445,10 @@
     
     .toastt {
     width: 300px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     height: 80px;
     font-weight: bold;
-    background: #38ff5d;
+    background: #1ec73d;
     font-weight: 500;
     font-size: 12px;
     border-top: 1px solid black;

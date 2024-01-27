@@ -66,7 +66,7 @@
     bottom: 0;
     width: 100%;
     height: 5px;
-    background: red;
+    background: rgb(0, 0, 0);
     animation: anim 5s linear forwards;
     }
     
@@ -82,16 +82,53 @@
     <section class="ftco-section">
         <div class="container">
             <div class="text-right mr-3 mb-3">
-                <a href="/add/penginapan" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Penginapan</span></a>
+                <a href="/add_kuliner" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Kuliner</span></a>
             </div>
-            <div class="col-lg-12 d-flex align-items-strech">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <input type="text" class="form-control text-center" placeholder="Search nama penginapan" id="searchDinas">
+            {{-- POP UP EDIT MENU --}}
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Edit Menu</h5>
+                        </div>
+                        <form action="/edit/menu" method="post">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="id">Id Menu :</label>
+                                    <input id="id" type="text" class="form-control" placeholder="Masukkan id Menu" readonly name="id">
+                                </div>
+                                <div class="form-group">
+                                    <label for="warung">Id Warung :</label>
+                                    <input id="warung" type="text" class="form-control" readonly name="warung">
+                                </div>
+                                <div class="form-group">
+                                    <label for="nama">Nama Menu :</label>
+                                    <input id="nama" type="text" class="form-control" placeholder="Masukkan nama Menu" required name="nama">
+                                </div>
+                                <div class="form-group">
+                                    <label for="harga">harga :</label>
+                                    <input id="harga" type="int" class="form-control" placeholder="Masukkan harga Menu" required name="harga">
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="text-align: center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12 d-flex align-items-strech">
+
+            {{-- END POP UP --}}
+            <div class="col-lg-25 d-flex align-items-strech">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <input type="text" class="form-control text-center" placeholder="Search" id="searchDinas">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-25 d-flex align-items-strech">
                 <div class="card w-100">
                   <div class="card-body">
                     <div class="row">
@@ -100,39 +137,35 @@
                                 <table class="table" id="usersTable">
                                     <thead class="thead-primary">
                                         <tr>
-                                            <th>No<button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
-                                            {{-- <th>Nama<button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th> --}}
+                                            <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
+                                            {{-- <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th> --}}
                                             <th>Nama</th>
                                             <th>Alamat</th>
-                                            <th>No Telp</th>
-                                            <th>Harga</th>
                                             <th>Jarak</th>
-                                            <th>Fasilitas</th>
+                                            <th>Menu</th>
                                             <th>#</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($penginapan as $penginapans )
+                                        @foreach ($kuliner as $warung )
                                         <tr>
-                                            <th scope="row" class="scope" width="200px">{{ $loop->iteration }}</th>
-                                            <td class="text-left" style="width: 300px;">{{ $penginapans->nama }}</td>
-                                            <td class="text-justify" style="width: 400px;">{{ $penginapans->alamat }}</td>
-                                            <td class="text-center" style="width: 150px;">{{ $penginapans->telp }}</td>
-                                            <td class="text-center" style="width: 150px;">{{ $penginapans->harga }}</td>
-                                            <td class="text-center" style="width: 150px;">{{ $penginapans->jarak }} <strong>Km</strong></td>
-                                            <td>
-                                                <ol>
-                                                    @foreach ($fasilitas[$penginapans->id] as $fasilitass)
-                                                    <li class="text-left" style="width: 100px;">{{ $fasilitass->nama }}</li>
+                                            <th scope="row" class="scope" width="150px">{{ $loop->iteration }}</th>
+                                            <td class="text-left" width="200px" >{{ $warung->nama }}</td>
+                                            <td class="text-justify" style="width: 300px;">{{ $warung->alamat }}</td>
+                                            <td class="text-center" style="width: 100px;">{{ $warung->jarak }} <strong>Km</strong></td>
+                                            <td style="width: 200px;"> 
+                                                <ol class="mt-4">
+                                                    @foreach ($menu[$warung->id] as $menus)
+                                                    <li  class="text-left d-flex" style="justify-content: space-between; width:200px; align-items: center;"><span>{{ $menus->nama }} <strong>Harga : {{ $menus->harga }}</strong></span><span><button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" name="edit_menu" data-id="{{ json_encode(['id' => $menus->id,'warung' => $warung->id,'nama' => $menus->nama, 'harga' => $menus->harga]) }}" style="display: inline-block; margin-left: 20px; border:none; background: transparent;" title="edit menu" class="d-inline-block"><i class="fa fa-pencil"></i></button><a style="display: inline-block;" href={{ route('hapus_menu',['id_menu' => $menus->id ]) }} title="hapus menu" class="d-inline-block ml-3"><i class="fa fa-trash-o"></i></a></span></li>
                                                     @endforeach
 
                                                 </ol>
                                             </td>
-                                            <td style="width: 300px">
-                                                <a href={{ route('delete_penginapan', ['id' => $penginapans->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
+                                            <td style="width: 200px">
+                                                <a href={{ route('delete_kuliner', ['id' => $warung->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
                                                     <i style="font-size: 20px" class="fa fa-trash"></i>
                                                 </a>
-                                                <a href={{ route('edit_penginapan' ,['id' => $penginapans->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
+                                                <a href={{ route('edit_kuliner' ,['id' => $warung->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
                                                     <i class="fa fa-pencil" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            
@@ -317,6 +350,25 @@
                 displayPaginationControls();
             }
         });
+    });
+</script>
+
+<script>
+    var staticBackdrop = document.getElementById('staticBackdrop');
+    staticBackdrop.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var dataId = button.getAttribute('data-id');
+        var parsedDataId = JSON.parse(dataId);
+
+        var idInput = staticBackdrop.querySelector('#id');
+        var warungInput = staticBackdrop.querySelector('#warung');
+        var namaInput = staticBackdrop.querySelector('#nama');
+        var hargaInput = staticBackdrop.querySelector('#harga');
+
+        idInput.value = parsedDataId.id;
+        warungInput.value = parsedDataId.warung;
+        namaInput.value = parsedDataId.nama;
+        hargaInput.value = parsedDataId.harga;
     });
 </script>
 

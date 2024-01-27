@@ -64,9 +64,7 @@ class AdminController extends Controller
         if($delete_gedung){
             $get_layanan = DB::table('layanan')->select("*")->where('id_gedung' ,"=", $id)->get();
             // melakukan penghapusan semua layanan sesuai id gedung yang mau dihapus
-            foreach($get_layanan as $layanan){
-                DB::table('layanan')->where('id_gedung', $id)->delete();
-            }
+            DB::table('layanan')->where('id_gedung','=', $id)->delete();
             $delete_gedung->delete();
             return back()->with(['sukses_toast' => "sukses menghapus data"]);
         }else{
@@ -790,6 +788,274 @@ class AdminController extends Controller
             if (isset($errors['jarak'])) {
                 return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk angka']);
             }
+        }
+    }
+    public function info_kuliner(){
+        $kuliner = Kuliner::select('*')
+        ->from('kuliner')
+        ->get();
+
+        $count = count($kuliner);
+        $menuArray = [];
+        for ($i = 0; $i < $count; $i++) {
+            $kuliners = $kuliner[$i];
+            $menu = Menu::select('*')
+            ->from('menu')
+            ->where('id_kuliner','=',$kuliners->id)
+            ->get();
+            $menuArray[$kuliners->id] = $menu;
+        }
+        // dd($layananArray);
+        return view('sistem_informasi.admin.kuliner.kuliner',['kuliner' => $kuliner,'menu' => $menuArray]);
+    }
+    public function delete_kuliner($id){
+
+        $delete_kuliner = DB::table('kuliner')->select("*")->where('id' ,"=", $id);
+
+        if($delete_kuliner){
+            $get_layanan = DB::table('menu')->select("*")->where('id_kuliner' ,"=", $id)->get();
+            // melakukan penghapusan semua menu sesuai id kuliner yang mau dihapus
+            DB::table('menu')->where('id_kuliner','=', $id)->delete();
+            $delete_kuliner->delete();
+            return back()->with(['sukses_toast' => "sukses menghapus data"]);
+        }else{
+            return back()->with(['error_toast' => "gagal menghapus data"]);
+        }
+    }
+    public function edit_kuliner($id){
+        $kuliner = Kuliner::select('*')
+        ->from('kuliner')
+        ->where('id','=',$id)
+        ->first();
+         $menu = Menu::select('*')
+         ->from('menu')
+         ->where('id_kuliner','=',$id)
+         ->get();
+
+        return view('sistem_informasi.admin.kuliner.edit_kuliner',['kuliner' => $kuliner,'menu' => $menu]);
+    }
+    public function submit_edit_kuliner(Request $request){
+        try {
+            $this->validate($request, [
+                'nama' => 'required',
+                'alamat' => 'required',
+                'jarak' => 'required|integer',
+                'file_layanan' => 'nullable|mimes:xlsx',
+            ]);
+            // pertama update data gedung nya dulu
+            // misal deskripsi nya  diubah
+            DB::table('kuliner')
+            ->update([
+                'nama' => $request->nama,
+                'alamat' => $request->alamat,
+                'jarak' => $request->jarak
+            ]);
+
+            if($request->file_layanan !== null){
+                $file = $request->file('file_layanan');
+                $nama_file = 'File_layanan'.'.'.$file->getClientOriginalExtension();
+                $file->move('file_layanan',$nama_file);
+                $nama_file_excel = 'file_layanan/'.$nama_file;
+    
+                $spreadsheet = IOFactory::load($nama_file_excel);
+                // buat ngebaca sheet pertama
+                $sheet = $spreadsheet->getActiveSheet();
+                // ngubah seluruh data ke array
+                $data = $sheet->toArray();
+    
+                // looping buat ngebaca isi file nya
+                for($i = 0; $i < count($data); $i++){
+                    // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
+                    if (isset($data[$i][2])) {
+                        return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                    }else{
+                        if($data[$i][0] == null || !isset($data[$i][1]) || !is_numeric($data[$i][1])){
+                            return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                        }else{
+                            // $trim_data = trim($data[$i][0]);
+                            $trim_data = $data[$i][0];
+                            $cek_menu = Menu::select('nama')
+                            ->from('menu')
+                            ->where('nama','=',$trim_data)
+                            ->get();
+                            //  KUERI DIATAS UNTUK MENGECEK APAKAH NAMA menu SUDAH ADA DIDATA BASE ATAU BELOM
+                            if(count($cek_menu) > 0){
+                                // KONDISI KETIKA SUDAH ADA DI DATABASE
+                                return back()->with(["error_input_dinas" => 'Input menu terhenti karena menu pada baris ke '.$i+1 .' sudah tersedia']);
+                            }else{
+                                // KONDISI JIKA BELUM TERSEDIA, MAKA AKAN DILAKUKAN INSERT
+                                DB::table('menu')
+                                ->insert([
+                                    'nama' => $trim_data,
+                                    'harga' => $data[$i][1],
+                                    'id_kuliner' => $request->id // ini id gedung nya sesuai apa yang di edit
+                                ]);
+                            }
+                        }
+                    }
+                }
+                File::delete('file_layanan/'.$nama_file);
+            }
+            return back()->with(['sukses_toast' => 'berhasil mengedit data']);
+        } catch (ValidationException $e) {
+            // Validation failed
+            $errors = $e->errors();
+
+            // Check specific fields
+            if (isset($errors['nama'])) {
+                return back()->with(["error_input_dinas" => 'nama Warung harus di isi']);
+            }
+            if (isset($errors['alamat'])) {
+                return back()->with(["error_input_dinas" => 'Alamat harus di isi']);
+            }
+            if (isset($errors['jarak'])) {
+                return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk integer']);
+            }
+
+            if (isset($errors['file_layanan'])) {
+                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / excel']);
+            }
+        }
+    }
+
+    public function hapus_menu($id_menu){
+        $hapus_menu = DB::table('menu')->where('id','=',$id_menu)->delete();
+        if($hapus_menu){
+            return back()->with(['sukses_toast' => "berhasil menghapus menu"]);
+        }else{
+            return back()->with(['error_toast' => "gagal menghapus menu"]);
+        }
+    }
+    public function add_kuliner(){
+        return view('sistem_informasi.admin.kuliner.add_kuliner');
+    }
+    public function submit_add_kuliner(Request $request){
+        try {
+            $this->validate($request, [
+                'nama' => 'required',
+                'alamat' => 'required',
+                'jarak' => 'required|integer',
+                'file_layanan' => 'required|mimes:xlsx',
+            ]);
+            $cek = DB::table('kuliner')
+            ->select('id')
+            ->orderByRaw("LENGTH(id), CAST(id AS SIGNED), id")
+            ->get();
+
+            $cekPanjang = count($cek);
+
+            if($cekPanjang == 0){
+                $year = Date('Y');
+                $id = 'KLN' . $year . 1;
+            }else{
+                $lastNumber = (int)substr($cek[$cekPanjang - 1]->id, 6);
+                $year = Date('Y');
+                $id = 'KLN' . $year . $lastNumber+1;
+            }
+
+            $cek_data = Kuliner::select('*')
+            ->from('kuliner')
+            ->where('nama','=',$request->nama)
+            ->first();
+            
+            if($cek_data){
+                return back()->with(["error_input_dinas" => 'Kuliner sudah tersedia']);
+            }else{
+                $insert_data = DB::table('kuliner')
+                ->insert([
+                    "id" => $id,
+                    "nama" => $request->nama,
+                    "alamat" => $request->alamat,
+                    "jarak" => $request->jarak,
+                ]);
+                if($insert_data){
+                    // membaca isi data file excel nya
+                    $file = $request->file('file_layanan');
+                    $nama_file = 'File_layanan'.'.'.$file->getClientOriginalExtension();
+                    $file->move('file_layanan',$nama_file);
+                    $nama_file_excel = 'file_layanan/'.$nama_file;
+        
+                    $spreadsheet = IOFactory::load($nama_file_excel);
+                    // buat ngebaca sheet pertama
+                    $sheet = $spreadsheet->getActiveSheet();
+                    // ngubah seluruh data ke array
+                    $data = $sheet->toArray();
+        
+                    // looping buat ngebaca isi file nya
+                    for($i = 0; $i < count($data); $i++){
+                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
+                        if (isset($data[$i][2])) {
+                            return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                        }else{
+                            if($data[$i][0] == null || !isset($data[$i][1]) || !is_numeric($data[$i][1])){
+                                return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
+                            }else{
+                                // $trim_data = trim($data[$i][0]);
+                                $trim_data = $data[$i][0];
+                                $cek_menu = Menu::select('nama')
+                                ->from('menu')
+                                ->where('nama','=',$trim_data)
+                                ->where('id_kuliner','=',$id)
+                                ->get();
+                                //  KUERI DIATAS UNTUK MENGECEK APAKAH NAMA menu SUDAH ADA DIDATA BASE ATAU BELOM
+                                if(count($cek_menu) > 0){
+                                    // KONDISI KETIKA SUDAH ADA DI DATABASE
+                                    return back()->with(["error_input_dinas" => 'Input menu terhenti karena menu pada baris ke '.$i+1 .' sudah tersedia']);
+                                }else{
+                                    // KONDISI JIKA BELUM TERSEDIA, MAKA AKAN DILAKUKAN INSERT
+                                    DB::table('menu')
+                                    ->insert([
+                                        'nama' => $trim_data,
+                                        'harga' => $data[$i][1],
+                                        'id_kuliner' => $id // ini id gedung nya sesuai apa yang di edit
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                    File::delete('file_layanan/'.$nama_file);
+                    return back()->with(['sukses_toast' => 'berhasil Menambah data']);
+                }
+            }
+        }
+        catch(ValidationException $e){
+            $errors = $e->errors();
+
+            // Check specific fields
+            if (isset($errors['nama'])) {
+                return back()->with(["error_input_dinas" => 'nama Warung harus di isi']);
+            }
+            if (isset($errors['alamat'])) {
+                return back()->with(["error_input_dinas" => 'Alamat harus di isi']);
+            }
+            if (isset($errors['jarak'])) {
+                return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk integer']);
+            }
+
+            if (isset($errors['file_layanan'])) {
+                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / excel']);
+            }
+        }
+    }
+    public function edit_menu(Request $request){
+        $cek_menu = Menu::select('*')
+        ->from('menu')
+        ->where('nama','=',$request->nama)
+        ->where('id_kuliner','=',$request->warung)
+        ->get();
+        // dd(count($cek_menu));
+        if(count($cek_menu) == 0){
+            $edit_menu = DB::table('menu')
+            ->where('id','=',$request->id)
+            ->update([
+                'nama' => $request->nama,
+                'harga' => $request->harga
+            ]);
+            if($edit_menu){
+                return back()->with(['sukses_toast' => "berhasil edit menu"]);
+            }
+        }else{
+            return back()->with(['error_toast' => "menu sudah ada"]);
         }
     }
 }

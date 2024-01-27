@@ -101,3 +101,25 @@ Route::post('/add/wisata',[AdminController::class,'add_wisata'])->name('add_wisa
 Route::get('/add/wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');
 Route::post('/submit_edit_wisata',[AdminController::class,'submit_edit_wisata'])->middleware('isAdmin');
 Route::get('/submit_edit_wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
+
+//  ============== kuliner ===========
+// ke halaman info kuliner
+Route::get('/kuliner',[AdminController::class,'info_kuliner'])->middleware('isAdmin');
+// menghapus dinas
+Route::get('/delete/kuliner/{id}',[AdminController::class,'delete_kuliner'])->name('delete_kuliner')->middleware('isAdmin');
+
+// utk mengedit kuliner
+Route::get('/edit/kuliner/{id}',[AdminController::class,'edit_kuliner'])->name('edit_kuliner')->middleware('isAdmin');
+Route::post('/submit_edit_kuliner',[AdminController::class,'submit_edit_kuliner'])->middleware('isAdmin');
+Route::get('/submit_edit_kuliner',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
+// menghapus menu
+Route::get('/hapus_menu/{id_menu}',[AdminController::class,'hapus_menu'])->name('hapus_menu')->middleware('isAdmin');
+Route::post('/edit/menu',[AdminController::class,'edit_menu'])->name('edit_menu')->middleware('isAdmin');
+Route::get('/edit/menu',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
+// menambah kuliner
+Route::get('/add_kuliner',[AdminController::class,'add_kuliner'])->middleware('isAdmin');
+Route::post('/submit_add_kuliner',[AdminController::class,'submit_add_kuliner'])->middleware('isAdmin');
+Route::get('/submit_add_kuliner',[landingController::class,'makeGedung'])->middleware('isAdmin');

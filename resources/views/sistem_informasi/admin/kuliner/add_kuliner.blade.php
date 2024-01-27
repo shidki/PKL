@@ -8,17 +8,17 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
-          <form action="/submit_edit_dinas" method="post" enctype="multipart/form-data">
+          <form action="/submit_add_kuliner" method="post" enctype="multipart/form-data">
             @csrf
               <div class="formbold-steps">
                   <ul>
                       <li class="formbold-step-menu1 active">
                           <span>1</span>
-                          Dinas
+                          Warung
                       </li>
                       <li class="formbold-step-menu2">
                           <span>2</span>
-                          Deskripsi
+                          Menu
                       </li>
                       <li class="formbold-step-menu3">
                           <span>3</span>
@@ -30,66 +30,53 @@
               <div class="formbold-form-step-1 active">
                 <div class="mb-3">
                   <div>
-                    <label for="id" class="formbold-form-label"> ID Dinas </label>
+                      <label for="nama" class="formbold-form-label"> warung <strong class="text-danger font-weight-bold">*</strong> </label>
                       <input
                       type="text"
-                      name="id"
-                      placeholder="Nama id"
-                      value="{{ $dinas->id }}"
-                      id="id"
-                      class="formbold-form-input"
-                      readonly
-                      />
-                  </div>
-                  <div>
-                      <label for="dinas" class="formbold-form-label"> Dinas </label>
-                      <input
-                      type="text"
-                      name="dinas"
-                      placeholder="Nama Dinas"
-                      value="{{ $dinas->nama }}"
-                      id="dinas"
+                      name="nama"
+                      placeholder="Nama warung"
+                      id="nama"
                       class="formbold-form-input"
                       required
                       />
                   </div>
                   <div>
-                      <label for="maps" class="formbold-form-label"> 3D maps </label>
+                      <label for="jarak" class="formbold-form-label mt-3"> jarak dari balaikota (km) <strong class="text-danger font-weight-bold">*</strong> </label>
                       <input
-                      type="text"
-                      name="maps"
-                      placeholder="Nama maps"
-                      value="{{ $dinas->maps }}"
-                      id="maps"
+                      type="int"
+                      name="jarak"
+                      placeholder="Masukkan jarak"
+                      id="jarak"
                       class="formbold-form-input"
                       required
                       />
                   </div>
-                </div>
-        
-                <div>
-                    <label for="layanan" class="formbold-form-label fs-5"> Tambah Layanan </label>
-                    <div>
-                      <ul style="list-style-type:circle">
-                        <li type="none" style="border-bottom: 1px solid rgb(129, 129, 129); display:inline-block; padding-bottom:3px; margin-bottom:10px;">List Layanan</li>
-                        @if (count($layanan) == 0)
-                          <li class="font-weight-bold">-</li>
-                        @else
-                        <li type="none" style="font-weight: bold; margin-bottom:10px;">Klik tombol <i class="fa fa-trash-o"></i> untuk menghapus layanan tersebut </li>
-                          @foreach ($layanan as $layanans )
-                          <li class="d-flex custom-bullet" style="justify-content: space-between;"><span>{{ $layanans->nama }}</span><a style="display: inline-block;" href={{ route('hapus_layanan',['id_layanan' => $layanans->id ]) }} title="hapus layanan" class="d-inline-block ml-5"><i class="fa fa-trash-o"></i></a></li>
-                          @endforeach
-                        @endif
-                      </ul>
+                  <div>
+                        <label for="alamat" class="formbold-form-label mt-3"> Alamat <strong class="text-danger font-weight-bold">*</strong> </label>
+                        <textarea
+                        rows="6"
+                        name="alamat"
+                        id="alamat"
+                        placeholder="Masukkan alamat"
+                        class="formbold-form-input"
+                        required
+                        ></textarea>
                     </div>
+                </div>
+                <div class="text-center mt-5 text-danger">{{ session('error_input_dinas') }}</div>
+              </div>
+      
+              <div class="formbold-form-step-2">
+                <div>
                     <div>
                       <ul style="list-style-type:circle">
                         <li type="none" style="border-bottom: 1px solid rgb(129, 129, 129); display:inline-block; padding-bottom:3px; margin-bottom:10px;">Ketentuan Format File</li>
                         <li>File harus dalam bentuk excel</li>
-                        <li>Hanya Menulis layanan pada satu kolom pertama tiap baris</li>
-                        <li type="none"><img src="{{ asset('assets/sistem_informasi/images/layanan/ketentuan_layanan.png') }}" height="150px" width="100px" alt=""></li>
+                        <li>Hanya Menulis menu dan harga pada kolom pertama dan kolom kedua tiap baris  ( harga harus dalam integer, contoh : 10000 )</li>
+                        <li type="none"><img src="{{ asset('assets/sistem_informasi/images/layanan/ketentuan_menu.png') }}" height="150px" width="200px" alt=""></li>
                       </ul>
                     </div>
+                    <label for="menu" class="formbold-form-label"> Tambah menu <strong class="text-danger font-weight-bold">*</strong> </label>
                     <div class="dropzone-area">
                       <div class="file-upload-icon">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -99,25 +86,10 @@
                               <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
                           </svg>
                       </div>
-                      <p style="font-weight: bold">Masukkan File Untuk Menambah Layanan</p>
-                      <input type="file" id="upload-file" name="file_layanan">
+                      <p style="font-weight: bold">Masukkan File Untuk Menambah menu</p>
+                      <input type="file" id="upload-file" name="file_layanan" required>
                       <p class="message">No Files Selected</p>
                   </div>
-                </div>
-                <div class="text-center mt-5 text-danger">{{ session('error_input_dinas') }}</div>
-              </div>
-      
-              <div class="formbold-form-step-2">
-                <div>
-                  <label for="deskripsi" class="formbold-form-label"> Deskripsi </label>
-                  <p>{{ $dinas->deskripsi }}</p>
-                  <textarea
-                    rows="6"
-                    name="deskripsi"
-                    id="deskripsi"
-                    placeholder="New Deskripsi"
-                    class="formbold-form-input"
-                  ></textarea>
                 </div>
               </div>
       
@@ -496,7 +468,7 @@
     
     .toastt {
     width: 300px;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     height: 80px;
     font-weight: bold;
     background: #1ec73d;

@@ -30,7 +30,7 @@
     color: rgb(255, 255, 255);
     height: 80px;
     font-weight: bold;
-    background: #38ff5d;
+    background: #1ec73d;
     font-weight: 500;
     font-size: 12px;
     border-top: 1px solid black;
@@ -381,24 +381,7 @@
         });
     });
 </script>
-<script>
-    var staticBackdrop = document.getElementById('staticBackdrop')
-    staticBackdrop.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget
-        var dataId = button.getAttribute('data-id')
-        // Mengisi placeholder pada data dengan data sesuai dengan ID dari data yang di klik
-        var nama = exampleModal.querySelector('.nama input')
-        var jabatan = exampleModal.querySelector('.jabatan input')
-        var sip = exampleModal.querySelector('.sip input')
-        var tanggal_buat_sip = exampleModal.querySelector('.tanggal_buat_sip input')
-        var exp_sip = exampleModal.querySelector('.exp_sip input')
-        nama.value = dataId.nama
-        jabatan.value = dataId.jabatan
-        sip.value = dataId.sip
-        tanggal_buat_sip.value = dataId.tanggal_buat_sip
-        exp_sip.value = dataId.exp_sip
-    })
-</script>
+
 
 </body>
 
