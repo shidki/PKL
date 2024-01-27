@@ -67,7 +67,7 @@
                     <div>
                         <label for="telp" class="formbold-form-label mt-3">No Telp ( contoh: 08547218271 / 02177218) <strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="telp"
                         placeholder="Masukkan No telp"
                         value="{{ $penginapan->telp }}"
@@ -79,7 +79,7 @@
                     <div>
                         <label for="harga" class="formbold-form-label mt-3">Harga per malam<strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="harga"
                         placeholder="Masukkan jml harga"
                         value="{{ $penginapan->harga }}"
@@ -91,7 +91,7 @@
                     <div>
                         <label for="jarak" class="formbold-form-label mt-3">Jarak dari balaikota<strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="jarak"
                         value="{{ $penginapan->jarak }}"
                         placeholder="Masukkan jml jarak"
@@ -101,7 +101,7 @@
                         />
                     </div>
                 </div>
-                <div class="text-center mt-5 text-danger">{{ session('error_input_dinas') }}</div>
+                <div class="text-center mt-5 text-danger"><strong>{{ session('error_input_dinas') }}</strong></div>
               </div>
       
               <div class="formbold-form-step-2">

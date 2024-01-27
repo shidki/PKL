@@ -79,6 +79,7 @@ Route::get('/penginapan',[AdminController::class,'info_penginapan'])->middleware
 Route::get('/delete/penginapan/{id}',[AdminController::class,'delete_penginapan'])->name('delete_penginapan')->middleware('isAdmin');
 // mengedit penginapan
 Route::get('/edit/penginapan/{id}',[AdminController::class,'edit_penginapan'])->name('edit_penginapan')->middleware('isAdmin');
+Route::get('/add/penginapan',[AdminController::class,'add_penginapan'])->name('add_penginapan')->middleware('isAdmin');
 
 Route::post('/submit_edit_penginapan',[AdminController::class,'submit_edit_penginapan'])->middleware('isAdmin');
 Route::get('/submit_edit_penginapan',[landingController::class,'makeGedung'])->middleware('isAdmin');

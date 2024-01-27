@@ -21,6 +21,6 @@ class Kuliner extends Model
         'jarak'
     ] ;
 
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false;  
 }

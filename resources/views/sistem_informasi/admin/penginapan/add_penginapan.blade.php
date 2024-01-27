@@ -54,7 +54,7 @@
                     <div>
                         <label for="telp" class="formbold-form-label mt-3">No Telp ( contoh: 08547218271 / 02177218) <strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="telp"
                         placeholder="Masukkan No telp"
                         id="telp"
@@ -65,7 +65,7 @@
                     <div>
                         <label for="harga" class="formbold-form-label mt-3">Harga per malam<strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="harga"
                         placeholder="Masukkan jml harga"
                         id="harga"
@@ -76,7 +76,7 @@
                     <div>
                         <label for="jarak" class="formbold-form-label mt-3">Jarak dari balaikota<strong class="text-danger font-weight-bold">*</strong> </label>
                         <input
-                        type="text"
+                        type="int"
                         name="jarak"
                         placeholder="Masukkan jml jarak"
                         id="jarak"

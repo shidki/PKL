@@ -23,6 +23,6 @@ class Penginapan extends Model
         'jarak'
     ] ;
 
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false; 
 }

@@ -89,7 +89,7 @@
                       />
                   </div>
                 </div>
-                <div class="text-center mt-5 text-danger">{{ session('error_input_admin') }}</div>
+                <div class="text-center mt-5 text-danger"><strong>{{ session('error_input_dinas') }}</strong></div>
               </div>
               <div class="formbold-form-step-2">
                 <div>

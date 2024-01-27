@@ -330,11 +330,13 @@ class AdminController extends Controller
     public function add_admin(Request $request) {
         $pw = Bcrypt($request->password);
         // untuk insert ID admin nya
-        $cek = Users::select('*')
-        ->from('users')
-        ->orderBy('id','desc')
-        ->first();
-        $lastNumber = (int)substr($cek->id, 9);
+        $cek = DB::table('users')
+        ->select('id')
+        ->orderByRaw("LENGTH(id), CAST(id AS SIGNED), id")
+        ->get();
+
+        $cekPanjang = count($cek);
+        $lastNumber = (int)substr($cek[$cekPanjang - 1]->id, 9);
         $year = Date('Y');
         $id = 'admin' . $year . $lastNumber+1;
         
@@ -413,7 +415,7 @@ class AdminController extends Controller
         $delete_penginapan = DB::table('penginapan')->where('id','=',$id)->delete();
         return back()->with(['sukses_toast' => "sukses menghapus tujuan"]);
     }
-    public function add_penginapan(Request $request){
+    public function add_penginapan(){
         return view('sistem_informasi.admin.penginapan.add_penginapan');
     }
 
@@ -441,9 +443,9 @@ class AdminController extends Controller
         try {
             $this->validate($request, [
                 'penginapan' => 'required',
-                'telp' => 'required',
-                'harga' => 'required',
-                'jarak' => 'required',
+                'telp' => 'required|integer',
+                'harga' => 'required|integer',
+                'jarak' => 'required|integer',
                 'file_fasilitas' => 'mimes:xlsx',
             ]);
             // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
@@ -557,13 +559,13 @@ class AdminController extends Controller
                 return back()->with(["error_input_dinas" => 'alamat tidak boleh kosong']);
             }
             if (isset($errors['telp'])) {
-                return back()->with(["error_input_dinas" => 'telp tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'No telepon harus dalam bentuk angka']);
             }
             if (isset($errors['harga'])) {
-                return back()->with(["error_input_dinas" => 'harga tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
             }
             if (isset($errors['jarak'])) {
-                return back()->with(["error_input_dinas" => 'jarak tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk angka']);
             }
         }
     }
@@ -572,11 +574,27 @@ class AdminController extends Controller
             $this->validate($request, [
                 'penginapan' => 'required',
                 'alamat' => 'required',
-                'telp' => 'required',
-                'harga' => 'required',
-                'jarak' => 'required',
+                'telp' => 'required|integer',
+                'harga' => 'required|integer',
+                'jarak' => 'required|integer',
                 'file_fasilitas' => 'required|mimes:xlsx',
             ]);
+            $cek = DB::table('penginapan')
+            ->select('id')
+            ->orderByRaw("LENGTH(id), CAST(id AS SIGNED), id")
+            ->get();
+    
+            $cekPanjang = count($cek);
+
+            if($cekPanjang == 0){
+                $year = Date('Y');
+                $id = 'PH' . $year . 1;
+            }else{
+                $lastNumber = (int)substr($cek[$cekPanjang - 1]->id, 6);
+                $year = Date('Y');
+                $id = 'PH' . $year . $lastNumber+1;
+            }
+            // dd($id);
             $cek_data = Penginapan::select('*')
             ->from('penginapan')
             ->where('nama','=',$request->penginapan)
@@ -587,6 +605,7 @@ class AdminController extends Controller
             }else{
                 $insert_data = DB::table('penginapan')
                 ->insert([
+                    "id" => $id,
                     "nama" => $request->penginapan,
                     "alamat" => $request->alamat,
                     "telp" => $request->telp,
@@ -656,13 +675,13 @@ class AdminController extends Controller
                 return back()->with(["error_input_dinas" => 'alamat tidak boleh kosong']);
             }
             if (isset($errors['telp'])) {
-                return back()->with(["error_input_dinas" => 'telp tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'No telepon harus dalam bentuk angka']);
             }
             if (isset($errors['harga'])) {
-                return back()->with(["error_input_dinas" => 'harga tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
             }
             if (isset($errors['jarak'])) {
-                return back()->with(["error_input_dinas" => 'jarak tidak boleh kosong']);
+                return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk angka']);
             }
         }
     }
@@ -674,6 +693,22 @@ class AdminController extends Controller
     }
     public function add_wisata(Request $request){
         // cek apakah nama wisata sudah ada atau belom
+        $cek = DB::table('wisata')
+        ->select('id')
+        ->orderByRaw("LENGTH(id), CAST(id AS SIGNED), id")
+        ->get();
+
+        $cekPanjang = count($cek);
+
+        if($cekPanjang == 0){
+            $year = Date('Y');
+            $id = 'WST' . $year . 1;
+        }else{
+            $lastNumber = (int)substr($cek[$cekPanjang - 1]->id, 6);
+            $year = Date('Y');
+            $id = 'WST' . $year . $lastNumber+1;
+        }
+
         $cek = Wisata::select('*')
         ->from('wisata')
         ->where('nama','=',$request->nama)
@@ -683,6 +718,7 @@ class AdminController extends Controller
         }else{
             $insertWisata = DB::table('wisata')
             ->insert([
+                'id' => $id,
                 'nama' => $request->nama,
                 'deskripsi' => $request->deskripsi,
                 'alamat' => $request->alamat,
@@ -711,8 +747,8 @@ class AdminController extends Controller
         try{
             $this->validate($request, [
                 'nama' => 'required',
-                'harga' => 'required',
-                'jarak' => 'required',
+                'harga' => 'required|integer',
+                'jarak' => 'required|integer',
             ]);
             $updateWisata = DB::table('wisata')
             ->where('id','=',$request->id)
@@ -749,10 +785,10 @@ class AdminController extends Controller
                 return back()->with(["error_input_dinas" => 'nama dinas harus di isi']);
             }
             if (isset($errors['harga'])) {
-                return back()->with(["error_input_dinas" => 'harga dinas harus di isi']);
+                return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
             }
             if (isset($errors['jarak'])) {
-                return back()->with(["error_input_dinas" => 'jarak dinas harus di isi']);
+                return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk angka']);
             }
         }
     }
