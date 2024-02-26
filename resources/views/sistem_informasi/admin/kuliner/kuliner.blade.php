@@ -12,9 +12,14 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="assets/sistem_informasi/table/css/style.css">
     <style>
+                #Gambar_instansi{
+            width: 100%;
+            height: 400px;
+        }
         #toastBox {
     position: fixed;
     bottom: 30px;
@@ -121,6 +126,44 @@
             </div>
 
             {{-- END POP UP --}}
+            {{-- POP UP LIST LAYANAN --}}
+           <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel2">List Menu <strong><span id="nama_menu_modal"></span></strong></h5>
+                    </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="nama">Nama menu :</label>
+                                <div id="menuList"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {{-- END POP UP --}}
+                {{-- POP UP FOTO INSTANSI --}}
+                <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Foto Warung <strong><span id="nama_warung_modal2"></span></strong></h5>
+                            </div>
+                                <div class="modal-body" id="foto_warung_container">
+                                    
+                                </div>
+                                <div class="modal-footer" style="text-align: center">
+                                    <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_warung" data-bs-dismiss="modal">Delete</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- END POP UP --}}
             <div class="col-lg-25 d-flex align-items-strech">
                 <div class="card w-100">
                     <div class="card-body">
@@ -137,10 +180,11 @@
                                 <table class="table" id="usersTable">
                                     <thead class="thead-primary">
                                         <tr>
-                                            <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
+                                            <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light"  style="font-size: 12px; margin-left: 3px;"></i></button></th>
                                             {{-- <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th> --}}
                                             <th>Nama</th>
                                             <th>Alamat</th>
+                                            <th>Foto</th>
                                             <th>Jarak</th>
                                             <th>Menu</th>
                                             <th>#</th>
@@ -152,18 +196,25 @@
                                             <th scope="row" class="scope" width="150px">{{ $loop->iteration }}</th>
                                             <td class="text-left" width="200px" >{{ $warung->nama }}</td>
                                             <td class="text-justify" style="width: 300px;">{{ $warung->alamat }}</td>
+                                            <td class="text-center" style="width: 100px;">
+                                                <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" name="foto_instansi" data-id="{{ json_encode(['gambar' => $warung->gambar,'id_warung' => $warung->id, 'nama' => $warung->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
+                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                </button>
+                                            </td>
                                             <td class="text-center" style="width: 100px;">{{ $warung->jarak }} <strong>Km</strong></td>
                                             <td style="width: 200px;"> 
                                                 <ol class="mt-4">
-                                                    @foreach ($menu[$warung->id] as $menus)
+                                                    {{-- @foreach ($menu[$warung->id] as $menus)
                                                     <li  class="text-left d-flex" style="justify-content: space-between; width:200px; align-items: center;"><span>{{ $menus->nama }} <strong>Harga : {{ $menus->harga }}</strong></span><span><button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" name="edit_menu" data-id="{{ json_encode(['id' => $menus->id,'warung' => $warung->id,'nama' => $menus->nama, 'harga' => $menus->harga]) }}" style="display: inline-block; margin-left: 20px; border:none; background: transparent;" title="edit menu" class="d-inline-block"><i class="fa fa-pencil"></i></button><a style="display: inline-block;" href={{ route('hapus_menu',['id_menu' => $menus->id ]) }} title="hapus menu" class="d-inline-block ml-3"><i class="fa fa-trash-o"></i></a></span></li>
-                                                    @endforeach
-
+                                                    @endforeach --}}
+                                                    <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" name="edit_menu" data-id="{{ json_encode(['menu' => $menu[$warung->id], 'nama' => $warung->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
+                                                        <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                    </button>
                                                 </ol>
                                             </td>
                                             <td style="width: 200px">
                                                 <a href={{ route('delete_kuliner', ['id' => $warung->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
-                                                    <i style="font-size: 20px" class="fa fa-trash"></i>
+                                                    <i style="font-size: 20px; color:red;" class="fa fa-trash"></i>
                                                 </a>
                                                 <a href={{ route('edit_kuliner' ,['id' => $warung->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
                                                     <i class="fa fa-pencil" style="font-size: 20px"></i>
@@ -187,6 +238,256 @@
     </section>
     <div id="toastBox">
     </div>
+
+
+    <script>
+        var staticBackdrop = document.getElementById('staticBackdrop2');
+        staticBackdrop.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+    
+            var namaWarung = staticBackdrop.querySelector('#nama_menu_modal');
+            namaWarung.textContent = parsedDataId.nama;
+
+
+            var menuList = document.getElementById('menuList');
+            menuList.innerHTML = ''; // Mengosongkan konten sebelumnya
+
+            if (parsedDataId.menu.length > 0) {
+                var ol = document.createElement('ol');
+                parsedDataId.menu.forEach(function (menu) {
+                    var li = document.createElement('li');
+                    li.setAttribute('style', 'font-weight: bold;');
+
+                    li.className = 'text-left d-flex';
+                    li.style.justifyContent = "space-between"
+                    li.style.borderBottom = "1px solid black"
+                    li.style.paddingBottom = "10px"
+                    li.style.paddingTop = "10px"
+                    li.style.paddingRight = "10px"
+                    var namaMenu = document.createElement('span');
+                    namaMenu.innerHTML = menu.nama
+                    namaMenu.style.width = '150px';
+                    li.appendChild(namaMenu);
+
+                    var hargaMenu = document.createElement('span');
+                    hargaMenu.innerHTML = 'harga : ' +  menu.harga
+                    hargaMenu.style.width = '100px';
+                    li.appendChild(hargaMenu);
+
+                    var btn_action = document.createElement('span');
+                    var deleteLink = document.createElement('button');
+                    deleteLink.setAttribute('onclick','showDeleteMenu("__id_menu__")'.replace('__id_menu__', menu.id));
+                    deleteLink.setAttribute('style','margin-right:28px; border: none; background: transparent; color: red;')
+                    deleteLink.title = 'hapus menu';
+                    deleteLink.className = 'd-inline-block ';
+                    deleteLink.innerHTML = '<i class="fa fa-trash-o"></i>';
+
+                    var editLink = document.createElement('button');
+                    editLink.type = 'submit';
+                    editLink.setAttribute('data-bs-toggle', 'modal');
+                    editLink.setAttribute('data-bs-target', '#staticBackdrop');
+                    editLink.name = 'edit_menu';
+                    editLink.setAttribute('data-id', JSON.stringify({ namamenu: menu.nama, id: menu.id, warung: parsedDataId.nama, harga: menu.harga }));
+                    editLink.style.display = 'inline-block';
+                    editLink.style.marginLeft = '20px';
+                    editLink.style.border = 'none';
+                    editLink.style.background = 'transparent';
+                    editLink.title = 'edit menu';
+                    editLink.className = 'd-inline-block ';
+                    editLink.innerHTML = '<i class="fa fa-pencil"></i>';
+
+                    btn_action.appendChild(deleteLink);
+                    btn_action.appendChild(editLink);
+
+                    li.appendChild(btn_action);
+                    ol.appendChild(li);
+                });
+                menuList.appendChild(ol);
+            } else {
+                menuList.innerHTML = '<p>Tidak ada menu.</p>';
+            }
+        });
+
+        var staticBackdrop3 = document.getElementById('staticBackdrop3');
+        staticBackdrop3.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+            
+            var NamaInstansi = staticBackdrop3.querySelector('#nama_warung_modal2');
+            NamaInstansi.textContent = parsedDataId.nama;
+
+            var fotoInstansiCont = staticBackdrop3.querySelector('#foto_warung_container');
+            var delete_gambar_warung = staticBackdrop3.querySelector('#delete_gambar_warung');
+            if(parsedDataId.gambar !== null){
+                var img = document.createElement("img"); // Perbaikan: Penggunaan createElement
+                img.src = "{{ asset('') }}" + parsedDataId.gambar;
+                console.log(parsedDataId.id_warung);
+                img.setAttribute('id','Gambar_instansi');
+                fotoInstansiCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                fotoInstansiCont.appendChild(img);
+                delete_gambar_warung.setAttribute('onclick','showDeleteGambar("__id_warung_")'.replace('__id_warung_', parsedDataId.id_warung));
+
+            }else{
+                var h3 = document.createElement("h3"); // Perbaikan: Penggunaan createElement
+                h3.textContent = "Belum Ada Gambar"
+                h3.setAttribute('class','text-center text-danger');
+                fotoInstansiCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                fotoInstansiCont.appendChild(h3);
+            }
+        });
+        //  untuk show modal edit menu
+
+        var editMenu = document.getElementById('staticBackdrop');
+        editMenu.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+
+            console.log(parsedDataId);
+            var idInput = editMenu.querySelector('#id');
+            var warungInput = editMenu.querySelector('#warung');
+            var namaInput = editMenu.querySelector('#nama');
+            var hargaInput = editMenu.querySelector('#harga');
+
+            idInput.value = parsedDataId.id;
+            warungInput.value = parsedDataId.warung;
+            namaInput.value = parsedDataId.namamenu;
+            hargaInput.value = parsedDataId.harga;
+        });
+
+        function showDeleteMenu(menuId) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+    
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus menu ini ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteMenu(menuId);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "menu gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+        function showDeleteGambar(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            console.log('warung = ' + id);
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus Gambar ini ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteGambarWarung(id);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "Gambar gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+        function deleteGambarWarung(idWarung) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            console.log('warung1 = ' + idWarung);
+            $.ajax({
+                url: '/delete_gambar_warung/' + idWarung,  
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        };
+
+        // Fungsi untuk menghapus admin
+        function deleteMenu(menuId) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            $.ajax({
+                url: '/hapus_menu/' + menuId,
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+    
+                    // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+                    // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        };
+
+    </script>    
+
+
 
     @if ($massage = Session::get('error_toast'))
         <script>
@@ -353,25 +654,55 @@
     });
 </script>
 
+
+@if (session('sukses_add'))
 <script>
-    var staticBackdrop = document.getElementById('staticBackdrop');
-    staticBackdrop.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var dataId = button.getAttribute('data-id');
-        var parsedDataId = JSON.parse(dataId);
-
-        var idInput = staticBackdrop.querySelector('#id');
-        var warungInput = staticBackdrop.querySelector('#warung');
-        var namaInput = staticBackdrop.querySelector('#nama');
-        var hargaInput = staticBackdrop.querySelector('#harga');
-
-        idInput.value = parsedDataId.id;
-        warungInput.value = parsedDataId.warung;
-        namaInput.value = parsedDataId.nama;
-        hargaInput.value = parsedDataId.harga;
+    Swal.fire({
+    title: "Berhasil menambah data",
+    icon: "success"
     });
 </script>
-
+@endif
+@if (session('error_add'))
+<script>
+    Swal.fire({
+    title: "Gagal menambah data",
+    icon: "error"
+    });
+</script>
+@endif
+@if (session('sukses_delete'))
+<script>
+    Swal.fire({
+    title: "Berhasil menghapus data",
+    icon: "success"
+    });
+</script>
+@endif
+@if (session('error_delete'))
+<script>
+    Swal.fire({
+    title: "Gagal menghapus data",
+    icon: "error"
+    });
+</script>
+@endif
+@if (session('sukses_edit'))
+<script>
+    Swal.fire({
+    title: "Data berhasil di edit",
+    icon: "success"
+    });
+</script>
+@endif
+@if (session('error_edit'))
+<script>
+    Swal.fire({
+    title: "Data gagal di edit",
+    icon: "error"
+    });
+</script>
+@endif
 
 </body>
 

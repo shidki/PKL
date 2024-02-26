@@ -20,7 +20,9 @@ class Wisata extends Model
         'deskripsi',
         'alamat',
         'harga_tiket',
-        'jarak'
+        'harga_weekend',
+        'jarak',
+        'gambar'
     ] ;
 
     public $incrementing = false;

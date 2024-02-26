@@ -113,3 +113,104 @@ function myMap() {
     };
     var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 }
+
+//  untuk tulisan pemerintah jogja
+const dynamicText = document.querySelector(".detail-box h3 span");
+const words = ["Kota Yogyakarta"];
+// Variables to track the position and deletion status of the word
+let wordIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+const typeEffect = () => {
+    const currentWord = words[wordIndex];
+    const currentChar = currentWord.substring(0, charIndex);
+    dynamicText.textContent = currentChar;
+    dynamicText.classList.add("stop-blinking");
+    if (!isDeleting && charIndex < currentWord.length) {
+        // If condition is true, type the next character
+        charIndex++;
+        setTimeout(typeEffect, 200);
+    } else if (isDeleting && charIndex > 0) {
+        // If condition is true, remove the previous character
+        charIndex--;
+        setTimeout(typeEffect, 100);
+    } else {
+        // If word is deleted then switch to the next word
+        isDeleting = !isDeleting;
+        dynamicText.classList.remove("stop-blinking");
+        wordIndex = !isDeleting ? (wordIndex + 1) % words.length : wordIndex;
+        setTimeout(typeEffect, 1200);
+    }
+}
+typeEffect();
+
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+    var targetElement = document.querySelector('#lokasi');
+
+    // Set the scroll range for the animation to occur
+    var startScroll = 50;
+    var endScroll = 1700;
+
+    if (scrollPosition > startScroll && scrollPosition < endScroll) {
+        targetElement.classList.add('animate__animated', 'animate__fadeInUp');
+    } else {
+        targetElement.classList.remove('animate__animated', 'animate__fadeInUp');
+    }
+});
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+    var targetElement = document.querySelector('#gedung');
+
+    // Set the scroll range for the animation to occur
+    var startScroll = 900;
+    var endScroll = 2800;
+
+    if (scrollPosition > startScroll && scrollPosition < endScroll) {
+        targetElement.classList.add('animate__animated', 'animate__fadeInUp');
+    } else {
+        targetElement.classList.remove('animate__animated', 'animate__fadeInUp');
+    }
+});
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+    var targetElement = document.querySelector('#penginapan');
+
+    // Set the scroll range for the animation to occur
+    var startScroll = 1550;
+    var endScroll = 3500;
+
+    if (scrollPosition > startScroll && scrollPosition < endScroll) {
+        targetElement.classList.add('animate__animated', 'animate__fadeInUp');
+    } else {
+        targetElement.classList.remove('animate__animated', 'animate__fadeInUp');
+    }
+});
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+    var targetElement = document.querySelector('#wisata');
+
+    // Set the scroll range for the animation to occur
+    var startScroll = 2250;
+    var endScroll = 3900;
+
+    if (scrollPosition > startScroll && scrollPosition < endScroll) {
+        targetElement.classList.add('animate__animated', 'animate__fadeInUp');
+    } else {
+        targetElement.classList.remove('animate__animated', 'animate__fadeInUp');
+    }
+});
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+    var targetElement = document.querySelector('#kuliner');
+
+    // Set the scroll range for the animation to occur
+    var startScroll = 2900;
+    var endScroll = 4800;
+
+    if (scrollPosition > startScroll && scrollPosition < endScroll) {
+        targetElement.classList.add('animate__animated', 'animate__fadeInUp');
+    } else {
+        targetElement.classList.remove('animate__animated', 'animate__fadeInUp');
+    }
+});

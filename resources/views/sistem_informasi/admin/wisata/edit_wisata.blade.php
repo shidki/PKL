@@ -53,6 +53,27 @@
                       required
                       />
                   </div>
+                  <div class="gambar_upload">
+                    <span class="formbold-form-label mt-3"> Foto Wisata</span>
+                    <img src="{{ asset($wisata->gambar) }}" height="300px" width="100%" alt="Foto Wisata" style="margin-bottom: 30px;">
+                    <input id="file-upload" type="file" name="file_gambar" accept="image/*" />
+  
+                    <label for="file-upload" id="file-drag" style="display: inline-block; margin-bottom: 20px;">
+                      <img id="file-image" src="#" alt="Preview" class="hidden">
+                      <div id="start">
+                        <i class="fa fa-download" aria-hidden="true"></i>
+                        <div>Select a file or drag here</div>
+                        <div id="notimage" class="hidden">Please select an image</div>
+                        <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                      </div>
+                      <div id="response" class="hidden">
+                        <div id="messages2"></div>
+                        <progress class="progress" id="file-progress" value="0">
+                          <span>0</span>%
+                        </progress>
+                      </div>
+                    </label>
+                  </div>
                   <div>
                       <label for="deskripsi" class="formbold-form-label mt-3 mt-3"> Deskripsi Wisata </label>
                       <p>Deskripsi : {{ $wisata->deskripsi }}</p>
@@ -65,13 +86,25 @@
                       ></textarea>
                   </div>
                   <div>
-                    <label for="jarak" class="formbold-form-label"> Harga Tiket </label>
+                    <label for="jarak" class="formbold-form-label"> Harga Tiket ( hari biasa) </label>
                       <input
                       type="int"
                       name="harga"
                       placeholder="Masukkan harga"
                       value="{{ $wisata->harga_tiket }}"
                       id="harga"
+                      class="formbold-form-input"
+                      required
+                      />
+                  </div>
+                  <div>
+                    <label for="jarak" class="formbold-form-label"> Harga Tiket ( weekend )</label>
+                      <input
+                      type="int"
+                      name="harga_weekend"
+                      placeholder="Masukkan harga"
+                      value="{{ $wisata->harga_weekend }}"
+                      id="harga_weekend"
                       class="formbold-form-input"
                       required
                       />
@@ -479,10 +512,10 @@
     
     .toastt {
     width: 300px;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     height: 80px;
     font-weight: bold;
-    background: #1ec73d;
+    background: #66ff66;
     font-weight: 500;
     font-size: 12px;
     border-top: 1px solid black;
@@ -527,8 +560,361 @@
         width: 0;
     }
     }
+    .gambar_upload {
+        display: block;
+        clear: both;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 600px;
+    }
+    
+    .gambar_upload label {
+        float: left;
+        clear: both;
+        width: 100%;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        background: #fff;
+        border-radius: 7px;
+        border: 3px solid #eee;
+        transition: all 0.2s ease;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    .gambar_upload label:hover {
+        border-color: #454cad;
+    }
+    
+    .gambar_upload label.hover {
+        border: 3px solid #454cad;
+        box-shadow: inset 0 0 0 6px #eee;
+    }
+    
+    .gambar_upload label.hover #start i.fa {
+        transform: scale(0.8);
+        opacity: 0.3;
+    }
+    
+    .gambar_upload #start {
+        float: left;
+        clear: both;
+        width: 100%;
+    }
+    
+    .gambar_upload #start.hidden {
+        display: none;
+    }
+    
+    .gambar_upload #start i.fa {
+        font-size: 50px;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .gambar_upload #response {
+        float: left;
+        clear: both;
+        width: 100%;
+    }
+    
+    .gambar_upload #response.hidden {
+        display: none;
+    }
+    
+    .gambar_upload #response #messages2 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .gambar_upload #file-image {
+        display: inline;
+        margin: 0 auto 0.5rem auto;
+        width: auto;
+        height: auto;
+        max-width: 180px;
+    }
+    
+    .gambar_upload #file-image.hidden {
+        display: none;
+    }
+    
+    .gambar_upload #notimage {
+        display: block;
+        float: left;
+        clear: both;
+        width: 100%;
+    }
+    
+    .gambar_upload #notimage.hidden {
+        display: none;
+    }
+    
+    .gambar_upload progress,
+    .gambar_upload .progress {
+        display: inline;
+        clear: both;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 180px;
+        height: 8px;
+        border: 0;
+        border-radius: 4px;
+        background-color: #eee;
+        overflow: hidden;
+    }
+    
+    .gambar_upload .progress[value]::-webkit-progress-bar {
+        border-radius: 4px;
+        background-color: #eee;
+    }
+    
+    .gambar_upload .progress[value]::-webkit-progress-value {
+        background: linear-gradient(to right, #393f90 0%, #454cad 50%);
+        border-radius: 4px;
+    }
+    
+    .gambar_upload .progress[value]::-moz-progress-bar {
+        background: linear-gradient(to right, #393f90 0%, #454cad 50%);
+        border-radius: 4px;
+    }
+    
+    .gambar_upload input[type=file] {
+        display: none;
+    }
+    
+    .gambar_upload div {
+        margin: 0 0 0.5rem 0;
+        color: #5f6982;
+    }
+    
+    .gambar_upload .btn {
+        display: inline-block;
+        margin: 0.5rem 0.5rem 1rem 0.5rem;
+        clear: both;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        text-transform: initial;
+        border: none;
+        border-radius: 0.2rem;
+        outline: none;
+        padding: 0 1rem;
+        height: 36px;
+        line-height: 36px;
+        color: #fff;
+        transition: all 0.2s ease-in-out;
+        box-sizing: border-box;
+        background: #454cad;
+        border-color: #454cad;
+        cursor: pointer;
+    }
   </style>
   <script>
+    function ekUpload() {
+        function Init() {
+
+            console.log("Upload Initialised");
+
+            var fileSelect = document.getElementById('file-upload'),
+                fileDrag = document.getElementById('file-drag'),
+                submitButton = document.getElementById('submit-button');
+
+            fileSelect.addEventListener('change', fileSelectHandler, false);
+
+            // Is XHR2 available?
+            var xhr = new XMLHttpRequest();
+            if (xhr.upload) {
+                // File Drop
+                fileDrag.addEventListener('dragover', fileDragHover, false);
+                fileDrag.addEventListener('dragleave', fileDragHover, false);
+                fileDrag.addEventListener('drop', fileSelectHandler, false);
+            }
+        }
+
+        function fileDragHover(e) {
+            var fileDrag = document.getElementById('file-drag');
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal-body file-upload');
+        }
+
+        function fileSelectHandler(e) {
+            // Fetch FileList object
+            var files = e.target.files || e.dataTransfer.files;
+
+            // Cancel event and hover styling
+            fileDragHover(e);
+
+            // Process all File objects
+            for (var i = 0, f; f = files[i]; i++) {
+                parseFile(f);
+                uploadFile(f);
+            }
+        }
+
+        // Output
+        function output(msg) {
+            // Response
+            var m = document.getElementById('messages2');
+            m.innerHTML = msg;
+        }
+
+        function parseFile(file) {
+
+            console.log(file.name);
+            output(
+                '<strong>' + encodeURI(file.name) + '</strong>'
+            );
+
+            // var fileType = file.type;
+            // console.log(fileType);
+            var imageName = file.name;
+
+            var isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
+            if (isGood) {
+                document.getElementById('start').classList.add("hidden");
+                document.getElementById('response').classList.remove("hidden");
+                document.getElementById('notimage').classList.add("hidden");
+                // Thumbnail Preview
+                document.getElementById('file-image').classList.remove("hidden");
+                document.getElementById('file-image').src = URL.createObjectURL(file);
+            } else {
+                document.getElementById('file-image').classList.add("hidden");
+                document.getElementById('notimage').classList.remove("hidden");
+                document.getElementById('start').classList.remove("hidden");
+                document.getElementById('response').classList.add("hidden");
+                document.getElementById("file-upload-form").reset();
+            }
+        }
+
+        function setProgressMaxValue(e) {
+            var pBar = document.getElementById('file-progress');
+
+            if (e.lengthComputable) {
+                pBar.max = e.total;
+            }
+        }
+
+        function updateFileProgress(e) {
+            var pBar = document.getElementById('file-progress');
+
+            if (e.lengthComputable) {
+                pBar.value = e.loaded;
+            }
+        }
+
+        function uploadFile(file) {
+
+            var xhr = new XMLHttpRequest(),
+                fileInput = document.getElementById('class-roster-file'),
+                pBar = document.getElementById('file-progress'),
+                fileSizeLimit = 1024; // In MB
+            if (xhr.upload) {
+                // Check if file is less than x MB
+                if (file.size <= fileSizeLimit * 1024 * 1024) {
+                    // Progress bar
+                    pBar.style.display = 'inline';
+                    xhr.upload.addEventListener('loadstart', setProgressMaxValue, false);
+                    xhr.upload.addEventListener('progress', updateFileProgress, false);
+
+                    // File received / failed
+                    xhr.onreadystatechange = function(e) {
+                        if (xhr.readyState == 4) {
+                            // Everything is good!
+
+                            // progress.className = (xhr.status == 200 ? "success" : "failure");
+                            // document.location.reload(true);
+                        }
+                    };
+
+                    // Start upload
+                    xhr.open('POST', document.getElementById('file-upload-form').action, true);
+                    xhr.setRequestHeader('X-File-Name', file.name);
+                    xhr.setRequestHeader('X-File-Size', file.size);
+                    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+                    xhr.send(file);
+                } else {
+                    output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
+                }
+            }
+        }
+
+        // Check for the various File API support.
+        if (window.File && window.FileList && window.FileReader) {
+            Init();
+        } else {
+            document.getElementById('file-drag').style.display = 'none';
+        }
+    }
+    ekUpload();
+
+            function showDeleteGambar(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            console.log('warung = ' + id);
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus Gambar ini ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteGambarPenginapan(id);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "Gambar gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+        function deleteGambarPenginapan(idPenginapan) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            console.log('warung1 = ' + idPenginapan);
+            $.ajax({
+                url: '/delete_gambar_penginapan/' + idPenginapan,  
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        };
+
     const stepMenuOne = document.querySelector('.formbold-step-menu1')
     const stepMenuTwo = document.querySelector('.formbold-step-menu2')
     const stepMenuThree = document.querySelector('.formbold-step-menu3')

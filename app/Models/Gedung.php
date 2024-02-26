@@ -17,7 +17,9 @@ class Gedung extends Model
     protected $fillable = [
         'id', 
         'nama', 
-        'deskripsi'
+        'deskripsi',
+        'jenis',
+        'gambar'
     ] ;
 
     public $incrementing = true;

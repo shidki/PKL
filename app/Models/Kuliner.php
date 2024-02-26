@@ -18,7 +18,8 @@ class Kuliner extends Model
         'id', 
         'nama', 
         'alamat',
-        'jarak'
+        'jarak',
+        'gambar'
     ] ;
 
     public $incrementing = false;

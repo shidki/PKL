@@ -14,6 +14,9 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-IYF3A/b5QDsjjr6f5lC7PgeVojOO0GW7R+EiAtkdbY//SWEZDtQqFJ9C1STh0pcHp1K5V02LFQKZ1KGHTtL54A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{asset('assets/sistem_informasi/table/css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+
     <style>
         #toastBox {
     position: fixed;
@@ -149,10 +152,14 @@
                                             <td class="text-center" style="width: 260px;">{{ $userss->role }}</td>
                                             {{-- <td class="text-center" style="width: 150px;">{{ $userss->status }}</td> --}}
                                             <td style="width: 300px">
-                                                <a href={{ route('delete_admin' , ['id' => $userss->id]) }} class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
+                                                {{-- <a href={{ route('delete_admin' , ['id' => $userss->id]) }} class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
                                                     <i style="font-size: 20px" class="fa fa-trash"></i>
-                                                </a>
-                                                <a href={{route('edit_admin' ,['id' => $userss->id ])}} class="d-inline-block" title="edit" name="edit">
+                                                </a> --}}
+                                                <button style="border: none; background: transparent; color: red;" onclick="showDeleteConfirmation( '{{$userss->id }}' )" class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
+                                                    <i style="font-size: 20px" class="fa fa-trash"></i>
+                                                </button>
+
+                                                <a href={{route('edit_admin' ,['id' => $userss->id ])}} class="d-inline-block ml-5" title="edit" name="edit">
                                                     <i class="fa fa-pencil" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            
@@ -174,6 +181,128 @@
     </section>
     <div id="toastBox">
     </div>
+
+<!-- Script JavaScript -->
+<script>
+    // Fungsi untuk menampilkan SweetAlert
+    function showDeleteConfirmation(userId) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Peringatan",
+            text: "Hapus admin ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Setuju",
+            cancelButtonText: "Batal",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Panggil fungsi deleteAdmin dengan parameter userId
+                deleteAdmin(userId);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Peringatan",
+                    text: "Admin gagal dihapus",
+                    icon: "error"
+                });
+            }
+        });
+    }
+
+    // Fungsi untuk menghapus admin
+    function deleteAdmin(userId) {
+        // Kirim permintaan AJAX ke controller untuk menghapus admin
+        // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+        $.ajax({
+            url: '/delete/admin/' + userId,
+            // console.log(url);
+            type: 'GET',
+            success: function (response) {
+                // Tampilkan SweetAlert sukses setelah menghapus
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Deleted!",
+                    text: response.sukses_delete,
+                    icon: "success"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    }
+                });
+
+                // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+                // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+            },
+            error: function (error) {
+                console.error("Error deleting admin:", error);
+            }
+        });
+    }
+</script>
+
+
+    @if (session('sukses_add'))
+        <script>
+            Swal.fire({
+            title: "Berhasil menambah data",
+            icon: "success"
+            });
+        </script>
+    @endif
+    @if (session('error_add'))
+        <script>
+            Swal.fire({
+            title: "Gagal menambah data",
+            icon: "error"
+            });
+        </script>
+    @endif
+    @if (session('sukses_delete'))
+        <script>
+            Swal.fire({
+            title: "Berhasil menghapus data",
+            icon: "success"
+            });
+        </script>
+    @endif
+    @if (session('error_delete'))
+        <script>
+            Swal.fire({
+            title: "Gagal menghapus data",
+            icon: "error"
+            });
+        </script>
+    @endif
+    @if (session('sukses_edit'))
+        <script>
+            Swal.fire({
+            title: "Data berhasil di edit",
+            icon: "success"
+            });
+        </script>
+    @endif
+    @if (session('error_edit'))
+        <script>
+            Swal.fire({
+            title: "Data gagal di edit",
+            icon: "error"
+            });
+        </script>
+    @endif
+
 
     @if ($massage = Session::get('error_toast'))
         <script>

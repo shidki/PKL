@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Crypt;
 
 // tampilan awal web
 Route::get('/',[landingController::class,'makeGedung']);
+// Route::get('/',function(){
+//     return view('landing_page.promosi');
+// });
 
 
 //  untuk menampilkan file 3dmap di iframe
@@ -54,11 +57,16 @@ Route::get('/submit_edit_dinas',[landingController::class,'makeGedung'])->middle
 
 // menghapus layanan
 Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'])->name('hapus_layanan')->middleware('isAdmin');
+Route::get('/edit_layanan',[landingController::class,'makeGedung'])->name('edit_layanan')->middleware('isAdmin');
 
+Route::post('/edit_layanan',[AdminController::class,'edit_layanan'])->name('edit_layanan')->middleware('isAdmin');
 // menambah dinas
 Route::get('/add_dinas',[AdminController::class,'add_dinas'])->middleware('isAdmin');
 Route::post('/submit_add_dinas',[AdminController::class,'submit_add_dinas'])->middleware('isAdmin');
 Route::get('/submit_add_dinas',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
+Route::get('/gedung/all',[landingController::class,'gedung_lengkap'])->name('gedung_lengkap');
+Route::get('/hapus_gambar_idInstansi/{idInstansi}',[AdminController::class,'hapus_gambar_idInstansi'])->name('hapus_gambar_idInstansi')->middleware('isAdmin');
 
 //  ============== admin ===========
 Route::get('/admin',[AdminController::class,'info_admin'])->middleware('isAdmin');
@@ -88,6 +96,7 @@ Route::post('/submit_add_penginapan',[AdminController::class,'submit_add_pengina
 Route::get('/submit_add_penginapan',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
 Route::get('/hapus_fasilitas/{id_fasilitas}',[AdminController::class,'hapus_fasilitas'])->name('hapus_fasilitas')->middleware('isAdmin');
+Route::get('/delete_gambar_penginapan/{idPenginapan}',[AdminController::class,'delete_gambar_penginapan'])->middleware('isAdmin');
 
 
 //  ============== wisata ===========
@@ -101,7 +110,7 @@ Route::post('/add/wisata',[AdminController::class,'add_wisata'])->name('add_wisa
 Route::get('/add/wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');
 Route::post('/submit_edit_wisata',[AdminController::class,'submit_edit_wisata'])->middleware('isAdmin');
 Route::get('/submit_edit_wisata',[landingController::class,'makeGedung'])->middleware('isAdmin');
-
+Route::get('/delete_gambar_wisata/{idWisata}',[AdminController::class,'delete_gambar_wisata'])->middleware('isAdmin');
 
 //  ============== kuliner ===========
 // ke halaman info kuliner
@@ -114,6 +123,10 @@ Route::get('/edit/kuliner/{id}',[AdminController::class,'edit_kuliner'])->name('
 Route::post('/submit_edit_kuliner',[AdminController::class,'submit_edit_kuliner'])->middleware('isAdmin');
 Route::get('/submit_edit_kuliner',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
+Route::get('/delete_gambar_warung/{idWarung}',[AdminController::class,'delete_gambar_warung'])->middleware('isAdmin');
+
+
+
 // menghapus menu
 Route::get('/hapus_menu/{id_menu}',[AdminController::class,'hapus_menu'])->name('hapus_menu')->middleware('isAdmin');
 Route::post('/edit/menu',[AdminController::class,'edit_menu'])->name('edit_menu')->middleware('isAdmin');
@@ -123,3 +136,19 @@ Route::get('/edit/menu',[landingController::class,'makeGedung'])->middleware('is
 Route::get('/add_kuliner',[AdminController::class,'add_kuliner'])->middleware('isAdmin');
 Route::post('/submit_add_kuliner',[AdminController::class,'submit_add_kuliner'])->middleware('isAdmin');
 Route::get('/submit_add_kuliner',[landingController::class,'makeGedung'])->middleware('isAdmin');
+
+// =========== LANDING PAGE PROMOSI ===============
+
+//  PENGINAPAN
+Route::get('/detail/penginapan/{nama} ',[landingController::class,'detail_penginapan'])->name('detail_penginapan');
+Route::get('/penginapan/all',[landingController::class,'penginapan_lengkap'])->name('penginapan_lengkap');
+
+Route::get('/detail/wisata/{nama} ',[landingController::class,'detail_wisata'])->name('detail_wisata');
+Route::get('/wisata/all',[landingController::class,'wisata_lengkap'])->name('wisata_lengkap');
+
+Route::get('/detail/kuliner/{nama} ',[landingController::class,'detail_kuliner'])->name('detail_kuliner');
+Route::get('/kuliner/all',[landingController::class,'kuliner_lengkap'])->name('kuliner_lengkap');
+
+//  DOWNLOAD FILE FORMAT 
+Route::get('/download_file_menu',[AdminController::class,'download_file_menu'])->middleware('isAdmin');
+Route::get('/download_file_fasilitas',[AdminController::class,'download_file_fasilitas'])->middleware('isAdmin');

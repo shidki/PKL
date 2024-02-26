@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Gedung;
 use App\Models\Layanan;
+use App\Models\Penginapan;
 use Illuminate\Support\Facades\Crypt;
 
 class GedungController extends Controller
@@ -22,6 +23,7 @@ class GedungController extends Controller
         ->from("layanan")
         ->where('id_gedung','=',$getID)
         ->get();
+
 
         return view('landing_page.detail', ['gedungDetails' => $gedungDetails,'layanan' => $layanan]);
     }

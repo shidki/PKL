@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
   <style>

@@ -12,9 +12,14 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="assets/sistem_informasi/table/css/style.css">
     <style>
+        #Gambar_instansi{
+            width: 100%;
+            height: 400px;
+        }
         #toastBox {
     position: fixed;
     bottom: 30px;
@@ -84,6 +89,77 @@
             <div class="text-right mr-3 mb-3">
                 <a href="/add_dinas" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Instansi</span></a>
             </div>
+            {{-- POP UP LIST LAYANAN --}}
+           <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">List Layanan <strong><span id="nama_dinas_modal"></span></strong></h5>
+                    </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="nama">Nama Layanan :</label>
+                                <div id="layananList"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {{-- END POP UP --}}
+        {{-- POP UP FOTO INSTANSI --}}
+        <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Foto Instansi <strong><span id="nama_dinas_modal2"></span></strong></h5>
+                    </div>
+                        <div class="modal-body" id="foto_instansi_container">
+                            
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_instansi" data-bs-dismiss="modal">Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {{-- END POP UP --}}
+
+        {{-- POP UP EDIT LAYANAN --}}
+       <div class="modal fade" id="editLayanan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editLayananTabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editLayananTabel">Edit Layanan <strong><span id="nama_dinas_modal"></span></strong></h5>
+                </div>
+                <form action="/edit_layanan" method="post">
+                    @csrf
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="Id_layanan">Id Layanan :</label>
+                                <input id="id_layanan" type="text" class="form-control"  readonly name="id_layanan">
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_instansi">Nama Instansi :</label>
+                                <input id="nama_instansi" type="text" class="form-control"  readonly name="nama_instansi">
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_layanan">Nama Layanan :</label>
+                                <input id="nama_layanan" type="text" class="form-control"  required name="nama_layanan">
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        {{-- END POP UP --}}
             <div class="col-lg-25 d-flex align-items-strech">
                 <div class="card w-100">
                     <div class="card-body">
@@ -100,9 +176,10 @@
                                 <table class="table" id="usersTable">
                                     <thead class="thead-primary">
                                         <tr>
-                                            <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
-                                            <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th>
+                                            <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light"  style="font-size: 10px; margin-left: 3px;"></i></button></th>
+                                            <th>Nama <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light" style="font-size: 10px; margin-left: 3px;"></i></button></th>
                                             <th>Deskripsi</th>
+                                            <th>Foto</th>
                                             <th>Layanan</th>
                                             <th>Maps</th>
                                             <th>#</th>
@@ -111,30 +188,41 @@
                                     <tbody>
                                         @foreach ($gedung as $dinas )
                                         <tr>
-                                            <th scope="row" class="scope" width="150px">{{ $loop->iteration }}</th>
-                                            <td class="text-left" width="150px" >{{ $dinas->nama }}</td>
-                                            <td class="text-justify" style="width: 300px;">{{ $dinas->deskripsi }}</td>
-                                            <td style="width: 200px;"> 
-                                                <ol>
+                                            <th scope="row" class="scope" width="250px">{{ $loop->iteration }}</th>
+                                            <td class="text-left" width="100px" >{{ $dinas->nama }}</td>
+                                            <td class="text-justify" style="width: 200px;">{{ $dinas->deskripsi }}</td>
+                                            <td class="text-center" style="width: 100px;">
+                                                <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" name="foto_instansi" data-id="{{ json_encode(['gambar' => $dinas->gambar,'id_dinas' => $dinas->id, 'nama' => $dinas->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
+                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                </button>
+                                            </td>
+                                            <td style="width: 100px;"> 
+                                                {{-- <ol>
                                                     @foreach ($layanan[$dinas->id] as $layanans)
                                                     <li class="text-left">{{ $layanans->nama }}</li>
                                                     @endforeach
 
-                                                </ol>
+                                                </ol> --}}
+                                                <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" name="edit_menu" data-id="{{ json_encode(['layanan' => $layanan[$dinas->id], 'nama' => $dinas->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
+                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                </button>
                                             </td>
-                                            <td style="width: 400px">
+                                            <td style="width: 200px">
                                                 @if ($dinas->maps !== null)
                                                     <iframe src="{{ $dinas->maps}}" frameborder="0"></iframe>
                                                 @else
                                                 <strong style="font-size: 50px;">-</strong>
                                                 @endif
                                             </td>
-                                            <td style="width: 200px">
-                                                <a href={{ route('delete_dinas', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
+                                            <td style="width: 300px">
+                                                {{-- <a href={{ route('delete_dinas', ['id' => $dinas->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
                                                     <i style="font-size: 20px" class="fa fa-trash"></i>
-                                                </a>
+                                                </a> --}}
+                                                <button style="border: none; background: transparent; color: red;" onclick="showDeleteConfirmation( '{{$dinas->id }}' )" class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
+                                                    <i style="font-size: 15px" class="fa fa-trash"></i>
+                                                </button>
                                                 <a href={{ route('edit_dinas' ,['id' => $dinas->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
-                                                    <i class="fa fa-pencil" style="font-size: 20px"></i>
+                                                    <i class="fa fa-pencil" style="font-size: 15px"></i>
                                                 </a>
                                             </td>                                            
                                         </tr>
@@ -155,6 +243,329 @@
     </section>
     <div id="toastBox">
     </div>
+
+    <script>
+        // Fungsi untuk menampilkan SweetAlert
+        function showDeleteConfirmation(dinasId) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+    
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus Instansi ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAdmin(dinasId);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "Instansi gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    
+        // Fungsi untuk menghapus admin
+        function deleteAdmin(dinasId) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            $.ajax({
+                url: '/delete/dinas/' + dinasId,
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+    
+                    // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+                    // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        }
+    </script>
+    
+
+    <script>
+
+
+        var staticBackdrop = document.getElementById('staticBackdrop');
+        staticBackdrop.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+    
+            var namaInstansi = staticBackdrop.querySelector('#nama_dinas_modal');
+            namaInstansi.textContent = parsedDataId.nama;
+
+
+            var layananList = document.getElementById('layananList');
+            layananList.innerHTML = ''; // Mengosongkan konten sebelumnya
+
+            if (parsedDataId.layanan.length > 0) {
+                var ol = document.createElement('ol');
+                parsedDataId.layanan.forEach(function (layanan) {
+                    var li = document.createElement('li');
+                    li.setAttribute('style', 'font-weight: bold;');
+
+                    li.className = 'text-left d-flex';
+                    li.style.justifyContent = "space-between"
+                    
+                    var namaLayanan = document.createElement('span');
+                    namaLayanan.innerHTML = layanan.nama
+                    namaLayanan.style.width = '350px';
+                    li.appendChild(namaLayanan);
+
+                    var btn_action = document.createElement('span');
+                    var deleteLink = document.createElement('button');
+                    deleteLink.setAttribute('onclick','showDeleteLayanan("__id_layanan__")'.replace('__id_layanan__', layanan.id));
+                    deleteLink.setAttribute('style','margin-right:28px; border: none; background: transparent; color: red;')
+                    deleteLink.title = 'hapus layanan';
+                    deleteLink.className = 'd-inline-block ';
+                    deleteLink.innerHTML = '<i class="fa fa-trash-o"></i>';
+
+                    var editLink = document.createElement('button');
+                    editLink.type = 'submit';
+                    editLink.setAttribute('data-bs-toggle', 'modal');
+                    editLink.setAttribute('data-bs-target', '#editLayanan');
+                    editLink.name = 'edit_layanan';
+                    editLink.setAttribute('data-id', JSON.stringify({ namaLayanan: layanan.nama, id: layanan.id, instansi: parsedDataId.nama }));
+                    editLink.style.display = 'inline-block';
+                    editLink.style.marginLeft = '20px';
+                    editLink.style.border = 'none';
+                    editLink.style.background = 'transparent';
+                    editLink.title = 'edit layanan';
+                    editLink.className = 'd-inline-block ';
+                    editLink.innerHTML = '<i class="fa fa-pencil"></i>';
+
+                    btn_action.appendChild(deleteLink);
+                    btn_action.appendChild(editLink);
+
+                    li.appendChild(btn_action);
+
+
+                    ol.appendChild(li);
+                });
+                layananList.appendChild(ol);
+            } else {
+                // Tampilkan pesan jika tidak ada layanan
+                layananList.innerHTML = '<p>Tidak ada layanan untuk insantsi ini.</p>';
+            }
+        });
+
+        
+
+
+        //  untuk show modal edit layanan
+
+        var editLayanan = document.getElementById('editLayanan');
+        editLayanan.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+            
+            var NamaInput = editLayanan.querySelector('#nama_layanan');
+            NamaInput.value = parsedDataId.namaLayanan;
+
+            var namaInstansi = editLayanan.querySelector('#nama_instansi');
+            namaInstansi.value = parsedDataId.instansi;
+
+            var idInput = editLayanan.querySelector('#id_layanan');
+            idInput.value = parsedDataId.id;
+        });
+
+        // untuk foto instansi
+        var staticBackdrop2 = document.getElementById('staticBackdrop2');
+        staticBackdrop2.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+            
+            var NamaInstansi = staticBackdrop2.querySelector('#nama_dinas_modal2');
+            NamaInstansi.textContent = parsedDataId.nama;
+
+            var fotoInstansiCont = staticBackdrop2.querySelector('#foto_instansi_container');
+            var delete_gambar_instansi = staticBackdrop2.querySelector('#delete_gambar_instansi');
+            if(parsedDataId.gambar !== null){
+                var img = document.createElement("img"); // Perbaikan: Penggunaan createElement
+                img.src = "{{ asset('') }}" + parsedDataId.gambar;
+
+                img.setAttribute('id','Gambar_instansi');
+                fotoInstansiCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                fotoInstansiCont.appendChild(img);
+                delete_gambar_instansi.setAttribute('onclick','showDeleteGambar("__id_instansi_")'.replace('__id_instansi_', parsedDataId.id_dinas));
+
+            }else{
+                var h3 = document.createElement("h3"); // Perbaikan: Penggunaan createElement
+                h3.textContent = "Belum Ada Gambar"
+                h3.setAttribute('class','text-center text-danger');
+                fotoInstansiCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                fotoInstansiCont.appendChild(h3);
+            }
+        });
+
+
+        function showDeleteLayanan(layananId) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+    
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus layanan ini ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteLayanan(layananId);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "layanan gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+
+        function showDeleteGambar(instansiID) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+    
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Hapus Gambar ini ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Setuju",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteGambarInstansi(instansiID);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan",
+                        text: "Gambar gagal dihapus",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    
+        // Fungsi untuk menghapus admin
+        function deleteLayanan(layananId) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            $.ajax({
+                url: '/hapus_layanan/' + layananId,
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+    
+                    // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+                    // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        }
+
+        function deleteGambarInstansi(idInstansi) {
+            // Kirim permintaan AJAX ke controller untuk menghapus admin
+            // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+            $.ajax({
+                url: '/hapus_gambar_idInstansi/' + idInstansi,
+                // console.log(url);
+                type: 'GET',
+                success: function (response) {
+                    // Tampilkan SweetAlert sukses setelah menghapus
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success"
+                        },
+                        buttonsStyling: false
+                    });
+    
+                    swalWithBootstrapButtons.fire({
+                        title: "Deleted!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+    
+                    // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+                    // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+                },
+                error: function (error) {
+                    console.error("Error deleting admin:", error);
+                }
+            });
+        }
+
+    </script>    
+
 
     @if ($massage = Session::get('error_toast'))
         <script>
@@ -321,7 +732,54 @@
     });
 </script>
 
-
+@if (session('sukses_add'))
+<script>
+    Swal.fire({
+    title: "Berhasil menambah data",
+    icon: "success"
+    });
+</script>
+@endif
+@if (session('error_add'))
+<script>
+    Swal.fire({
+    title: "Gagal menambah data",
+    icon: "error"
+    });
+</script>
+@endif
+@if (session('sukses_delete'))
+<script>
+    Swal.fire({
+    title: "Berhasil menghapus data",
+    icon: "success"
+    });
+</script>
+@endif
+@if (session('error_delete'))
+<script>
+    Swal.fire({
+    title: "Gagal menghapus data",
+    icon: "error"
+    });
+</script>
+@endif
+@if (session('sukses_edit'))
+<script>
+    Swal.fire({
+    title: "Data berhasil di edit",
+    icon: "success"
+    });
+</script>
+@endif
+@if (session('error_edit'))
+<script>
+    Swal.fire({
+    title: "Data gagal di edit",
+    icon: "error"
+    });
+</script>
+@endif
 </body>
 
 </html>

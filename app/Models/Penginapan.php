@@ -19,8 +19,11 @@ class Penginapan extends Model
         'nama', 
         'alamat',
         'telp',
-        'harga',
-        'jarak'
+        'harga_terendah',
+        'harga_tertinggi',
+        'jarak',
+        'jenis',
+        'gambar'
     ] ;
 
     public $incrementing = false;

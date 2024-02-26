@@ -347,7 +347,7 @@ a:focus {
 /* client section end */
 
 .info_section {
-    background-color: #00204a;
+    background-color: rgb(22, 123, 22);
     color: #ffffff;
     padding: 45px 0 15px 0;
 }
@@ -427,6 +427,22 @@ a:focus {
     color: #ffffff;
 }
 
+.info_section .info_contact .contact_link_box a:hover {
+    color: rgb(56, 217, 56);
+}
+
+.info_section .info_social a:hover {
+    color: rgb(56, 217, 56);
+}
+
+.info_section .info_links a:hover {
+    color: rgb(56, 217, 56);
+}
+
+.info_section form button:hover {
+    background-color: rgb(36, 136, 36);
+}
+
 .info_section form input {
     border: none;
     border-bottom: 1px solid #ffffff;
@@ -458,7 +474,7 @@ a:focus {
     text-align: center;
     display: inline-block;
     padding: 10px 55px;
-    background-color: #1c43b9;
+    background-color: rgb(53, 221, 38);
     color: #ffffff;
     border: 1.5px solid rgb(255, 255, 255);
     -webkit-transition: all 0.3s;
