@@ -9,14 +9,88 @@
             <!-- Yearly Breakup -->
             <div class="card overflow-hidden">
               <div class="card-body p-4">
-                <h5 class="card-title mb-3 fw-semibold">Jumlah Pengguna</h5>
+                <h5 class="card-title mb-3 fw-semibold">Jumlah Admin</h5>
                 <div class="row align-items-center">
                   <div class="col-8">
-                    <h4 class="fw-semibold mb-3">{{ $jml_pengguna }}</h4>
+                    <h4 class="fw-semibold mb-3">{{ $jml_admin}}</h4>
                   </div>
                   <div class="col-4">
                     <div class="d-flex justify-content-center">
-                      <div id="breakup"></div>
+                      {{-- <div id="breakup"></div> --}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-3">
+              <!-- Yearly Breakup -->
+              <div class="card overflow-hidden">
+                <div class="card-body p-4">
+                  <h5 class="card-title mb-3 fw-semibold">Jumlah Instansi</h5>
+                  <div class="row align-items-center">
+                    <div class="col-8">
+                      <h4 class="fw-semibold mb-3">{{ $jml_instansi }}</h4>
+                    </div>
+                    <div class="col-4">
+                      <div class="d-flex justify-content-center">
+                        {{-- <div id="breakup"></div> --}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <!-- Yearly Breakup -->
+              <div class="card overflow-hidden">
+                <div class="card-body p-4">
+                  <h5 class="card-title mb-3 fw-semibold">Jumlah Penginapan</h5>
+                  <div class="row align-items-center">
+                    <div class="col-8">
+                      <h4 class="fw-semibold mb-3">{{ $jml_penginapan }}</h4>
+                    </div>
+                    <div class="col-4">
+                      <div class="d-flex justify-content-center">
+                        {{-- <div id="breakup"></div> --}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <!-- Yearly Breakup -->
+              <div class="card overflow-hidden">
+                <div class="card-body p-4">
+                  <h5 class="card-title mb-3 fw-semibold">Jumlah Wisata</h5>
+                  <div class="row align-items-center">
+                    <div class="col-8">
+                      <h4 class="fw-semibold mb-3">{{ $jml_wisata }}</h4>
+                    </div>
+                    <div class="col-4">
+                      <div class="d-flex justify-content-center">
+                        {{-- <div id="breakup"></div> --}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <!-- Yearly Breakup -->
+              <div class="card overflow-hidden">
+                <div class="card-body p-4">
+                  <h5 class="card-title mb-3 fw-semibold">Jumlah kuliner</h5>
+                  <div class="row align-items-center">
+                    <div class="col-8">
+                      <h4 class="fw-semibold mb-3">{{ $jml_kuliner }}</h4>
+                    </div>
+                    <div class="col-4">
+                      <div class="d-flex justify-content-center">
+                        {{-- <div id="breakup"></div> --}}
+                      </div>
                     </div>
                   </div>
                 </div>

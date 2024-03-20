@@ -18,6 +18,7 @@ class Users extends Model
         'id', 
         'email', 
         'username',
+        'nama_admin',
         'password',
         'role'
     ] ;

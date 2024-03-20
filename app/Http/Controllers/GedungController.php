@@ -19,7 +19,7 @@ class GedungController extends Controller
         // dd($nama);
         // dd($gedungDetails->id);
         $getID = $gedungDetails->id;
-        $layanan = Layanan::select("nama")
+        $layanan = Layanan::select("*")
         ->from("layanan")
         ->where('id_gedung','=',$getID)
         ->get();

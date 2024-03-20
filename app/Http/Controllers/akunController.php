@@ -28,12 +28,25 @@ class akunController extends Controller
             // dd($getname->username);
             session(['email' => $request->email]);
             session(['nama' => $getname->username]);
-            return redirect('/')->with(['username' => $getname->username]);
+            return redirect('/administrator')->with(['username' => $getname->username]);
+        }else{
+            $cek_email = Users::select("*")
+            ->from("users")
+            ->where("email",'=',$request->email)
+            ->first();
+            if(!$cek_email){
+                return back()->with([
+                    'login_error' => 'Email Tidak Tersedia',
+                ])->onlyInput('email'); 
+            }else{
+                return back()->with([
+                    'login_error' => 'Password Salah',
+                ])->onlyInput('email');
+            }
+
         }
 
-        return back()->with([
-            'login_error' => 'LOGIN GAGAL',
-        ])->onlyInput('email');
+        
     }
     public function logout(){
         Auth::logout();

@@ -32,7 +32,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3>List Wisata</h3>
+                        <h3>Daftar Wisata</h3>
                         <span class="breadcrumb" style="font-size: 20px;"><a href="/"><i class="d-inline-block fa fa-arrow-left" style="margin-right: 5px;"></i><span><strong>Beranda</strong></span></a></span>
                     </div>
                 </div>

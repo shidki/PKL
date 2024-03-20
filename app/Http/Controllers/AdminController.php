@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gambar_detail_layanan;
+use App\Models\List_fasilitas;
 use Illuminate\Http\Request;
 use App\Models\Gedung;
 use App\Models\Layanan;
@@ -23,23 +25,32 @@ class AdminController extends Controller
 {
     //
     public function viewpage(){
-        $jml_pengguna = Users::select("id")
-        ->from('users')
-        ->count();
 
         $jml_admin = Users::select("id")
         ->from('users')
         ->count();
+        $jml_instansi = Gedung::select("id")
+        ->from('gedung')
+        ->count();
+        $jml_wisata = Wisata::select("id")
+        ->from('wisata')
+        ->count();
+        $jml_penginapan = Penginapan::select("id")
+        ->from('penginapan')
+        ->count();
+        $jml_kuliner = Kuliner::select("id")
+        ->from('kuliner')
+        ->count();
 
-        $email = session('email');
+        $nama = session('nama');
         $getuser = Users::select("*")
         ->from("users")
-        ->where("email",'=',$email)
+        ->where("username",'=',$nama)
         ->first();
 
         // $pw = Crypt::decryptString($getuser->password);
         // dd($pw);
-        return view('sistem_informasi.admin.dashboard',["jml_pengguna" => $jml_pengguna,"jml_admin" => $jml_admin, 'email' => $email,'name' => $getuser->username ]);
+        return view('sistem_informasi.admin.dashboard',["jml_instansi" => $jml_instansi,"jml_penginapan" => $jml_penginapan,"jml_wisata" => $jml_wisata,"jml_kuliner" => $jml_kuliner,"jml_admin" => $jml_admin, 'email' => $getuser->email,'name' => $getuser->username, "nama_admin" => $getuser->nama_admin ]);
     }
     public function info_gedung(){
         $gedung = Gedung::select('*')
@@ -51,9 +62,10 @@ class AdminController extends Controller
         $layananArray = [];
         for ($i = 0; $i < $count; $i++) {
             $gedungs = $gedung[$i];
-            $layanan = Layanan::select('*')
-            ->from('layanan')
-            ->where('id_gedung','=',$gedungs->id)
+            $layanan = Layanan::select('l.*','g.id_layanan','g.gambar_detail','g.judul_gambar')
+            ->from('layanan as l')
+            ->leftJoin("gambar_detail_layanan as g",'g.id_layanan','=',"l.id")
+            ->where('l.id_gedung','=',$gedungs->id)
             ->get();
             $layananArray[$gedungs->id] = $layanan;
         }
@@ -63,9 +75,8 @@ class AdminController extends Controller
     public function delete_gedung($id){
 
         $delete_gedung = DB::table('gedung')->select("*")->where('id' ,"=", $id);
-
         if($delete_gedung){
-            $getGambar = Gedung::select('gambar')
+            $getGambar = Gedung::select('*')
             ->from("gedung")
             ->where('id','=',$id)
             ->first();
@@ -73,8 +84,21 @@ class AdminController extends Controller
                 File::delete($getGambar->gambar);
             }
             $get_layanan = DB::table('layanan')->select("*")->where('id_gedung' ,"=", $id)->get();
-            // melakukan penghapusan semua layanan sesuai id gedung yang mau dihapus
+
+
+
+
+            // delete gambar detail layanan dulu baru delete data yang ada di database
+            foreach ($get_layanan as $detail_gambar) {
+                $getPath_gambar = Gambar_detail_layanan::select("*")->from("gambar_detail_layanan")->where('id_layanan','=',$detail_gambar->id)->get();
+                foreach ($getPath_gambar as $gambar) {
+                    File::delete($gambar->gambar_detail);
+                }
+                DB::table('gambar_detail_layanan')->where('id_layanan','=', $detail_gambar->id)->delete();
+            }
             DB::table('layanan')->where('id_gedung','=', $id)->delete();
+                        // melakukan penghapusan semua layanan sesuai id gedung yang mau dihapus
+
             $delete_gedung->delete();
             return back()->with(['sukses_delete' => "sukses menghapus data"]);
         }else{
@@ -99,8 +123,18 @@ class AdminController extends Controller
                 'dinas' => 'required',
                 'file_gambar' => 'nullable|image',
                 'jenis' => 'nullable',
+                'jumlah_layanan' => 'required',
                 'file_layanan' => 'nullable|mimes:xlsx',
             ]);
+            $get_gedung = DB::table('gedung')->pluck('nama')->toArray();
+            $get_nama = Gedung::select("nama")->from("gedung")->where("id",'=',$request->id)->first();
+
+            // misal nama dinas nya diubah
+            if($get_nama->nama !== $request->dinas){
+                if(in_array($request->dinas, $get_gedung)){
+                    return back()->with(["error_input_dinas" => "dinas sudah tersedia"]);
+                }
+            }
 
             if($request->jenis !== null){
                 DB::table('gedung')->where('id','=',$request->id)
@@ -185,6 +219,127 @@ class AdminController extends Controller
                     }
                 }
                 File::delete('file_layanan/'.$nama_file);
+            }else{
+                for($i=1; $i<$request->jumlah_layanan + 1; $i++){
+                    $this->validate($request,[
+                        'layananke'.$i => 'nullable',
+                        'deskripsilayananke'.$i => 'nullable',
+                        'judulGambarlayananke'.$i => 'nullable',
+                    ]);
+                    
+                    if($request->{'layananke'.$i} !== null){
+                        if($request->{'deskripsilayananke'.$i} !== null){
+                            $cek_id = Gedung::select('id')
+                            ->from('gedung')
+                            ->where('nama','=',$request->dinas)
+                            ->first();
+    
+                            // kondisi jika id ditemukan
+                            if($cek_id){
+                                // valdiasi bahwa layanan belom tersedia
+                                $cek_layanan = Layanan::select("nama")
+                                ->from("layanan")
+                                ->where("id_gedung",'=',$cek_id->id)
+                                ->where("nama",'=',$request->{'layananke'.$i})
+                                ->first();
+
+                                if(!$cek_layanan){
+                                    $insert_layanan = DB::table('layanan')
+                                    ->insert([
+                                        'nama' => $request->{'layananke'.$i},
+                                        'deskripsi' => $request->{'deskripsilayananke'.$i},
+                                        'id_gedung' => $cek_id->id
+                                    ]);
+                                    // kondisi jika insert gagal
+                                    if(!$insert_layanan){
+                                        return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                    }
+                                }else{
+                                    return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                }
+                            }
+                        }else{
+                            $cek_id = Gedung::select('id')
+                            ->from('gedung')
+                            ->where('nama','=',$request->dinas)
+                            ->first();
+    
+                            // kondisi jika id ditemukan
+                            if($cek_id){
+                                // valdiasi bahwa layanan belom tersedia
+                                $cek_layanan = Layanan::select("nama")
+                                ->from("layanan")
+                                ->where("id_gedung",'=',$cek_id->id)
+                                ->where("nama",'=',$request->{'layananke'.$i})
+                                ->first();
+
+                                if(!$cek_layanan){
+                                    $insert_layanan = DB::table('layanan')
+                                    ->insert([
+                                        'nama' => $request->{'layananke'.$i},
+                                        'id_gedung' => $cek_id->id
+                                    ]);
+                                    // kondisi jika insert gagal
+                                    if(!$insert_layanan){
+                                        return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                    }
+                                }else{
+                                    return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                }
+                            }
+                        }
+                        if($request->{'file_gambar_layanan'.$i} !== null){
+                            $file_gambar = $request->file('file_gambar_layanan'.$i);
+                            $nama_file_gambar = 'gambar_layanan_'.$request->dinas."_".$request->{'layananke'.$i}.$file_gambar->getClientOriginalName();
+                            $file_gambar->move('file_gambar/instansi/layanan',$nama_file_gambar);
+                            $nama_file_gambar_layanan = 'file_gambar/instansi/layanan/'.$nama_file_gambar;
+                            // dd($request->file('file_gambar_layanan2'));
+                            // cek id layanan yang sudah ditambah
+                            $cek_id_layanan = Layanan::select("*")
+                            ->from("layanan")
+                            ->where("nama",'=',$request->{'layananke'.$i})
+                            ->where("id_gedung",'=',$cek_id->id)
+                            ->first();
+                            // jika layanan ketemu
+                            if($cek_id_layanan){
+                                if($request->{'judulGambarlayananke'.$i} !== null){
+                                    $insert_layanan = DB::table('gambar_detail_layanan')
+                                    ->insert([
+                                        'gambar_detail' => $nama_file_gambar_layanan,
+                                        'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                        'id_layanan' => $cek_id_layanan->id
+                                    ]);
+                                }else{
+                                    $insert_layanan = DB::table('gambar_detail_layanan')
+                                    ->insert([
+                                        'gambar_detail' => $nama_file_gambar_layanan,
+                                        'id_layanan' => $cek_id_layanan->id
+                                    ]);
+                                }
+                            }else{
+                                return back()->with(["error_input_dinas" => 'input gambar layanan ke '.$i." gagal"]);
+                            }
+                        }else{
+                            $cek_id_layanan = Layanan::select("*")
+                            ->from("layanan")
+                            ->where("nama",'=',$request->{'layananke'.$i})
+                            ->where("id_gedung",'=',$cek_id->id)
+                            ->first();
+                            
+                            if($request->{'judulGambarlayananke'.$i} !== null){
+                                $insert_layanan = DB::table('gambar_detail_layanan')
+                                ->insert([
+                                    'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                    'id_layanan' => $cek_id_layanan->id
+                                ]);
+                            }
+                        }
+                    }else{
+                        if($request->{'deskripsilayananke'.$i} !== null || $request->{'file_gambar_layanan'.$i} !== null || $request->{'judulGambarlayananke'.$i} !== null){
+                            return back()->with(["error_input_dinas" => 'input layanan ke '.$i." gagal"]);
+                        }
+                    }
+                }
             }
             return redirect('/dinas')->with(['sukses_edit' => 'berhasil mengedit data']);
         } catch (ValidationException $e) {
@@ -206,10 +361,20 @@ class AdminController extends Controller
     }
 
     public function hapus_layanan($id_layanan){
-        $hapus_layanan = DB::table('layanan')->where('id','=',$id_layanan)->delete();
-        if($hapus_layanan){
+        
+        $getPath_gambar = Gambar_detail_layanan::select("*")->from("gambar_detail_layanan")->where('id_layanan','=',$id_layanan)->get();
+        $hapus_gambar_layanan = DB::table('gambar_detail_layanan')->where('id_layanan','=',$id_layanan)->delete();
+        
+        if($hapus_gambar_layanan ){
+            if (!$getPath_gambar->isEmpty()) {
+                foreach ($getPath_gambar as $gambar) {
+                    File::delete($gambar->gambar_detail);
+                }
+            }
+            $hapus_layanan = DB::table('layanan')->where('id','=',$id_layanan)->delete();
             return back()->with(['sukses_delete_layanan' => "berhasil menghapus layanan"]);
         }else{
+            $hapus_layanan = DB::table('layanan')->where('id','=',$id_layanan)->delete();
             return back()->with(['error_delete_layanan' => "gagal menghapus layanan"]);
         }
     }
@@ -294,22 +459,134 @@ class AdminController extends Controller
     }
     public function edit_layanan(Request $request){
         // cek apakah layanan sudah tersedia atau belom
-        $cekNama = Layanan::select('*')
+        // dd(5);
+        $getNama = Layanan::select('*')
         ->from('layanan')
         ->where('nama','=',$request->nama_layanan)
+        ->whereNot('id','=',$request->id_layanan)
         ->first();
-
-        if($cekNama){
-            return back()->with(['error_ready' => "layanan sudah tersedia"]);
-        }else{
+        
+        if($getNama){
+            if($request->nama_layanan !== $getNama->nama){
+                $cekNama = Layanan::select('*')
+                ->from('layanan')
+                ->where('nama','=',$request->nama_layanan)
+                ->first();
+                if($cekNama){
+                    return back()->with(['error_add' => "layanan sudah tersedia"]);
+                }
+            }
+        }
+        
+        if($request->deskripsiLayanan == null){
+            // dd(6);
             $update = DB::table('layanan')
             ->where('id','=',$request->id_layanan)
             ->update([
                 'nama' => $request->nama_layanan
             ]);
+            if($request->detail_layanan_gambar !== null){
+                $file_gambar = $request->file('detail_layanan_gambar');
+                $nama_file_gambar = 'gambar_layanan_'.$request->nama_layanan.$file_gambar->getClientOriginalName();
+                $file_gambar->move('file_gambar/instansi/layanan',$nama_file_gambar);
+                $nama_file_gambar_layanan = 'file_gambar/instansi/layanan/'.$nama_file_gambar;
+                // get path gambar sebelumnya
+                
+                $getpath = Gambar_detail_layanan::select("*")->from("gambar_detail_layanan")->where("id_layanan",'=',$request->id_layanan)->first();
+                if($getpath !== null){
+                    File::delete($getpath->gambar_detail);
+                    $update = DB::table('gambar_detail_layanan')
+                    ->where('id_layanan','=',$request->id_layanan)
+                    ->update([
+                        'gambar_detail' => $nama_file_gambar_layanan,
+                        'judul_gambar' => $request->judul_gambar_detail
+                    ]);
+                    if($update){
+                        return back()->with(['sukses_edit' => "berhasil edit layanan"]);
+                    }else{
+                        dd(1);
+                        return back()->with(['error_edit' => "gagal edit layanan"]);
+                    }
+                }else{
+                    $update = DB::table('gambar_detail_layanan')
+                    ->insert([
+                        'gambar_detail' => $nama_file_gambar_layanan,
+                        'judul_gambar' => $request->judul_gambar_detail
+                    ]);
+                    if($update){
+                        return back()->with(['sukses_edit' => "berhasil edit layanan"]);
+                    }else{
+                        dd(2);
+                        return back()->with(['error_edit' => "gagal edit layanan"]);
+                    }
+                }
+
+            }else{
+                $update = DB::table('gambar_detail_layanan')
+                    ->where('id_layanan','=',$request->id_layanan)
+                    ->update([
+                        'judul_gambar' => $request->judul_gambar_detail
+                    ]);
+                if($update){
+                    return back()->with(['sukses_edit' => "berhasil edit layanan"]);
+                }else{
+                    dd($request->judul_gambar_detail);
+                    return back()->with(['error_edit' => "gagal edit layanan"]);
+                }
+            }
+        }else{
+            $update = DB::table('layanan')
+            ->where('id','=',$request->id_layanan)
+            ->update([
+                'nama' => $request->nama_layanan,
+                'deskripsi' => $request->deskripsiLayanan,
+            ]);
+            if($request->detail_layanan_gambar !== null){
+                $file_gambar = $request->file('detail_layanan_gambar');
+                $nama_file_gambar = 'gambar_layanan_'.$request->nama_layanan.$file_gambar->getClientOriginalName();
+                $file_gambar->move('file_gambar/instansi/layanan',$nama_file_gambar);
+                $nama_file_gambar_layanan = 'file_gambar/instansi/layanan/'.$nama_file_gambar;
+                dd($nama_file_gambar_layanan);
+                // get path gambar sebelumnya
+                $getpath = Gambar_detail_layanan::select("*")->from("gambar_detail_layanan")->where("id_layanan",'=',$request->id_layanan)->first();
+                if($getpath !== null){
+                    File::delete($getpath->gambar_detail);
+                    $update = DB::table('gambar_detail_layanan')
+                    ->where('id_layanan','=',$request->id_layanan)
+                    ->update([
+                        'gambar_detail' => $nama_file_gambar_layanan,
+                        'judul_gambar' => $request->judul_gambar
+                    ]);
+                    if($update){
+                        return back()->with(['sukses_edit' => "berhasil edit layanan"]);
+                    }else{
+                        dd(14);
+                        return back()->with(['error_edit' => "gagal edit layanan"]);
+                    }
+                }else{
+                    $update = DB::table('gambar_detail_layanan')
+                    ->insert([
+                        'gambar_detail' => $nama_file_gambar_layanan,
+                        'id_layanan' => $request->id_layanan,
+                    ]);
+                    if($update){
+                        return back()->with(['sukses_edit' => "berhasil edit layanan"]);
+                    }else{
+                        dd(5);
+                        return back()->with(['error_edit' => "gagal edit layanan"]);
+                    }
+                }
+            }else{
+                $update = DB::table('gambar_detail_layanan')
+                ->where('id_layanan','=',$request->id_layanan)
+                ->update([
+                    'judul_gambar' => $request->judul_gambar
+                ]);
+            }
             if($update){
                 return back()->with(['sukses_edit' => "berhasil edit layanan"]);
             }else{
+                dd(100);
                 return back()->with(['error_edit' => "gagal edit layanan"]);
             }
         }
@@ -323,14 +600,19 @@ class AdminController extends Controller
                 'dinas' => 'required',
                 'deskripsi' => 'required',
                 'jenis' => 'required',
+                'jumlah_layanan' => 'required',
                 'file_gambar' => 'required|image',
                 'file_layanan' => 'nullable|mimes:xlsx',
             ]);
+            
+            // dd($request->jumlah_layanan);
+            // dd($request->{'judulGambarlayananke1'});
             $cek_data = Gedung::select('*')
             ->from('gedung')
             ->where('nama','=',$request->dinas)
             ->first();
-            
+            $file_gambar_layanan1 = $request->file('file_gambar_layanan1');
+            // dd($file_gambar_layanan1);
             if($cek_data){
                 return back()->with(["error_input_dinas" => 'instansi sudah tersedia']);
             }else{
@@ -339,6 +621,7 @@ class AdminController extends Controller
                     $nama_file_gambar = 'gambar_instansi_'.$file_gambar->getClientOriginalName();
                     $file_gambar->move('file_gambar/instansi',$nama_file_gambar);
                     $nama_file_gambar_instansi = 'file_gambar/instansi/'.$nama_file_gambar;
+                    
 
                     $insert_data = DB::table('gedung')
                     ->insert([
@@ -365,7 +648,10 @@ class AdminController extends Controller
                             $sheet = $spreadsheet->getActiveSheet();
                             // ngubah seluruh data ke array
                             $data = $sheet->toArray();
-                            for($i = 0; $i < count($data); $i++){
+                            if($data[0][0] !== "Nama Layanan"){
+                                return back()->with(["error_input_dinas" => 'Input Excel harus sesuai format yang tersedia']);
+                            }
+                            for($i = 1; $i < count($data); $i++){
                                 // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
                                 if (isset($data[$i][1])) {
                                     // dd(5);
@@ -396,6 +682,129 @@ class AdminController extends Controller
                                 }
                             }
                             File::delete('file_layanan/'.$nama_file);
+                        }else{
+                            for($i=1; $i<$request->jumlah_layanan + 1; $i++){
+                                $this->validate($request,[
+                                    'layananke'.$i => 'nullable',
+                                    'judulGambarlayananke'.$i => 'nullable',
+                                    'deskripsilayananke'.$i => 'nullable',
+                                    'file_gambar_layanan'.$i => 'nullable',
+                                ]);
+                                
+                                if($request->{'layananke'.$i} !== null){
+                                    if($request->{'deskripsilayananke'.$i} !== null){
+                                        $cek_id = Gedung::select('id')
+                                        ->from('gedung')
+                                        ->where('nama','=',$request->dinas)
+                                        ->first();
+                
+                                        // kondisi jika id ditemukan
+                                        if($cek_id){
+                                            // valdiasi bahwa layanan belom tersedia
+                                            $cek_layanan = Layanan::select("nama")
+                                            ->from("layanan")
+                                            ->where("id_gedung",'=',$cek_id->id)
+                                            ->where("nama",'=',$request->{'layananke'.$i})
+                                            ->first();
+            
+                                            if(!$cek_layanan){
+                                                $insert_layanan = DB::table('layanan')
+                                                ->insert([
+                                                    'nama' => $request->{'layananke'.$i},
+                                                    'deskripsi' => $request->{'deskripsilayananke'.$i},
+                                                    'id_gedung' => $cek_id->id
+                                                ]);
+                                                // kondisi jika insert gagal
+                                                if(!$insert_layanan){
+                                                    return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                                }
+                                            }else{
+                                                return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                            }
+                                        }
+                                    }else{
+                                        $cek_id = Gedung::select('id')
+                                        ->from('gedung')
+                                        ->where('nama','=',$request->dinas)
+                                        ->first();
+                
+                                        // kondisi jika id ditemukan
+                                        if($cek_id){
+                                            // valdiasi bahwa layanan belom tersedia
+                                            $cek_layanan = Layanan::select("nama")
+                                            ->from("layanan")
+                                            ->where("id_gedung",'=',$cek_id->id)
+                                            ->where("nama",'=',$request->{'layananke'.$i})
+                                            ->first();
+            
+                                            if(!$cek_layanan){
+                                                $insert_layanan = DB::table('layanan')
+                                                ->insert([
+                                                    'nama' => $request->{'layananke'.$i},
+                                                    'id_gedung' => $cek_id->id
+                                                ]);
+                                                // kondisi jika insert gagal
+                                                if(!$insert_layanan){
+                                                    return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                                }
+                                            }else{
+                                                return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                            }
+                                        }
+                                    }
+                                    
+                                    if($request->{'file_gambar_layanan'.$i} !== null){
+                                        $file_gambar = $request->file('file_gambar_layanan'.$i);
+                                        $nama_file_gambar = 'gambar_layanan_'.$request->dinas."_".$request->{'layananke'.$i}.$file_gambar->getClientOriginalName();
+                                        $file_gambar->move('file_gambar/instansi/layanan',$nama_file_gambar);
+                                        $nama_file_gambar_layanan = 'file_gambar/instansi/layanan/'.$nama_file_gambar;
+
+                                        // cek id layanan yang sudah ditambah
+                                        $cek_id_layanan = Layanan::select("*")
+                                        ->from("layanan")
+                                        ->where("nama",'=',$request->{'layananke'.$i})
+                                        ->where("id_gedung",'=',$cek_id->id)
+                                        ->first();
+                                        // jika layanan ketemu
+                                        if($cek_id_layanan){
+                                            if($request->{'judulGambarlayananke'.$i} !== null){
+                                                $insert_layanan = DB::table('gambar_detail_layanan')
+                                                ->insert([
+                                                    'gambar_detail' => $nama_file_gambar_layanan,
+                                                    'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                                    'id_layanan' => $cek_id_layanan->id
+                                                ]);
+                                            }else{
+                                                $insert_layanan = DB::table('gambar_detail_layanan')
+                                                ->insert([
+                                                    'gambar_detail' => $nama_file_gambar_layanan,
+                                                    'id_layanan' => $cek_id_layanan->id
+                                                ]);
+                                            }
+                                        }else{
+                                            return back()->with(["error_input_dinas" => 'input gambar layanan ke '.$i." gagal"]);
+                                        }
+                                    }else{
+                                        $cek_id_layanan = Layanan::select("*")
+                                        ->from("layanan")
+                                        ->where("nama",'=',$request->{'layananke'.$i})
+                                        ->where("id_gedung",'=',$cek_id->id)
+                                        ->first();
+
+                                        if($request->{'judulGambarlayananke'.$i} !== null){
+                                            $insert_layanan = DB::table('gambar_detail_layanan')
+                                            ->insert([
+                                                'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                                'id_layanan' => $cek_id_layanan->id
+                                            ]);
+                                        }
+                                    }
+                                }else{
+                                    if($request->{'deskripsilayananke'.$i} !== null || $request->{'file_gambar_layanan'.$i} !== null || $request->{'judulGambarlayananke'.$i} !== null){
+                                        return back()->with(["error_input_dinas" => 'input layanan ke '.$i." gagal"]);
+                                    }
+                                }
+                            }
                         }
                         return redirect('/dinas')->with(['sukses_add' => 'berhasil Menambah data']);
                     }
@@ -426,7 +835,11 @@ class AdminController extends Controller
                             $sheet = $spreadsheet->getActiveSheet();
                             // ngubah seluruh data ke array
                             $data = $sheet->toArray();
-                            for($i = 0; $i < count($data); $i++){
+                            if($data[0][0] !== "Nama Layanan"){
+                                return back()->with(["error_input_dinas" => 'Input Excel harus sesuai format yang tersedia']);
+                            }
+
+                            for($i = 1; $i < count($data); $i++){
                                 // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
                                 if (isset($data[$i][1])) {
                                     // dd(5);
@@ -452,11 +865,150 @@ class AdminController extends Controller
                                             if(!$insert_layanan){
                                                 return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
                                             }
+                                        }else{
+                                            $cek_id = Gedung::select('id')
+                                            ->from('gedung')
+                                            ->where('nama','=',$request->dinas)
+                                            ->first();
+                    
+                                            // kondisi jika id ditemukan
+                                            if($cek_id){
+                                                $insert_layanan = DB::table('layanan')
+                                                ->insert([
+                                                    'nama' => $request->{'layananke'.$i},
+                                                    'id_gedung' => $cek_id->id
+                                                ]);
+                                                // kondisi jika insert gagal
+                                                if(!$insert_layanan){
+                                                    return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                             File::delete('file_layanan/'.$nama_file);
+                        }else{
+                            for($i=1; $i<=$request->jumlah_layanan; $i++){
+                                $this->validate($request,[
+                                    'layananke'.$i => 'nullable',
+                                    'deskripsilayananke'.$i => 'nullable',
+                                    'judulGambarlayananke'.$i => 'nullable',
+                                ]);
+                                if($request->{'layananke'.$i} !== null){
+                                    if($request->{'deskripsilayananke'.$i} !== null){
+                                        $cek_id = Gedung::select('id')
+                                        ->from('gedung')
+                                        ->where('nama','=',$request->dinas)
+                                        ->first();
+                
+                                        // kondisi jika id ditemukan
+                                        if($cek_id){
+                                            // valdiasi bahwa layanan belom tersedia
+                                            $cek_layanan = Layanan::select("nama")
+                                            ->from("layanan")
+                                            ->where("id_gedung",'=',$cek_id->id)
+                                            ->where("nama",'=',$request->{'layananke'.$i})
+                                            ->first();
+            
+                                            if(!$cek_layanan){
+                                                $insert_layanan = DB::table('layanan')
+                                                ->insert([
+                                                    'nama' => $request->{'layananke'.$i},
+                                                    'deskripsi' => $request->{'deskripsilayananke'.$i},
+                                                    'id_gedung' => $cek_id->id
+                                                ]);
+                                                // kondisi jika insert gagal
+                                                if(!$insert_layanan){
+                                                    return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                                }
+                                            }else{
+                                                return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                            }
+                                        }
+                                    }else{
+                                        $cek_id = Gedung::select('id')
+                                        ->from('gedung')
+                                        ->where('nama','=',$request->dinas)
+                                        ->first();
+                
+                                        // kondisi jika id ditemukan
+                                        if($cek_id){
+                                            // valdiasi bahwa layanan belom tersedia
+                                            $cek_layanan = Layanan::select("nama")
+                                            ->from("layanan")
+                                            ->where("id_gedung",'=',$cek_id->id)
+                                            ->where("nama",'=',$request->{'layananke'.$i})
+                                            ->first();
+            
+                                            if(!$cek_layanan){
+                                                $insert_layanan = DB::table('layanan')
+                                                ->insert([
+                                                    'nama' => $request->{'layananke'.$i},
+                                                    'id_gedung' => $cek_id->id
+                                                ]);
+                                                // kondisi jika insert gagal
+                                                if(!$insert_layanan){
+                                                    return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                                }
+                                            }else{
+                                                return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena layanan '.$request->{'layananke'.$i}.' sudah tersedia']);
+                                            }
+                                        }
+                                    }
+                                    
+                                    if($request->{'file_gambar_layanan'.$i} !== null){
+                                        $file_gambar = $request->file('file_gambar_layanan'.$i);
+                                        $nama_file_gambar = 'gambar_layanan_'.$request->dinas."_".$request->{'layananke'.$i}.$file_gambar->getClientOriginalName();
+                                        $file_gambar->move('file_gambar/instansi/layanan',$nama_file_gambar);
+                                        $nama_file_gambar_layanan = 'file_gambar/instansi/layanan/'.$nama_file_gambar;
+
+                                        // cek id layanan yang sudah ditambah
+                                        $cek_id_layanan = Layanan::select("*")
+                                        ->from("layanan")
+                                        ->where("nama",'=',$request->{'layananke'.$i})
+                                        ->where("id_gedung",'=',$cek_id->id)
+                                        ->first();
+                                        // jika layanan ketemu
+                                        if($cek_id_layanan){
+                                            if($request->{'judulGambarlayananke'.$i} !== null){
+                                                $insert_layanan = DB::table('gambar_detail_layanan')
+                                                ->insert([
+                                                    'gambar_detail' => $nama_file_gambar_layanan,
+                                                    'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                                    'id_layanan' => $cek_id_layanan->id
+                                                ]);
+                                            }else{
+                                                $insert_layanan = DB::table('gambar_detail_layanan')
+                                                ->insert([
+                                                    'gambar_detail' => $nama_file_gambar_layanan,
+                                                    'id_layanan' => $cek_id_layanan->id
+                                                ]);
+                                            }
+                                        }else{
+                                            return back()->with(["error_input_dinas" => 'input gambar layanan ke '.$i." gagal"]);
+                                        }
+                                    }else{
+                                        $cek_id_layanan = Layanan::select("*")
+                                        ->from("layanan")
+                                        ->where("nama",'=',$request->{'layananke'.$i})
+                                        ->where("id_gedung",'=',$cek_id->id)
+                                        ->first();
+                                        
+                                        if($request->{'judulGambarlayananke'.$i} !== null){
+                                            $insert_layanan = DB::table('gambar_detail_layanan')
+                                            ->insert([
+                                                'judul_gambar' => $request->{'judulGambarlayananke'.$i},
+                                                'id_layanan' => $cek_id_layanan->id
+                                            ]);
+                                        }
+                                    }
+                                }else{
+                                    if($request->{'deskripsilayananke'.$i} !== null || $request->{'file_gambar_layanan'.$i} !== null || $request->{'judulGambarlayananke'.$i} !== null){
+                                        return back()->with(["error_input_dinas" => 'input layanan ke '.$i." gagal"]);
+                                    }
+                                }
+                            }
                         }
                         return redirect('/dinas')->with(['sukses_add' => 'berhasil Menambah data']);
                     }
@@ -500,6 +1052,14 @@ class AdminController extends Controller
 
     public function add_admin(Request $request) {
         $pw = Bcrypt($request->password);
+
+        // cek username udah tersedia atau belom
+        $cek_username = Users::select("*")->from("users")->where("username",'=',$request->username)->first();
+
+        // dd($cek_username);
+        if($cek_username){
+            return back()->with(["error_add" => "username sudah tersedia"]);
+        }
         // untuk insert ID admin nya
         $cek = DB::table('users')
         ->select('id')
@@ -513,12 +1073,13 @@ class AdminController extends Controller
         
         $exsistingUser = DB::table('users')->where('email', $request->email)->first();
         if($exsistingUser) {
-            return back()->with(["error_ready" => 'Email sudah tersedia']);
+            return back()->with(["error_add" => 'Email sudah tersedia']);
         }else{
             $add_admin = DB::table('users')->insert([
                 "id" => $id,
                 "email" => $request->email,
                 "username" => $request->username,
+                "nama_admin" => $request->nama_admin,
                 "password" => $pw,
             ]);
         }
@@ -535,7 +1096,23 @@ class AdminController extends Controller
             $this->validate($request, [
                 'email' => 'required',
                 'nama' => 'required',
+                'nama_admin' => 'required',
             ]);
+            $cek_username = Users::select("*")
+            ->from("users")->where("username",'=',$request->username)->where("id",'!=',$request->id)->first();
+    
+            if($cek_username){
+                return back()->with(["error_input_admin" => "username sudah tersedia"]);
+            }
+
+            $cek_email = Users::select("*")->from("users")->where("id",'=',$request->id)->first();
+            if($request->email !== $cek_email->email){
+                $get_email = Users::pluck("email")->toArray();
+                if(in_array($request->email, $get_email)){
+                    return back()->with(["error_input_admin" => 'email sudah tersedia']);
+                }else{
+                }
+            }
             $update = DB::table('users')->where('id', '=', $request->id)->update([
                 "email" => $request->email,
                 "username" => $request->nama,
@@ -550,13 +1127,31 @@ class AdminController extends Controller
                 return redirect('/admin')->with(["error_input_admin" => 'email harus di isi']);
             }
             if (isset($errors['nama'])) {
+                return redirect('/admin')->with(["error_input_admin" => 'username tidak boleh kosong']);
+            }
+            if (isset($errors['nama_admin'])) {
                 return redirect('/admin')->with(["error_input_admin" => 'nama tidak boleh kosong']);
             }
         }
     }
     public function delete_admin($id){
-        DB::table('users')->where('id','=', $id)->delete();
-        return redirect('/admin')->with(['sukses_delete' => "berhasil menghapus admin"]);
+        $jml_admin = Users::select("id")
+        ->from('users')
+        ->count();
+        $cek_email = Session('email');
+        if($jml_admin > 1){
+            // cek email yang mau dihapus
+            $cek_email_dariId = Users::select("email")->from("users")->where('id','=',$id)->first();
+            // dd($cek_email_dariId);
+            if($cek_email_dariId->email !== $cek_email){
+                DB::table('users')->where('id','=', $id)->delete();
+                return redirect('/admin')->with(['sukses_delete' => "berhasil menghapus admin"]);
+            }else{
+                return response()->json(['error_delete' => 'Tidak bisa menghapus akun']);
+            }
+        }else{
+            return response()->json(['error_delete' => 'Tidak bisa menghapus akun']);
+        }
     }
 
 
@@ -570,8 +1165,9 @@ class AdminController extends Controller
         $fasilitasArray = [];
         for ($i = 0; $i < $count; $i++) {
             $penginapans = $penginapan[$i];
-            $fasilitas = Fasilitas::select('*')
-            ->from('fasilitas')
+            $fasilitas = Fasilitas::select('f.*','l.nama_fasilitas')
+            ->from('fasilitas as f')
+            ->join("list_fasilitas as l",'l.id','=','f.id_jenis_fasilitas')
             ->where('id_penginapan','=',$penginapans->id)
             ->get();
             $fasilitasArray[$penginapans->id] = $fasilitas;
@@ -595,16 +1191,20 @@ class AdminController extends Controller
         return back()->with(['sukses_delete' => "sukses menghapus penginapan"]);
     }
     public function add_penginapan(){
-        return view('sistem_informasi.admin.penginapan.add_penginapan');
+        $fasilitas = List_fasilitas::select("*")->from("list_fasilitas")->get();
+
+        return view('sistem_informasi.admin.penginapan.add_penginapan',["fasilitas" => $fasilitas]);
     }
 
     public function edit_penginapan($id){
         //  untuk mengisi di select nya
         $penginapan = Penginapan::select('*')->from('penginapan')->where('id','=',$id)->first();
-        $fasilitas = Fasilitas::select('nama as nama_fasilitas','id as id_fasilitas')
-        ->from("fasilitas")
-        ->where('id_penginapan','=',$id)
-        ->get();
+        
+        // get fasilitas yang sudah dipilih apa aja
+        $getFasilitasPenginapan = Fasilitas::select("*")->from("fasilitas")->where("id_penginapan", '=', $id)->get();
+        $fasilitas = List_fasilitas::select("*")->from("list_fasilitas")->whereNotIn("id", $getFasilitasPenginapan->pluck('id_jenis_fasilitas'))->get();
+        // dd($fasilitas);        
+
         // dd($fasilitas);
         // dd($penginapan);
 
@@ -628,12 +1228,22 @@ class AdminController extends Controller
                 'jarak' => 'required|numeric',
                 'file_gambar' => 'nullable|image',
                 'jenis' => 'nullable',
-                'file_fasilitas' => 'nullable|mimes:xlsx',
             ]);
+            $get_penginapan = DB::table('penginapan')->pluck('nama')->toArray();
+            $get_nama = Penginapan::select("nama")->from("penginapan")->where("id",'=',$request->id)->first();
+
+            // misal nama penginapan nya diubah
+            if($get_nama->nama !== $request->penginapan){
+                if(in_array($request->penginapan, $get_penginapan)){
+                    return back()->with(["error_input_dinas" => "penginapan sudah tersedia"]);
+                }
+            }
+
             // ketika jarak yang dimasukkan lebih dari 10 km
             if($request->jarak >= 10){
                 return back()->with(["error_input_dinas" => 'jarak tidak boleh lebih dari 10km']);
             }
+
             // kalo inputan tujuan kosng, berarti masih make tujuan kunjungan sebelumnya
             if($request->jenis !== null){
                 $update_penginapan = DB::table('penginapan')
@@ -643,8 +1253,6 @@ class AdminController extends Controller
                 ]);
             }
             if($request->alamat == null){
-                
-                // hapus file sebelumnya
                 
                 $update_penginapan = DB::table('penginapan')
                 ->where('id','=',$request->id)
@@ -671,41 +1279,16 @@ class AdminController extends Controller
                     DB::table('penginapan')->where('id','=',$request->id)->update(['gambar' => $nama_file_gambar_penginapan]);
                 }
                 // dd($request->file_fasilitas);
-                if($request->file_fasilitas !== null){
-                    $file = $request->file('file_fasilitas');
-                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
-                    $file->move('file_layanan',$nama_file);
-                    $nama_file_excel = 'file_layanan/'.$nama_file;
-        
-                    $spreadsheet = IOFactory::load($nama_file_excel);
-                    // buat ngebaca sheet pertama
-                    $sheet = $spreadsheet->getActiveSheet();
-                    // ngubah seluruh data ke array
-                    $data = $sheet->toArray();
-                    for($i = 1; $i < count($data); $i++){
-                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
-                        if (isset($data[$i][1])) {
-                            // dd(5);
-                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                        }else{
-                            if($data[$i][0] == null){
-                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                            }else{
-
-                                $insert_fasilitas = DB::table('fasilitas')
-                                ->insert([
-                                    'nama' => $data[$i][0],
-                                    'id_penginapan' => $request->id
-                                ]);
-                                // kondisi jika insert gagal
-                                if(!$insert_fasilitas){
-                                    return redirect('/penginapan')->with(['error_edit' => 'gagal Menambah data']);
-                                }
-                            }
-                        }
+                $fasilitas = $request->input('fasilitas');
+                if($fasilitas !== null){
+                    foreach ($fasilitas as $fasilitass) {
+                        $insert = DB::table("fasilitas")->insert([
+                            "id_jenis_fasilitas" => $fasilitass,
+                            "id_penginapan" => $request->id,
+                        ]);
                     }
-                    
-                    File::delete('file_layanan/'.$nama_file);
+                }else{
+                    return redirect('/penginapan')->with(['sukses_edit' => "Fasilitas berhasil di edit"]);
                 }
                 return redirect('/penginapan')->with(['sukses_edit' => "Fasilitas berhasil di edit"]);
             }else{
@@ -735,40 +1318,17 @@ class AdminController extends Controller
                     }
                     DB::table('penginapan')->where('id','=',$request->id)->update(['gambar' => $nama_file_gambar_penginapan]);
                 }
-                if($request->file_fasilitas !== null){
-                    $file = $request->file('file_fasilitas');
-                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
-                    $file->move('file_layanan',$nama_file);
-                    $nama_file_excel = 'file_layanan/'.$nama_file;
-        
-                    $spreadsheet = IOFactory::load($nama_file_excel);
-                    // buat ngebaca sheet pertama
-                    $sheet = $spreadsheet->getActiveSheet();
-                    // ngubah seluruh data ke array
-                    $data = $sheet->toArray();
-                    for($i = 1; $i < count($data); $i++){
-                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
-                        if (isset($data[$i][1])) {
-                            // dd(5);
-                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                        }else{
-                            if($data[$i][0] == null){
-                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                            }else{
-
-                                $insert_fasilitas = DB::table('fasilitas')
-                                ->insert([
-                                    'nama' => $data[$i][0],
-                                    'id_penginapan' => $request->id
-                                ]);
-                                // kondisi jika insert gagal
-                                if(!$insert_fasilitas){
-                                    return back()->with(['error_edit' => 'gagal Menambah data']);
-                                }
-                            }
-                        }
+                $fasilitas = $request->input('fasilitas');
+                if($fasilitas !== null){
+                    foreach ($fasilitas as $fasilitass) {
+                        // cek apakah fasilitas sudah dipilih atau belum
+                        $insert = DB::table("fasilitas")->insert([
+                            "id_jenis_fasilitas" => $fasilitass,
+                            "id_penginapan" => $request->penginapan,
+                        ]);
                     }
-                    File::delete('file_layanan/'.$nama_file);
+                }else{
+                    return redirect('/penginapan')->with(['sukses_edit' => "Fasilitas berhasil di edit"]);
                 }
                 return redirect('/penginapan')->with(['sukses_edit' => "Fasilitas berhasil di edit"]);
             }
@@ -781,9 +1341,7 @@ class AdminController extends Controller
                 return back()->with(["error_input_dinas" => 'nama penginapan harus di isi']);
             }
 
-            if (isset($errors['file_fasilitas'])) {
-                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / fasilitas harus di isi']);
-            }
+
             if (isset($errors['file_gambar'])) {
                 return back()->with(["error_input_dinas" => 'Format gambar salah']);
             }
@@ -794,7 +1352,10 @@ class AdminController extends Controller
             if (isset($errors['telp'])) {
                 return back()->with(["error_input_dinas" => 'No telepon harus dalam bentuk angka']);
             }
-            if (isset($errors['harga'])) {
+            if (isset($errors['harga_terendah'])) {
+                return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
+            }
+            if (isset($errors['harga_tertinggi'])) {
                 return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
             }
             if (isset($errors['jarak'])) {
@@ -813,7 +1374,6 @@ class AdminController extends Controller
                 'jarak' => 'required|numeric',
                 'jenis' => 'required',
                 'file_gambar' => 'required|image',
-                'file_fasilitas' => 'required|mimes:xlsx',
             ]);
             $cek = DB::table('penginapan')
             ->select('id')
@@ -863,47 +1423,20 @@ class AdminController extends Controller
                 ]);
                 if($insert_data){
                     // membaca isi data file excel nya
-                    $file = $request->file('file_fasilitas');
-                    $nama_file = 'File_fasilitas'.'.'.$file->getClientOriginalExtension();
-                    $file->move('file_layanan',$nama_file);
-                    $nama_file_excel = 'file_layanan/'.$nama_file;
-        
-                    $spreadsheet = IOFactory::load($nama_file_excel);
-                    // buat ngebaca sheet pertama
-                    $sheet = $spreadsheet->getActiveSheet();
-                    // ngubah seluruh data ke array
-                    $data = $sheet->toArray();
-                    for($i = 1; $i < count($data); $i++){
-                        // ini misal ada 2 kolom input ( soalnya aku nerapin cuman masukin 1 kolom doang )
-                        if (isset($data[$i][1])) {
-                            // dd(5);
-                            return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                        }else{
-                            if($data[$i][0] == null){
-                                return back()->with(["error_input_dinas" => 'Input fasilitas terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
-                            }else{
-                                //  mengecek id penginapan yang sudah ditambah sebelumnya diatas untuk menambah data fasilitas pada penginapan tersebut
-                                $cek_id = Penginapan::select('id')
-                                ->from('penginapan')
-                                ->where('nama','=',$request->penginapan)
-                                ->first();
-
-                                // kondisi jika id ditemukan
-                                if($cek_id){
-                                    $insert_fasilitas = DB::table('fasilitas')
-                                    ->insert([
-                                        'nama' => $data[$i][0],
-                                        'id_penginapan' => $cek_id->id
-                                    ]);
-                                    // kondisi jika insert gagal
-                                    if(!$insert_fasilitas){
-                                        return redirect('/penginapan')->with(['error_add' => 'gagal Menambah data']);
-                                    }
-                                }
-                            }
+                    $fasilitas = $request->input('fasilitas');
+                    // dd($fasilitas);
+                    if($fasilitas!== null){
+                        foreach ($fasilitas as $fasilitass) {
+                            $insert = DB::table("fasilitas")->insert([
+                                "id_jenis_fasilitas" => $fasilitass,
+                                "id_penginapan" => $id,
+                            ]);
                         }
+                    }else{
+                        return redirect('/penginapan')->with(['sukses_add' => 'berhasil Menambah data']);
                     }
-                    File::delete('file_layanan/'.$nama_file);
+                }else{
+                    return redirect('/penginapan')->with(['error_add' => 'Gagal Menambah data']);
                 }
                 return redirect('/penginapan')->with(['sukses_add' => 'berhasil Menambah data']);
             }
@@ -918,9 +1451,11 @@ class AdminController extends Controller
             if (isset($errors['jenis'])) {
                 return back()->with(["error_input_dinas" => 'jenis penginapan harus di isi']);
             }
-
-            if (isset($errors['file_fasilitas'])) {
-                return back()->with(["error_input_dinas" => 'File harus dalam bentuk .xlsx / fasilitas harus di isi']);
+            if (isset($errors['harga_terendah'])) {
+                return back()->with(["error_input_dinas" => 'harga penginapan harus di isi / harus dalam berbentuk angka']);
+            }
+            if (isset($errors['harga_tertinggi'])) {
+                return back()->with(["error_input_dinas" => 'harga penginapan harus di isi / harus dalam berbentuk angka']);
             }
             if (isset($errors['file_gambar'])) {
                 return back()->with(["error_input_dinas" => 'File harus dalam bentuk gambar / gambar harus di isi']);
@@ -969,7 +1504,7 @@ class AdminController extends Controller
         ->where('nama','=',$request->nama)
         ->first();
         if($cek){
-            return back()->with(['error_ready' => 'wisata sudah tersedia']);
+            return redirect("/wisata")->with(['error_ready' => 'wisata sudah tersedia']);
         }else{
             $file_gambar = $request->file('file_gambar');
             $nama_file_gambar = 'gambar_wisata_'.$file_gambar->getClientOriginalName();
@@ -977,7 +1512,7 @@ class AdminController extends Controller
             $nama_file_gambar_wisata = 'file_gambar/wisata/'.$nama_file_gambar;
             // dd($nama_file_gambar);
             if($request->jarak >= 10){
-                return back()->with(["error_input_dinas" => 'jarak tidak boleh lebih dari 10km']);
+                return redirect("/wisata")->with(['error_ready' => 'Jarak Tidak boleh lebih dari 10km']);
             }
 
             $insertWisata = DB::table('wisata')
@@ -992,9 +1527,9 @@ class AdminController extends Controller
                 'jarak' => $request->jarak
             ]);
             if($insertWisata){
-                return back()->with(['sukses_add' => 'wisata berhasil ditambah']);
+                return redirect("/wisata")->with(['sukses_add' => 'wisata berhasil ditambah']);
             }else{
-                return back()->with(['error_add' => 'wisata gagal ditambah']);
+                return redirect("/wisata")->with(['error_add' => 'wisata gagal ditambah']);
             }
         }
     }
@@ -1032,6 +1567,16 @@ class AdminController extends Controller
             ]);
             // dd($nama_file_gambar_wisata);
             // mengambil data wisata yang ada di database sesuai id
+            $get_wisata = DB::table('wisata')->pluck('nama')->toArray();
+            $get_nama = Wisata::select("nama")->from("wisata")->where("id",'=',$request->id)->first();
+
+            // misal nama wisata nya diubah
+            if($get_nama->nama !== $request->nama){
+                if(in_array($request->nama, $get_wisata)){
+                    return back()->with(["error_input_dinas" => "wisata sudah tersedia"]);
+                }
+            }
+
             $getdata = Wisata::select('*')
             ->from("wisata")
             ->where('id','=',$request->id)
@@ -1127,6 +1672,9 @@ class AdminController extends Controller
             if (isset($errors['harga'])) {
                 return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
             }
+            if (isset($errors['harga_weekend'])) {
+                return back()->with(["error_input_dinas" => 'harga harus dalam bentuk angka']);
+            }
             if (isset($errors['jarak'])) {
                 return back()->with(["error_input_dinas" => 'jarak harus dalam bentuk angka']);
             }
@@ -1195,12 +1743,22 @@ class AdminController extends Controller
                 'nama' => 'required',
                 'alamat' => 'nullable',
                 'jarak' => 'required|numeric',
+                'jumlah_menu' => 'required|numeric',
                 'file_gambar' => 'nullable|image',
                 'file_layanan' => 'nullable|mimes:xlsx',
             ]);
             // pertama update data gedung nya dulu
             // misal deskripsi nya  diubah
-            
+            $get_kuliner = DB::table('kuliner')->pluck('nama')->toArray();
+            $get_nama = Kuliner::select("nama")->from("kuliner")->where("id",'=',$request->id)->first();
+
+            // misal nama kuliner nya diubah
+            if($get_nama->nama !== $request->nama){
+                if(in_array($request->nama, $get_kuliner)){
+                    return back()->with(["error_input_dinas" => "kuliner sudah tersedia"]);
+                }
+            }
+
             if($request->jarak >= 10){
                 return back()->with(["error_input_dinas" => 'jarak tidak boleh lebih dari 10km']);
             }
@@ -1275,6 +1833,51 @@ class AdminController extends Controller
                     }
                 }
                 File::delete('file_layanan/'.$nama_file);
+            }else{
+                for($i=1; $i<$request->jumlah_menu + 1; $i++){
+                    if($request->{'menu'.$i} !== null){
+                        if($request->{'hargamenu'.$i} === null){
+                            return back()->with(["error_input_dinas" => "Harga Menu ke ".$i." Kosong"]);
+                        }else{
+                            $cek_id = Kuliner::select('id')
+                            ->from('kuliner')
+                            ->where('nama','=',$request->nama)
+                            ->first();
+    
+                            // kondisi jika id ditemukan
+                            if($cek_id){
+                                // valdiasi bahwa layanan belom tersedia
+                                $cek_menu = Menu::select("nama")
+                                ->from("menu")
+                                ->where("id_kuliner",'=',$cek_id->id)
+                                ->where("nama",'=',$request->{'menu'.$i})
+                                ->first();
+
+                                if(!$cek_menu){
+                                    if(!is_numeric($request->{'hargamenu'.$i})){
+                                        return back()->with(["error_input_dinas" => 'Input Menu terhenti karena Harga Menu ke '.$i.' tidak berbentuk angka']);
+                                    }
+                                    $insert_menu = DB::table('menu')
+                                    ->insert([
+                                        'nama' => $request->{'menu'.$i},
+                                        'harga' => $request->{'hargamenu'.$i},
+                                        'id_kuliner' => $cek_id->id
+                                    ]);
+                                    // kondisi jika insert gagal
+                                    if(!$insert_menu){
+                                        return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                    }
+                                }else{
+                                    return back()->with(["error_input_dinas" => 'Input Menu terhenti karena Menu '.$request->{'menu'.$i}.' sudah tersedia']);
+                                }
+                            }
+                        }
+                    }else{
+                        if($request->{'hargamenu'.$i} !== null){
+                            return back()->with(["error_input_dinas" => "Menu ke ".$i." Kosong"]);
+                        }
+                    }
+                }
             }
             return redirect('/kuliner')->with(['sukses_edit' => 'berhasil mengedit data']);
         } catch (ValidationException $e) {
@@ -1318,9 +1921,11 @@ class AdminController extends Controller
                 'nama' => 'required',
                 'alamat' => 'required',
                 'jarak' => 'required|numeric',
+                'jumlah_menu' => 'required|numeric',
                 'file_gambar' => 'required|image',
-                'file_layanan' => 'required|mimes:xlsx',
+                'file_layanan' => 'nullable|mimes:xlsx',
             ]);
+            // dd($request->jumlah_menu);
             $cek = DB::table('kuliner')
             ->select('id')
             ->orderByRaw("LENGTH(id), CAST(id AS SIGNED), id")
@@ -1364,21 +1969,24 @@ class AdminController extends Controller
                 ]);
 
                 if($insert_data){
-                    // membaca isi data file excel nya
-                    $file = $request->file('file_layanan');
-                    $nama_file = 'File_layanan'.'.'.$file->getClientOriginalExtension();
-                    $file->move('file_layanan',$nama_file);
-                    $nama_file_excel = 'file_layanan/'.$nama_file;
-        
-                    $spreadsheet = IOFactory::load($nama_file_excel);
-                    // buat ngebaca sheet pertama
-                    $sheet = $spreadsheet->getActiveSheet();
-                    // ngubah seluruh data ke array
-                    $data = $sheet->toArray();
-        
-                    // looping buat ngebaca isi file nya
-                    for($i = 1; $i < count($data); $i++){
-                        if($data[$i][0] == null || !isset($data[$i][1]) || !is_numeric($data[$i][1])){
+                    if($request->file_layanan !== null){
+                        // membaca isi data file excel nya
+                        $file = $request->file('file_layanan');
+                        $nama_file = 'File_layanan'.'.'.$file->getClientOriginalExtension();
+                        $file->move('file_layanan',$nama_file);
+                        $nama_file_excel = 'file_layanan/'.$nama_file;
+            
+                        $spreadsheet = IOFactory::load($nama_file_excel);
+                        // buat ngebaca sheet pertama
+                        $sheet = $spreadsheet->getActiveSheet();
+                        // ngubah seluruh data ke array
+                        $data = $sheet->toArray();
+                        if($data[0][0] !== "Nama Menu" || $data[0][1] !== "Harga Menu ( angka )"){
+                            return back()->with(["error_input_dinas" => 'Input Excel harus sesuai format yang tersedia']);
+                        }
+                        // looping buat ngebaca isi file nya
+                        for($i = 1; $i < count($data); $i++){
+                            if($data[$i][0] == null || !isset($data[$i][1]) || !is_numeric($data[$i][1])){
                                 return back()->with(["error_input_dinas" => 'Input Layanan terhenti karena pada baris ke '.$i+1 .' tidak sesuai format penulisan']);
                             }else{
                                 // $trim_data = trim($data[$i][0]);
@@ -1393,7 +2001,7 @@ class AdminController extends Controller
                                     // KONDISI KETIKA SUDAH ADA DI DATABASE
                                     return back()->with(["error_input_dinas" => 'Input menu terhenti karena menu pada baris ke '.$i+1 .' sudah tersedia']);
                                 }else{
-                                    // KONDISI JIKA BELUM TERSEDIA, MAKA AKAN DILAKUKAN INSERT
+                                // KONDISI JIKA BELUM TERSEDIA, MAKA AKAN DILAKUKAN INSERT
                                     DB::table('menu')
                                     ->insert([
                                         'nama' => $trim_data,
@@ -1402,9 +2010,57 @@ class AdminController extends Controller
                                     ]);
                                 }
                             }
+                        }
+                        File::delete('file_layanan/'.$nama_file);
+                    }else{
+                        for($i=1; $i<$request->jumlah_menu + 1; $i++){
+                            if($request->{'menu'.$i} !== null){
+                                if($request->{'hargamenu'.$i} === null){
+                                    return back()->with(["error_input_dinas" => "Harga Menu ke ".$i." Kosong"]);
+                                }else{
+                                    $cek_id = Kuliner::select('id')
+                                    ->from('kuliner')
+                                    ->where('nama','=',$request->nama)
+                                    ->first();
+            
+                                    // kondisi jika id ditemukan
+                                    if($cek_id){
+                                        // valdiasi bahwa layanan belom tersedia
+                                        $cek_menu = Menu::select("nama")
+                                        ->from("menu")
+                                        ->where("id_kuliner",'=',$cek_id->id)
+                                        ->where("nama",'=',$request->{'menu'.$i})
+                                        ->first();
+        
+                                        if(!$cek_menu){
+                                            if(!is_numeric($request->{'hargamenu'.$i})){
+                                                return back()->with(["error_input_dinas" => 'Input Menu terhenti karena Harga Menu ke '.$i.' tidak berbentuk angka']);
+                                            }
+                                            $insert_menu = DB::table('menu')
+                                            ->insert([
+                                                'nama' => $request->{'menu'.$i},
+                                                'harga' => $request->{'hargamenu'.$i},
+                                                'id_kuliner' => $cek_id->id
+                                            ]);
+                                            // kondisi jika insert gagal
+                                            if(!$insert_menu){
+                                                return redirect('/dinas')->with(['error_add' => 'gagal Menambah data']);
+                                            }
+                                        }else{
+                                            return back()->with(["error_input_dinas" => 'Input Menu terhenti karena Menu '.$request->{'menu'.$i}.' sudah tersedia']);
+                                        }
+                                    }
+                                }
+                            }else{
+                                if($request->{'hargamenu'.$i} !== null){
+                                    return back()->with(["error_input_dinas" => "Menu ke ".$i." Kosong"]);
+                                }
+                            }
+                        }
                     }
-                    File::delete('file_layanan/'.$nama_file);
                     return redirect('kuliner')->with(['sukses_add' => 'berhasil Menambah data']);
+                }else{
+                    return redirect('kuliner')->with(['error_add' => 'gagal Menambah data']);
                 }
             }
         }
@@ -1431,12 +2087,16 @@ class AdminController extends Controller
         }
     }
     public function edit_menu(Request $request){
+        $get_id_kuliner = Kuliner::select("*")->from("kuliner")->where("nama",'=',$request->warung)->first();
         $cek_menu = Menu::select('*')
         ->from('menu')
         ->where('nama','=',$request->nama)
-        ->where('id_kuliner','=',$request->warung)
+        ->where('id_kuliner','=',$get_id_kuliner->id)
         ->first();
         if(!$cek_menu){
+            if(!is_numeric($request->harga)){
+                return back()->with(['error_edit' => "harga harus dalam bentuk angka"]);
+            }
             $edit_menu = DB::table('menu')
             ->where('id','=',$request->id)
             ->update([
@@ -1448,6 +2108,9 @@ class AdminController extends Controller
             }
         }else{
             if($cek_menu->id == $request->id){
+                if(!is_numeric($request->harga)){
+                    return back()->with(['error_edit' => "harga harus dalam bentuk angka"]);
+                }
                 $edit_menu = DB::table('menu')
                 ->where('id','=',$request->id)
                 ->update([
@@ -1468,6 +2131,14 @@ class AdminController extends Controller
         }
         return response()->download($filePath);
     }
+    public function download_file_layanan(){
+        $filePath = public_path('file_template/layanan.xlsx');
+
+        if (!file_exists($filePath)) {
+            return back()->with(['error_ready' => "File tidak tersedia"]);
+        }
+        return response()->download($filePath);
+    }
     public function download_file_fasilitas(){
         $filePath = public_path('file_template/fasilitas.xlsx');
 
@@ -1475,5 +2146,40 @@ class AdminController extends Controller
             return back()->with(['error_ready' => "File tidak tersedia"]);
         }
         return response()->download($filePath);
+    }
+    public function add_jenis_fasilitas(Request $request){
+        $jenisFasilitas = $request->input('jenis_fasilitas');
+        // cek apakah fasilitas udah ada apa belom
+        $cek = List_fasilitas::select("*")->from("list_fasilitas")->where("nama_fasilitas",'=',$jenisFasilitas)->first();
+        if($cek){
+            return redirect("/add/penginapan")->with(["error_add" => "Gagal Menambah Fasilitas"]);
+        }
+        if($jenisFasilitas){
+            DB::table("list_fasilitas")->insert([
+                "nama_fasilitas" => $jenisFasilitas
+            ]);
+            return redirect("/add/penginapan")->with(["sukses_add" => "Berhasil Menambah Fasilitas"]);
+        }else{
+            return redirect("/add/penginapan")->with(["error_add" => "Gagal Menambah Fasilitas"]);
+        }
+    }
+    public function hapus_jenis_fasilitas($id){
+        $cek = List_fasilitas::select("*")->from("list_fasilitas")->where("id",'=',$id)->first();
+        if($cek){
+            // cek diatas merupakan ngecek apakah benar adanya data tersebut di table list fasilitas
+            $hapus_fasilitas_penginapan = DB::table("fasilitas")->select("*")->where("id_jenis_fasilitas",'=',$id)->delete();
+            // hapus_fasilitas_penginapan adalah menghapus fasilitas terkait yang sudah digunakan pada penginapan
+            // setelah itu baru hapus dari list fasilitas
+            if($hapus_fasilitas_penginapan){
+                $hapus_jenis_fasilitas = DB::table("list_fasilitas")->select("*")->where("id",'=',$id)->delete();
+                if($hapus_jenis_fasilitas){
+                    return back()->with(["sukses_delete" => "berhasil menghapus fasilitas"]);
+                }else{
+                    return back()->with(["error_delete" => "gagal menghapus fasilitas"]);
+                }
+            }else{
+                return back()->with(["error_delete" => "gagal menghapus fasilitas"]);
+            }
+        }
     }
 }

@@ -231,14 +231,26 @@
         border-color: #454cad;
         cursor: pointer;
     }
+    #searchEmail::placeholder {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: f002;
+        color: #888;
+        opacity: 1;
+        padding-left: 5px;
+    }
     </style>
 </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <body>
     <section class="ftco-section">
         <div class="container">
+            <div class="text-left mb-3">
+                <span style="font-size: 20px; font-weight: bold;color: rgb(43, 75, 255);margin-left: 14px">DAFTAR WISATA</span>
+            </div>
             <div class="text-right mr-3 mb-3">
-                <button type="submit" class="btn btn-success" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Wisata</span></button>
+                <button type="submit" class="btn btn-success" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Tambah Wisata</span></button>
             </div>
             {{-- POP UP FOTO Wisata --}}
             <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -251,7 +263,7 @@
                                             
                         </div>
                         <div class="modal-footer" style="text-align: center">
-                            <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_wisata" data-bs-dismiss="modal">Delete</button>
+                            <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_wisata" data-bs-dismiss="modal">Hapus</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
@@ -263,7 +275,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Add Wisata</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Tambah Wisata</h5>
                     </div>
                     <form action="/add/wisata" method="post" enctype="multipart/form-data">
                         @csrf
@@ -273,16 +285,16 @@
                                 <input id="nama" type="text" class="form-control" placeholder="Masukkan naama wisata" required name="nama">
                             </div>
                             <div class="gambar_upload">
-                                <span class="formbold-form-label mt-3"> Foto Penginapan <strong class="text-danger">*</strong></span>
+                                <span class="formbold-form-label mt-3"> Foto Wisata <strong class="text-danger">*</strong></span>
                                 <input required id="file-upload" type="file" name="file_gambar" accept="image/*" />
               
                                 <label for="file-upload" id="file-drag" style="display: inline-block; margin-bottom: 20px;">
                                   <img id="file-image" src="#" alt="Preview" class="hidden">
                                   <div id="start">
                                     <i class="fa fa-download" aria-hidden="true"></i>
-                                    <div>Select a file or drag here</div>
-                                    <div id="notimage" class="hidden">Please select an image</div>
-                                    <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                                    <div>Pilih File atau Tarik File</div>
+                                    <div id="notimage" class="hidden">Masukkan Gambar</div>
+                                    <span id="file-upload-btn" class="btn btn-primary">Pilih Gambar</span>
                                   </div>
                                   <div id="response" class="hidden">
                                     <div id="messages2"></div>
@@ -301,11 +313,11 @@
                                 <input id="alamat" type="text" class="form-control" placeholder="Masukkan Alamat" required name="alamat">
                             </div>
                             <div class="form-group">
-                                <label for="harga">Harga Tiket ( hari biasa ) :</label>
+                                <label for="harga">Harga Tiket pada hari biasa (Rupiah) :</label>
                                 <input id="harga" type="number" class="form-control" placeholder="Masukkan harga" required name="harga">
                             </div>
                             <div class="form-group">
-                                <label for="harga_weekend">Harga Tiket ( weekend ) :</label>
+                                <label for="harga_weekend">Harga Tiket pada weekend (Rupiah) :</label>
                                 <input id="harga_weekend" type="number" class="form-control" placeholder="Masukkan harga" required name="harga_weekend">
                             </div>
                             <div class="form-group">
@@ -314,8 +326,8 @@
                             </div>
                         </div>
                         <div class="modal-footer" style="text-align: center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+                            <button type="submit" class="btn btn-primary">Tambah</button>
                         </div>
                     </form>
                 </div>
@@ -323,10 +335,26 @@
         </div>
 
         {{-- END POP UP --}}
-        <div class="col-lg-25 d-flex align-items-strech">
-            <div class="card w-100">
-                <div class="card-body">
-                    <input type="text" class="form-control text-center" placeholder="Search nama wisata" id="searchEmail">
+        <div class="modal fade" id="deskripsi_wisata_container" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Deskripsi Wisata <strong><span id="nama_dinas_modal2"></span></strong></h5>
+                    </div>
+                        <div class="modal-body" id="deskripsi_wisata">
+                            
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {{-- END POP UP --}}
+        <div class="col-lg-25 d-flex align-items-strech mb-4">
+            <div class=" w-100">
+                <div class="-body">
+                    <input style="border-radius: 50px;" type="text" class="form-control text-center" placeholder="&#xf002;   Cari nama wisata" id="searchEmail">
                 </div>
             </div>
         </div>
@@ -342,13 +370,13 @@
                                             <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light"  style="font-size: 12px; margin-left: 3px;"></i></button></th>
                                             {{-- <th>Nama<button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th> --}}
                                             <th>Nama</th>
-                                            <th>Deskripsi</th>
-                                            <th>alamat<br>
+                                            {{-- <th>Deskripsi</th> --}}
+                                            <th>Alamat<br>
                                             <th>Foto<br>
-                                            <th>harga tiket biasa<br>
-                                            <th>harga tiket weekend <br>
-                                            <th>jarak<br>
-                                            <th>#</th>
+                                            {{-- <th>harga tiket biasa<br>
+                                            <th>harga tiket weekend <br> --}}
+                                            <th>Jarak<br>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -356,22 +384,29 @@
                                         <tr>
                                             <th scope="row" class="scope" width="200px">{{ $loop->iteration }}</th>
                                             <td class="text-center" width="150px">{{ $wisatas->nama }}</td>
-                                            <td class="text-justify" style="width: 250px;">{{ $wisatas->deskripsi }}</td>
+                                            {{-- <td class="text-center" style="width: 100px;">
+                                                <button type="submit" data-bs-toggle="modal" data-bs-target="#deskripsi_wisata_container" name="deskripsi_wisata" data-id="{{ json_encode(['deskripsi' => $wisatas->deskripsi,'id_wisatas' => $wisatas->id, 'nama' => $wisatas->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
+                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                </button>
+                                            </td> --}}
                                             <td class="text-center" style="width: 200px;">{{ $wisatas->alamat }}</td>
                                             <td class="text-center" style="width: 50px;">
                                                 <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" name="foto_wisata" data-id="{{ json_encode(['gambar' => $wisatas->gambar,'id_wisata' => $wisatas->id, 'nama' => $wisatas->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
-                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                    <i class="fa fa-camera" style="font-size: 15px;"></i>
                                                 </button>
                                             </td>
-                                            <td class="text-center" style="width: 200px;">{{ $wisatas->harga_tiket }}</td>
-                                            <td class="text-center" style="width: 200px;">{{ $wisatas->harga_weekend }}</td>
+                                            {{-- <td class="text-center" style="width: 200px;">{{ $wisatas->harga_tiket }}</td>
+                                            <td class="text-center" style="width: 200px;">{{ $wisatas->harga_weekend }}</td> --}}
                                             <td class="text-center" style="width: 260px;">{{ $wisatas->jarak }} <strong>Km</strong></td>
                                             <td style="width: 300px">
-                                                <a href={{ route('delete_wisata' , ['id' => $wisatas->id]) }} class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
+                                                {{-- <a href={{ route('delete_wisata' , ['id' => $wisatas->id]) }} class="d-inline-block" style="margin-right:28px;" title="delete" name="delete">
                                                     <i style="font-size: 15px; color: red;" class="fa fa-trash"></i>
-                                                </a>
+                                                </a> --}}
+                                                <button style="border: none; background: transparent; color: red;margin-right: 10px;" onclick="showDeleteFasilitas( '{{$wisatas->id }}' )" class="d-inline-block" style="margin-right:28px;" title="Hapus Wisata" name="delete">
+                                                    <i style="font-size: 15px" class="fa fa-trash"></i>
+                                                </button>
                                                 <a href={{route('edit_wisata' ,['id' => $wisatas->id ])}} class="d-inline-block" title="edit" name="edit">
-                                                    <i class="fa fa-pencil" style="font-size: 15px"></i>
+                                                    <i class="fa fa-pen" style="font-size: 15px"></i>
                                                 </a>
                                             </td>                                            
                                         </tr>
@@ -431,6 +466,73 @@
     @endif
     {{-- search email --}}
     <script>
+        function showDeleteFasilitas(wisataId) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Peringatan",
+        text: "Hapus wisata ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Setuju",
+        cancelButtonText: "Batal",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deletewisata(wisataId);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "wisata gagal dihapus",
+                icon: "error"
+            });
+        }
+    });
+}
+
+// Fungsi untuk menghapus admin
+function deletewisata(wisataId) {
+    // Kirim permintaan AJAX ke controller untuk menghapus admin
+    // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+    $.ajax({
+        url: '/delete/wisata/' + wisataId,
+        // console.log(url);
+        type: 'GET',
+        success: function (response) {
+            // Tampilkan SweetAlert sukses setelah menghapus
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Data Berhasil Dihapus!",
+                text: response.sukses_delete,
+                icon: "success"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+
+            // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+            // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+        },
+        error: function (error) {
+            console.error("Error deleting admin:", error);
+        }
+    });
+}
+    </script>
+    <script>
         // untuk sesuai email
         document.addEventListener('DOMContentLoaded', function () {
         var searchEmailInput = document.getElementById('searchEmail');
@@ -484,6 +586,30 @@
     // });
     </script>
     <script>
+        //  untuk deskrpsi wisata
+        var deskripsi_wisata_container = document.getElementById('deskripsi_wisata_container');
+        deskripsi_wisata_container.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var dataId = button.getAttribute('data-id');
+            var parsedDataId = JSON.parse(dataId);
+            
+            var Namawisata = deskripsi_wisata_container.querySelector('#nama_dinas_modal2');
+            Namawisata.textContent = parsedDataId.nama;
+            console.log(parsedDataId.deskripsi);
+            var deskripsiwisataCont = deskripsi_wisata_container.querySelector('#deskripsi_wisata');
+            if(parsedDataId.gambar !== null){
+                deskripsiwisataCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                deskripsiwisataCont.textContent = parsedDataId.deskripsi
+            
+            }else{
+                var h3 = document.createElement("h3"); // Perbaikan: Penggunaan createElement
+                h3.textContent = "Belum Ada Deskripsi"
+                h3.setAttribute('class','text-center text-danger');
+                deskripsiwisataCont.innerHTML = ''; // Kosongkan konten sebelumnya jika ada
+                deskripsiwisataCont.appendChild(h3);
+            }
+        });
+
         function ekUpload() {
         function Init() {
 
@@ -700,7 +826,7 @@
                     });
     
                     swalWithBootstrapButtons.fire({
-                        title: "Deleted!",
+                        title: "Data Berhasil Dihapus!",
                         text: response.sukses_delete,
                         icon: "success"
                     }).then((result) => {
@@ -830,6 +956,14 @@
 <script>
     Swal.fire({
     title: "Gagal menambah data",
+    icon: "error"
+    });
+</script>
+@endif
+@if (session('error_ready'))
+<script>
+    Swal.fire({
+    title: "{{session('error_ready')}}",
     icon: "error"
     });
 </script>

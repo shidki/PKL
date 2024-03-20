@@ -58,6 +58,9 @@ Route::get('/submit_edit_dinas',[landingController::class,'makeGedung'])->middle
 // menghapus layanan
 Route::get('/hapus_layanan/{id_layanan}',[AdminController::class,'hapus_layanan'])->name('hapus_layanan')->middleware('isAdmin');
 Route::get('/edit_layanan',[landingController::class,'makeGedung'])->name('edit_layanan')->middleware('isAdmin');
+// detail layanan
+Route::get('/detail_layanan/{id}/{nama}',[landingController::class,'detail_layanan'])->name('detail_layanan');
+
 
 Route::post('/edit_layanan',[AdminController::class,'edit_layanan'])->name('edit_layanan')->middleware('isAdmin');
 // menambah dinas
@@ -96,6 +99,10 @@ Route::post('/submit_add_penginapan',[AdminController::class,'submit_add_pengina
 Route::get('/submit_add_penginapan',[landingController::class,'makeGedung'])->middleware('isAdmin');
 
 Route::get('/hapus_fasilitas/{id_fasilitas}',[AdminController::class,'hapus_fasilitas'])->name('hapus_fasilitas')->middleware('isAdmin');
+Route::get('/hapus_jenis_fasilitas/{id}',[AdminController::class,'hapus_jenis_fasilitas'])->name('hapus_jenis_fasilitas')->middleware('isAdmin');
+
+Route::get('/add_jenis_fasilitas',[landingController::class,'makeGedung'])->middleware('isAdmin');
+Route::post('/add_jenis_fasilitas',[AdminController::class,'add_jenis_fasilitas'])->name('add_jenis_fasilitas')->middleware('isAdmin');
 Route::get('/delete_gambar_penginapan/{idPenginapan}',[AdminController::class,'delete_gambar_penginapan'])->middleware('isAdmin');
 
 
@@ -152,3 +159,4 @@ Route::get('/kuliner/all',[landingController::class,'kuliner_lengkap'])->name('k
 //  DOWNLOAD FILE FORMAT 
 Route::get('/download_file_menu',[AdminController::class,'download_file_menu'])->middleware('isAdmin');
 Route::get('/download_file_fasilitas',[AdminController::class,'download_file_fasilitas'])->middleware('isAdmin');
+Route::get('/download_file_layanan',[AdminController::class,'download_file_layanan'])->middleware('isAdmin');

@@ -8,6 +8,9 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
+          <div class="text-left mb-5">
+            <span style="font-size: 15px; font-weight: bold;"><a href="/wisata">DAFTAR WISATA</a> / EDIT WISATA</span>
+          </div>
           <form action="/submit_edit_wisata" method="post" enctype="multipart/form-data">
             @csrf
               <div class="formbold-steps">
@@ -86,7 +89,7 @@
                       ></textarea>
                   </div>
                   <div>
-                    <label for="jarak" class="formbold-form-label"> Harga Tiket ( hari biasa) </label>
+                    <label for="jarak" class="formbold-form-label"> Harga Tiket pada hari biasa (Rupiah) </label>
                       <input
                       type="int"
                       name="harga"
@@ -98,7 +101,7 @@
                       />
                   </div>
                   <div>
-                    <label for="jarak" class="formbold-form-label"> Harga Tiket ( weekend )</label>
+                    <label for="jarak" class="formbold-form-label"> Harga Tiket pada weekend (Rupiah)</label>
                       <input
                       type="int"
                       name="harga_weekend"
@@ -110,7 +113,7 @@
                       />
                   </div>
                   <div>
-                    <label for="jarak" class="formbold-form-label"> Jarak dari balaikota </label>
+                    <label for="jarak" class="formbold-form-label"> Jarak dari balaikota (Km) </label>
                       <input
                       type="int"
                       name="jarak"

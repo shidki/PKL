@@ -95,14 +95,26 @@ animation: anim 5s linear forwards;
           <ul id="sidebarnav">
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Home</span>
+              <span class="hide-menu">Dasbor</span>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="/administrator" aria-expanded="false">
                 <span>
                   <i class=" fa fa-home"></i>
                 </span>
-                <span class="hide-menu">Dashboard</span>
+                <span class="hide-menu">Dasbor</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Akun</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/admin" aria-expanded="false">
+                <span>
+                  <i class="fa fa-user-circle"></i>
+                </span>
+                <span class="hide-menu">Daftar Admin</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -114,31 +126,20 @@ animation: anim 5s linear forwards;
                 <span>
                   <i class=" fa fa-building"></i>
                 </span>
-                <span class="hide-menu">Instansi</span>
+                <span class="hide-menu">Kelola Instansi</span>
               </a>
             </li>
+
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Account</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin" aria-expanded="false">
-                <span>
-                  <i class="fa fa-user-circle"></i>
-                </span>
-                <span class="hide-menu">Admin</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Other</span>
+              <span class="hide-menu">Rekomendasi</span>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="/penginapan" aria-expanded="false">
                 <span>
                   <i class=" fa fa-hotel"></i>
                 </span>
-                <span class="hide-menu">Penginapan</span>
+                <span class="hide-menu">Kelola Penginapan</span>
               </a>
             </li>
             <li class="sidebar-item">
@@ -146,27 +147,27 @@ animation: anim 5s linear forwards;
                 <span>
                   <i class=" fa fa-plane"></i>
                 </span>
-                <span class="hide-menu">Wisata</span>
+                <span class="hide-menu">Kelola Wisata</span>
               </a>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="/kuliner" aria-expanded="false">
                 <span>
-                  <i class=" fa fa-cutlery"></i>
+                  <i class="fa fa-cutlery" aria-hidden="true"></i>
                 </span>
-                <span class="hide-menu">Kuliner</span>
+                <span class="hide-menu">Kelola Kuliner</span>
               </a>
             </li>
             <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Page</span>
+                <span class="hide-menu">Beranda</span>
               </li>
               <li class="sidebar-item">
                 <a class="sidebar-link" href="/" aria-expanded="false">
                   <span>
                     <i class="fa fa-arrow-left"></i>
                   </span>
-                  <span class="hide-menu">Back</span>
+                  <span class="hide-menu">Beranda</span>
                 </a>
               </li>
           </ul>
@@ -194,7 +195,7 @@ animation: anim 5s linear forwards;
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                   <div class="message-body">
-                    <a href="/logout" class="btn btn-outline-primary text-black mx-3 mt-2 d-block">Logout</a>
+                    <a href="/logout" class="btn btn-outline-primary text-black mx-3 mt-2 d-block">Keluar</a>
                   </div>
                 </div>
               </li>

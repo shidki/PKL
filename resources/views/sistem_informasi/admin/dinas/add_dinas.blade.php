@@ -8,6 +8,9 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
+          <div class="text-left mb-5">
+            <span style="font-size: 15px; font-weight: bold;"><a href="/dinas">DAFTAR INSTANSI</a> / TAMBAH INSTANSI</span>
+          </div>
           <form action="/submit_add_dinas" method="post" enctype="multipart/form-data" id="file-upload-form" class="uploader">
             @csrf
               <div class="formbold-steps">
@@ -48,9 +51,9 @@
                       <img id="file-image" src="#" alt="Preview" class="hidden">
                       <div id="start">
                         <i class="fa fa-download" aria-hidden="true"></i>
-                        <div>Select a file or drag here</div>
-                        <div id="notimage" class="hidden">Please select an image</div>
-                        <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                        <div>Pilih File atau Tarik File</div>
+                        <div id="notimage" class="hidden">Masukkan Gambar</div>
+                        <span id="file-upload-btn" class="btn btn-primary">Pilih Gambar</span>
                       </div>
                       <div id="response" class="hidden">
                         <div id="messages2"></div>
@@ -80,13 +83,69 @@
                     </select>
                   </div>
                 </div>
-        
-                <div>
+                <h5 class="mb-3" style="font-weight: bold;">Tipe Input Layanan</h5>
+                {{-- <div class="mb-3" style="display: flex;justify-content: space-between;">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio_input" id="biasa" checked>
+                    <label class="form-check-label" for="biasa">
+                      Biasa
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio_input" id="excel">
+                    <label class="form-check-label" for="excel">
+                      Excel
+                    </label>
+                  </div>
+                </div> --}}
+                <div class="mb-4" id="layanan_container">
+                  <div id="layananke1_container" class="mb-3">
+                    <div class="mb-3">
+                      <label for="layananke1" class="form-label">Layanan Ke 1</label>
+                      <input type="text" class="form-control" name="layananke1" id="layananke1" placeholder="Masukkan Nama Layanan">
+                    </div>
+                    <div class="mb-3">
+                      <label for="deskripsilayananke1" class="form-label">Deskripsi Layanan ke 1</label>
+                      <textarea class="form-control" id="deskripsilayananke1" name="deskripsilayananke1" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="judulGambarlayananke1" class="form-label">Judul Gambar Detail Layanan ke 1</label>
+                      <input type="text" class="form-control" name="judulGambarlayananke1" id="judulGambarlayananke1" placeholder="Masukkan Nama Layanan">
+                    </div>
+                    <div class="gambar_upload" style="margin-bottom: 250px;">
+                      <div class="file-upload_gambar" >
+                        <input value="masukkan gambar" id="file-upload_gambar-btn" class="file-upload_gambar-btn" type="button"  onclick="$('.file-upload_gambar-input').trigger( 'click' )">
+                        <label for="file-upload_gambar-btn">
+                          <div class="image-upload-wrap">
+                            <input name="file_gambar_layanan1" class="file-upload_gambar-input" type='file' onchange="readURL(this);" accept="image/*" />
+                            <div class="drag-text">
+                                <h3>Masukkan File Gambar</h3>
+                            </div>
+                          </div>
+                          <div class="file-upload_gambar-content">
+                            <img class="file-upload_gambar-image" src="#" alt="your image" />
+                            <div class="image-title-wrap">
+                                <button type="button" onclick="removeUpload()" class="remove-image"><span class="image-title">Uploaded Image</span></button>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div id="jumlah_layanan_container" style="text-align: right;" class="mr-5 mb-3">Jumlah Layanan :  <input type="int" id="jumlah_layanan" name="jumlah_layanan" value="1" readonly style="border: none; width: 30px;"></div>
+                <div id="btn_layanan_container" class="mx-auto mb-4" style="justify-content: space-between; display: flex;">
+                  <button title="Hapus Layanan" style="width: 100px" class="btn btn-primary button_layanan" type="button" id="kurang_layanan">-</button>
+                  <button title="Tambah Layanan" style="width: 100px" class="btn btn-primary button_layanan" type="button" id="tambah_layanan">+</button>
+                </div>
+
+                  <div id="excel_input" style="display: none;">
                     <div>
                       <ul style="list-style-type:circle">
                         <li type="none" style="border-bottom: 1px solid rgb(129, 129, 129); display:inline-block; padding-bottom:3px; margin-bottom:10px;">Ketentuan Format File</li>
                         <li>File harus dalam bentuk excel</li>
                         <li>Hanya Menulis layanan pada satu kolom pertama tiap baris</li>
+                        <li><strong>Format File dapat di download <a href="/download_file_layanan" style="text-decoration: underline;">Disini</a></strong></li>
                         <li type="none"><img src="{{ asset('assets/sistem_informasi/images/layanan/ketentuan_layanan.png') }}" height="150px" width="100px" alt=""></li>
                       </ul>
                     </div>
@@ -104,7 +163,7 @@
                       <input type="file" id="upload-file" name="file_layanan">
                       <p class="message">No Files Selected</p>
                     </div>
-                </div>
+                  </div>
                 <div class="text-center mt-5 text-danger">{{ session('error_input_dinas') }}</div>
               </div>
       
@@ -156,7 +215,137 @@
 </div>
 <div id="toastBox">
 </div>
+<script>
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var $wrap = $(input).closest('.gambar_upload').find('.image-upload-wrap');
+            var $image = $(input).closest('.gambar_upload').find('.file-upload_gambar-image');
+            var $content = $(input).closest('.gambar_upload').find('.file-upload_gambar-content');
+            $wrap.hide();
+            $image.attr('src', e.target.result);
+            $content.show();
+            $content.find('.image-title').html(input.files[0].name);
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        removeUpload(input);
+    }
+}
 
+function removeUpload(input) {
+    var $wrap = $(input).closest('.gambar_upload').find('.image-upload-wrap');
+    var $content = $(input).closest('.gambar_upload').find('.file-upload_gambar-content');
+    var $image = $(input).closest('.gambar_upload').find('.file-upload_gambar-image');
+    $image.attr('src', '#'); // Menghapus src gambar
+    $(input).val(''); // Menghapus nilai dari input file
+    $content.hide();
+    $wrap.show();
+}
+
+
+$('.image-upload-wrap').on('dragover', function() {
+    $(this).addClass('image-dropping');
+});
+
+$('.image-upload-wrap').on('dragleave', function() {
+    $(this).removeClass('image-dropping');
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var tambahButton = document.getElementById("tambah_layanan");
+    var kurangButton = document.getElementById("kurang_layanan");
+    var layananContainer = document.getElementById("layanan_container");
+    var jumlahlayananContainer = document.getElementById("jumlah_layanan");
+    var count = 1; // Untuk menghitung jumlah layanan
+
+    // Fungsi untuk menambah layanan
+    tambahButton.addEventListener("click", function() {
+        count++; // Menambah jumlah layanan
+        var newLayananContainer = document.createElement("div");
+        newLayananContainer.id = "layananke" + count + "_container";
+        newLayananContainer.classList.add("mb-3");
+        newLayananContainer.innerHTML = `
+            <div class="mb-3">
+                <label for="layananke${count}" class="form-label">Layanan Ke ${count}</label>
+                <input type="text" class="form-control" name="layananke${count}" id="layananke${count}" placeholder="Masukkan Nama Layanan">
+            </div>
+            <div class="mb-3">
+                <label for="deskripsilayananke${count}" class="form-label">Deskripsi Layanan ke ${count}</label>
+                <textarea class="form-control" id="deskripsilayananke${count}" name="deskripsilayananke${count}" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                      <label for="judulGambarlayananke${count}" class="form-label">Judul Gambar Detail Layanan ke ${count}</label>
+                      <input type="text" class="form-control" name="judulGambarlayananke${count}" id="judulGambarlayananke${count}" placeholder="Masukkan Nama Layanan">
+                    </div>
+            <div class="gambar_upload" style="margin-bottom: 250px;">
+            <div class="file-upload_gambar">
+                <input  id="file-upload_gambar-btn${count}" class="file-upload_gambar-btn" type="button"  onclick="document.getElementById('file-upload_gambar-input${count}').click()">
+                <label for="file-upload_gambar-btn${count}">
+                    <div class="image-upload-wrap">
+                        <input name="file_gambar_layanan${count}" class="file-upload_gambar-input" id="file-upload_gambar-input${count}" type='file' onchange="readURL(this);" accept="image/*" />
+                        <div class="drag-text">
+                            <h3>Masukkan File Gambar</h3>
+                        </div>
+                    </div>
+                    <div class="file-upload_gambar-content">
+                        <img class="file-upload_gambar-image" src="#" alt="your image" />
+                        <div class="image-title-wrap">
+                            <button type="button" onclick="removeUpload(${count})" class="remove-image"> <span class="image-title">Uploaded Image</span></button>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+        `;
+        jumlahlayananContainer.setAttribute("value", count);
+        layananContainer.appendChild(newLayananContainer);
+    });
+
+    // Fungsi untuk mengurangi layanan
+    kurangButton.addEventListener("click", function() {
+        if (count > 1) {
+            var lastLayananContainer = document.getElementById("layananke" + count + "_container");
+            layananContainer.removeChild(lastLayananContainer);
+            count--; // Mengurangi jumlah layanan
+  
+            jumlahlayananContainer.setAttribute("value", count);
+        } else {
+            alert("Minimal satu layanan harus ada.");
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    var biasaRadio = document.getElementById("biasa");
+    var excelRadio = document.getElementById("excel");
+    var layananContainer = document.getElementById("layanan_container");
+    var excelInput = document.getElementById("excel_input");
+    var jumlahLayananContainer = document.getElementById("jumlah_layanan_container");
+    var btnLayananContainer = document.getElementById("btn_layanan_container");
+
+    biasaRadio.addEventListener("change", function() {
+        if (biasaRadio.checked) {
+            layananContainer.style.display = "block";
+            excelInput.style.display = "none";
+            jumlahLayananContainer.style.display = "block";
+            btnLayananContainer.style.display = "flex"; // Tampilkan btn_layanan_container
+        }
+    });
+
+    excelRadio.addEventListener("change", function() {
+        if (excelRadio.checked) {
+            layananContainer.style.display = "none";
+            excelInput.style.display = "block";
+            jumlahLayananContainer.style.display = "none";
+            btnLayananContainer.style.display = "none"; // Sembunyikan btn_layanan_container
+        }
+    });
+});
+
+</script>
 @if ($massage = Session::get('error_toast'))
     <script>
         let box = document.getElementById('toastBox');
@@ -190,6 +379,117 @@
     </script>
 @endif
   <style>
+      .file-upload_gambar {
+          background-color: #ffffff;
+          width: 100%;
+          margin: 0 auto;
+      }
+      
+      .file-upload_gambar-btn {
+          width: 100%;
+          margin: 0;
+          color: #fff;
+          background: #4596ff;
+          border: none;
+          padding: 10px;
+          border-radius: 4px;
+          border-bottom: 4px solid #15824B;
+          transition: all .2s ease;
+          outline: none;
+          text-transform: uppercase;
+          font-weight: 700;
+      }
+      
+      .file-upload_gambar-btn:hover {
+          background: #4596ff;
+          color: #ffffff;
+          transition: all .2s ease;
+          cursor: pointer;
+      }
+      
+      .file-upload_gambar-btn:active {
+          border: 0;
+          transition: all .2s ease;
+      }
+      
+      .file-upload_gambar-content {
+          display: none;
+          text-align: center;
+      }
+      
+      .file-upload_gambar-input {
+          position: absolute;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          outline: none;
+          opacity: 0;
+          cursor: pointer;
+      }
+      
+      .image-upload-wrap {
+          margin-top: 20px;
+          border: 2px solid #c1c1c1;
+          position: relative;
+      }
+      
+      .image-dropping,
+      .image-upload-wrap:hover {
+          background-color: #3a6fff;
+          border: .5px dashed #ffffff;
+      }
+      
+      .image-title-wrap {
+          padding: 0 15px 15px 15px;
+          color: #222;
+      }
+      
+      .drag-text {
+          text-align: center;
+      }
+      
+      .drag-text h3 {
+        font-size: 18px;
+          font-weight: 100;
+          text-transform: uppercase;
+          color: #000000;
+          padding: 60px 0;
+      }
+      
+      .file-upload_gambar-image {
+          max-height: 200px;
+          max-width: 200px;
+          margin: auto;
+          padding: 10px;
+      }
+      
+      .remove-image {
+          width: 200px;
+          margin: 0;
+          color: #fff;
+          background: #cd4535;
+          border: none;
+          padding: 10px;
+          border-radius: 4px;
+          border-bottom: 4px solid #b02818;
+          transition: all .2s ease;
+          outline: none;
+          text-transform: uppercase;
+          font-weight: 700;
+      }
+      
+      .remove-image:hover {
+          background: #c13b2a;
+          color: #ffffff;
+          transition: all .2s ease;
+          cursor: pointer;
+      }
+      
+      .remove-image:active {
+          border: 0;
+          transition: all .2s ease;
+      }
      @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
     @import url("https://fonts.googleapis.com/css?family=Roboto");
 

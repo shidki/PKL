@@ -37,7 +37,7 @@
 
                 <p style="color: red">{{ session('login_error') }}</p>
                 <p style="color: rgb(9, 101, 7)">{{ session('sukses') }}</p>
-                <button>Log In</button>
+                <button>Kirim</button>
             </form>
         </div>
         <div class="toggle-container">
@@ -87,7 +87,7 @@
 
             let icon = '<i class="fa-solid fa-circle-exclamation"></i>';
             toast.classList.add('toastt');
-            toast.innerHTML = icon + "{{ $massage }}";
+            toast.innerHTML = icon + "Login Gagal";
             box.appendChild(toast);
 
             toast.classList.add("errortoast");

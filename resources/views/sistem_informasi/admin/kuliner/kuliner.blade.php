@@ -80,14 +80,25 @@
         width: 0;
     }
     }
+    #searchDinas::placeholder {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: #888;
+        opacity: 1;
+        padding-left: 5px;
+    }
     </style>
 </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <body>
     <section class="ftco-section">
         <div class="container">
+            <div class="text-left mb-3">
+                <span style="font-size: 20px; font-weight: bold;color: rgb(43, 75, 255);margin-left: 14px">DAFTAR KULINER</span>
+            </div>
             <div class="text-right mr-3 mb-3">
-                <a href="/add_kuliner" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Kuliner</span></a>
+                <a href="/add_kuliner" class="btn btn-success"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Tambah Kuliner</span></a>
             </div>
             {{-- POP UP EDIT MENU --}}
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -117,8 +128,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer" style="text-align: center">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+                                <button type="submit" class="btn btn-primary">Ubah</button>
                             </div>
                         </form>
                     </div>
@@ -140,7 +151,7 @@
                             </div>
                         </div>
                         <div class="modal-footer" style="text-align: center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
                         </div>
                 </div>
             </div>
@@ -157,17 +168,17 @@
                                     
                                 </div>
                                 <div class="modal-footer" style="text-align: center">
-                                    <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_warung" data-bs-dismiss="modal">Delete</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn bg-danger" style="color: white" id="delete_gambar_warung" data-bs-dismiss="modal">Hapus</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
                                 </div>
                         </div>
                     </div>
                 </div>
                 {{-- END POP UP --}}
-            <div class="col-lg-25 d-flex align-items-strech">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <input type="text" class="form-control text-center" placeholder="Search" id="searchDinas">
+            <div class="col-lg-25 d-flex align-items-strech mb-4">
+                <div class="w-100">
+                    <div class="">
+                        <input style="border-radius: 50px;" type="text" class="form-control text-center" placeholder="&#xf002;   Cari Kuliner" id="searchDinas">
                     </div>
                 </div>
             </div>
@@ -187,7 +198,7 @@
                                             <th>Foto</th>
                                             <th>Jarak</th>
                                             <th>Menu</th>
-                                            <th>#</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -198,26 +209,29 @@
                                             <td class="text-justify" style="width: 300px;">{{ $warung->alamat }}</td>
                                             <td class="text-center" style="width: 100px;">
                                                 <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" name="foto_instansi" data-id="{{ json_encode(['gambar' => $warung->gambar,'id_warung' => $warung->id, 'nama' => $warung->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
-                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                    <i class="fa fa-camera" style="font-size: 15px;"></i>
                                                 </button>
                                             </td>
                                             <td class="text-center" style="width: 100px;">{{ $warung->jarak }} <strong>Km</strong></td>
-                                            <td style="width: 200px;"> 
-                                                <ol class="mt-4">
-                                                    {{-- @foreach ($menu[$warung->id] as $menus)
+                                            <td style="width: 100px;"> 
+                                                {{-- <ol class="">
+                                                    @foreach ($menu[$warung->id] as $menus)
                                                     <li  class="text-left d-flex" style="justify-content: space-between; width:200px; align-items: center;"><span>{{ $menus->nama }} <strong>Harga : {{ $menus->harga }}</strong></span><span><button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" name="edit_menu" data-id="{{ json_encode(['id' => $menus->id,'warung' => $warung->id,'nama' => $menus->nama, 'harga' => $menus->harga]) }}" style="display: inline-block; margin-left: 20px; border:none; background: transparent;" title="edit menu" class="d-inline-block"><i class="fa fa-pencil"></i></button><a style="display: inline-block;" href={{ route('hapus_menu',['id_menu' => $menus->id ]) }} title="hapus menu" class="d-inline-block ml-3"><i class="fa fa-trash-o"></i></a></span></li>
-                                                    @endforeach --}}
-                                                    <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" name="edit_menu" data-id="{{ json_encode(['menu' => $menu[$warung->id], 'nama' => $warung->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu" class="d-inline-block">
-                                                        <i class="fa fa-search-plus" style="font-size: 15px;"></i>
-                                                    </button>
-                                                </ol>
+                                                    @endforeach
+                                                </ol> --}}
+                                                <button type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" name="edit_menu" data-id="{{ json_encode(['menu' => $menu[$warung->id], 'nama' => $warung->nama]) }}" style="display: inline-block; border:none; background: transparent;" title="edit menu">
+                                                    <i class="fa fa-search-plus" style="font-size: 15px;"></i>
+                                                </button>
                                             </td>
                                             <td style="width: 200px">
-                                                <a href={{ route('delete_kuliner', ['id' => $warung->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
+                                                {{-- <a href={{ route('delete_kuliner', ['id' => $warung->id]) }} class="d-inline-block mr-3" title="delete" name="delete">
                                                     <i style="font-size: 20px; color:red;" class="fa fa-trash"></i>
-                                                </a>
+                                                </a> --}}
+                                                <button style="border: none; background: transparent; color: red;" onclick="showDeleteFasilitas( '{{$warung->id }}' )" class="d-inline-block" style="margin-right:28px;" title="Hapus Wisata" name="delete">
+                                                    <i style="font-size: 15px" class="fa fa-trash"></i>
+                                                </button>
                                                 <a href={{ route('edit_kuliner' ,['id' => $warung->id ]) }} class="d-inline-block ml-3" title="edit" name="edit">
-                                                    <i class="fa fa-pencil" style="font-size: 20px"></i>
+                                                    <i class="fa fa-pen" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            
                                         </tr>
@@ -239,7 +253,74 @@
     <div id="toastBox">
     </div>
 
+<script>
+    function showDeleteFasilitas(KulinerId) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
 
+    swalWithBootstrapButtons.fire({
+        title: "Peringatan",
+        text: "Hapus Kuliner ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Setuju",
+        cancelButtonText: "Batal",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deletekuliner(KulinerId);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Peringatan",
+                text: "Kuliner gagal dihapus",
+                icon: "error"
+            });
+        }
+    });
+}
+
+// Fungsi untuk menghapus admin
+function deletekuliner(kulinerId) {
+    // Kirim permintaan AJAX ke controller untuk menghapus admin
+    // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
+    console.log(kulinerId);
+    $.ajax({
+        url: '/delete/kuliner/' + kulinerId,
+        // console.log(url);
+        type: 'GET',
+        success: function (response) {
+            // Tampilkan SweetAlert sukses setelah menghapus
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Data Berhasil Dihapus!",
+                text: response.sukses_delete,
+                icon: "success"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+
+            // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
+            // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+        },
+        error: function (error) {
+            console.error("Error deleting admin:", error);
+        }
+    });
+}
+</script>
     <script>
         var staticBackdrop = document.getElementById('staticBackdrop2');
         staticBackdrop.addEventListener('show.bs.modal', function (event) {
@@ -434,7 +515,7 @@
                     });
     
                     swalWithBootstrapButtons.fire({
-                        title: "Deleted!",
+                        title: "Data Berhasil Dihapus!",
                         text: response.sukses_delete,
                         icon: "success"
                     }).then((result) => {
@@ -467,7 +548,7 @@
                     });
     
                     swalWithBootstrapButtons.fire({
-                        title: "Deleted!",
+                        title: "Data Berhasil Dihapus!",
                         text: response.sukses_delete,
                         icon: "success"
                     }).then((result) => {
@@ -698,7 +779,7 @@
 @if (session('error_edit'))
 <script>
     Swal.fire({
-    title: "Data gagal di edit",
+    title: "{{session('error_edit')}}",
     icon: "error"
     });
 </script>

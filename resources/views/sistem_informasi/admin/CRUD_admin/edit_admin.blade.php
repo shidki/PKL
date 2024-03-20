@@ -8,6 +8,9 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
+          <div class="text-left mb-5">
+            <span style="font-size: 15px; font-weight: bold;"><a href="/admin">DAFTAR ADMIN</a> / EDIT ADMIN</span>
+          </div>
           <form action="/submit_edit_admin" method="post" enctype="multipart/form-data">
             @csrf
               <div class="formbold-steps">
@@ -58,13 +61,25 @@
               </div>
               <div class="formbold-form-step-2">
                 <div>
-                  <label for="nama" class="formbold-form-label mt-3 mt-3"> Nama Admin </label>
+                  <label for="nama" class="formbold-form-label mt-3 mt-3"> Username </label>
                   <input
                   type="text"
                   name="nama"
                   placeholder="Nama admin"
                   value="{{ $admin->username }}"
                   id="nama"
+                  class="formbold-form-input"
+                  readonly
+                  />
+                </div>
+                <div>
+                  <label for="nama" class="formbold-form-label mt-3 mt-3"> Nama Admin </label>
+                  <input
+                  type="text"
+                  name="nama_admin"
+                  placeholder="Nama admin"
+                  value="{{ $admin->username }}"
+                  id="nama_admin"
                   class="formbold-form-input"
                   required
                   />

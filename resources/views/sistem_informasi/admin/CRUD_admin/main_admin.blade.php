@@ -78,21 +78,32 @@
         width: 0;
     }
     }
+    #searchEmail::placeholder {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: #888;
+        opacity: 1;
+        padding-left: 5px;
+    }
     </style>
 </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <body>
     <section class="ftco-section">
         <div class="container">
+            <div class="text-left mb-3">
+                <span style="font-size: 20px; font-weight: bold;color: rgb(43, 75, 255);margin-left: 14px">Akun / Daftar Admin</span>
+            </div>
             <div class="text-right mr-3 mb-3">
-                <button type="submit" class="btn btn-success" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Add Admin</span></button>
+                <button type="submit" class="btn btn-success" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="fa fa-plus"></i> <span class="d-inline-block ml-3">Tambah Admin</span></button>
             </div>
            {{-- POP UP ADD ADMIN --}}
            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Add ADMIN</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Tambah Admin</h5>
                     </div>
                     <form action="/add/admin" method="post">
                         @csrf
@@ -100,6 +111,10 @@
                             <div class="form-group">
                                 <label for="username">User Name :</label>
                                 <input id="username" type="text" class="form-control" placeholder="User Name" required name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="nama">Nama Admin :</label>
+                                <input id="nama" type="text" class="form-control" placeholder="Nama Admin" required name="nama_admin">
                             </div>
                             <div class="form-group">
                                 <label for="email">Email :</label>
@@ -111,8 +126,8 @@
                             </div>
                         </div>
                         <div class="modal-footer" style="text-align: center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+                            <button type="submit" class="btn btn-primary">Tambah</button>
                         </div>
                     </form>
                 </div>
@@ -120,10 +135,10 @@
         </div>
 
         {{-- END POP UP --}}
-        <div class="col-lg-12 d-flex align-items-strech">
-            <div class="card w-100">
-                <div class="card-body">
-                    <input type="text" class="form-control text-center" placeholder="Search Email" id="searchEmail">
+        <div class="col-lg-12 d-flex align-items-strech mb-4">
+            <div class="w-100">
+                <div style="">
+                    <input  style="border-radius: 50px;" type="text" class="form-control text-center" placeholder="&#xf002;   Cari Email" id="searchEmail">
                 </div>
             </div>
         </div>
@@ -139,16 +154,18 @@
                                             <th>No <button style="border: none; background: transparent;" onclick="sortTable()"><i class="fa fa-sort text-light ml-2"></i></button></th>
                                             <th>Email</th>
                                             <th>Username <button style="border: none; background: transparent;" onclick="sortTableName()"><i class="fa fa-sort text-light ml-2"></i></button></th>
+                                            <th>Nama Admin<br>
                                             <th>Role<br>
-                                            <th>#</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($users as $userss )
                                         <tr>
-                                            <th scope="row" class="scope" width="100px">{{ $loop->iteration }}</th>
+                                            <th scope="row" class="scope" width="200px">{{ $loop->iteration }}</th>
                                             <td class="text-center" width="150px">{{ $userss->email }}</td>
                                             <td class="text-justify" style="width: 200px;">{{ $userss->username }}</td>
+                                            <td class="text-justify" style="width: 200px;">{{ $userss->nama_admin }}</td>
                                             <td class="text-center" style="width: 260px;">{{ $userss->role }}</td>
                                             {{-- <td class="text-center" style="width: 150px;">{{ $userss->status }}</td> --}}
                                             <td style="width: 300px">
@@ -160,7 +177,7 @@
                                                 </button>
 
                                                 <a href={{route('edit_admin' ,['id' => $userss->id ])}} class="d-inline-block ml-5" title="edit" name="edit">
-                                                    <i class="fa fa-pencil" style="font-size: 20px"></i>
+                                                    <i class="fa fa-pen" style="font-size: 20px"></i>
                                                 </a>
                                             </td>                                            
                                         </tr>
@@ -217,34 +234,39 @@
     }
 
     // Fungsi untuk menghapus admin
+    
     function deleteAdmin(userId) {
-        // Kirim permintaan AJAX ke controller untuk menghapus admin
-        // Sesuaikan dengan URL atau metode yang digunakan dalam aplikasi Anda
         $.ajax({
             url: '/delete/admin/' + userId,
             // console.log(url);
             type: 'GET',
             success: function (response) {
-                // Tampilkan SweetAlert sukses setelah menghapus
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success"
                     },
                     buttonsStyling: false
                 });
-
-                swalWithBootstrapButtons.fire({
-                    title: "Deleted!",
-                    text: response.sukses_delete,
-                    icon: "success"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-
-                // Di sini, Anda dapat memutuskan apa yang harus dilakukan setelah menghapus,
-                // seperti me-refresh halaman atau menghapus elemen dari DOM, dll.
+                if (response.error_delete) {
+                    console.error("Error deleting admin:", response.error_delete);
+                    // Menampilkan pesan kesalahan
+                    swalWithBootstrapButtons.fire({
+                        title: "Peringatan!",
+                        text: response.error_delete,
+                        icon: "error"
+                    });
+                } else {
+                    // Menampilkan pesan sukses
+                    swalWithBootstrapButtons.fire({
+                        title: "Data Berhasil Dihapus!",
+                        text: response.sukses_delete,
+                        icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
             },
             error: function (error) {
                 console.error("Error deleting admin:", error);
@@ -252,7 +274,6 @@
         });
     }
 </script>
-
 
     @if (session('sukses_add'))
         <script>
@@ -265,13 +286,14 @@
     @if (session('error_add'))
         <script>
             Swal.fire({
-            title: "Gagal menambah data",
+            title: "{{session('error_add')}}",
             icon: "error"
             });
         </script>
     @endif
     @if (session('sukses_delete'))
         <script>
+            
             Swal.fire({
             title: "Berhasil menghapus data",
             icon: "success"
@@ -281,7 +303,7 @@
     @if (session('error_delete'))
         <script>
             Swal.fire({
-            title: "Gagal menghapus data",
+            title: "{{ session('error_delete') }}",
             icon: "error"
             });
         </script>

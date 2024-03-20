@@ -162,6 +162,9 @@
     <div class="card-body">
       <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
+          <div class="text-left mb-5">
+            <span style="font-size: 15px; font-weight: bold;"><a href="/kuliner">DAFTAR KULINER</a> / EDIT KULINER</span>
+          </div>
           <form action="/submit_edit_kuliner" method="post" enctype="multipart/form-data">
             @csrf
               <div class="formbold-steps">
@@ -216,9 +219,9 @@
                       <img id="file-image" src="#" alt="Preview" class="hidden">
                       <div id="start">
                         <i class="fa fa-download" aria-hidden="true"></i>
-                        <div>Select a file or drag here</div>
-                        <div id="notimage" class="hidden">Please select an image</div>
-                        <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                        <div>Pilih File atau Tarik File</div>
+                        <div id="notimage" class="hidden">Masukkan Gambar</div>
+                        <span id="file-upload-btn" class="btn btn-primary">Pilih Gambar</span>
                       </div>
                       <div id="response" class="hidden">
                         <div id="messages2"></div>
@@ -229,7 +232,7 @@
                     </label>
                   </div>
                   <div>
-                    <label for="jarak" class="formbold-form-label mt-3"> jarak dari balaikota <strong class="text-danger font-weight-bold">*</strong> </label>
+                    <label for="jarak" class="formbold-form-label mt-3"> jarak dari balaikota (Km)<strong class="text-danger font-weight-bold">*</strong> </label>
                     <input
                     type="int"
                     name="jarak"
@@ -257,7 +260,40 @@
               </div>
       
               <div class="formbold-form-step-2">
-                <div>
+                <h5 class="mb-3" style="font-weight: bold;">Tipe Input Layanan</h5>
+                <div class="mb-3" style="display: flex;justify-content: space-between;">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio_input" id="biasa" checked>
+                    <label class="form-check-label" for="biasa">
+                      Biasa
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio_input" id="excel">
+                    <label class="form-check-label" for="excel">
+                      Excel
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-4" id="layanan_container">
+                  <div id="menu_container" class="mb-3">
+                    <div class="mb-3">
+                      <label for="menu1" class="form-label">Menu 1</label>
+                      <input type="text" class="form-control" name="menu1" id="menu1" placeholder="Masukkan Nama Menu">
+                    </div>
+                    <div class="mb-3">
+                      <label for="hargamenu1" class="form-label">Harga 1</label>
+                      <input type="text" class="form-control" name="hargamenu1" id="hargamenu1" placeholder="Masukkan Harga">
+                    </div>
+                    <hr>
+                  </div>
+                </div>
+                <div id="jumlah_menu_container" style="text-align: right;" class="mr-5 mb-3">Jumlah menu :  <input type="int" id="jumlah_menu" name="jumlah_menu" value="1" readonly style="border: none; width: 30px;"></div>
+                <div id="btn_layanan_container" class="mx-auto mb-4" style="justify-content: space-between; display: flex;">
+                  <button title="Hapus Layanan" style="width: 100px" class="btn btn-primary button_layanan" type="button" id="kurang_layanan">-</button>
+                  <button title="Tambah Layanan" style="width: 100px" class="btn btn-primary button_layanan" type="button" id="tambah_layanan">+</button>
+                </div>
+                <div id="excel_input" style="display: none;">
                     <label for="menu" class="formbold-form-label fs-5"> Tambah Menu </label>
                     <div>
                       <ul style="list-style-type:circle">
@@ -279,7 +315,7 @@
                       </div>
                       <p style="font-weight: bold">Masukkan File Untuk Menambah menu</p>
                       <input type="file" id="upload-file" name="file_layanan">
-                      <p class="message">No Files Selected</p>
+                      <p class="message">Tidak Ada File yang Dipilih</p>
                   </div>
                 </div>
               </div>
@@ -872,6 +908,75 @@
     }
     }
   </style>
+  <script>
+      document.addEventListener("DOMContentLoaded", function() {
+    var tambahButton = document.getElementById("tambah_layanan");
+    var kurangButton = document.getElementById("kurang_layanan");
+    var layananContainer = document.getElementById("layanan_container");
+    var jumlahlayananContainer = document.getElementById("jumlah_menu");
+    var count = 1; 
+
+    // Fungsi untuk menambah layanan
+    tambahButton.addEventListener("click", function() {
+        count++; // Menambah jumlah layanan
+        var newLayananContainer = document.createElement("div");
+        newLayananContainer.id = "menuke" + count + "_container";
+        newLayananContainer.classList.add("mb-3");
+        newLayananContainer.innerHTML = `
+                    <div class="mb-3">
+                      <label for="menu${count}" class="form-label">Menu ${count}</label>
+                      <input type="text" class="form-control" name="menu${count}" id="menu${count}" placeholder="Masukkan Nama Menu">
+                    </div>
+                    <div class="mb-3">
+                      <label for="hargamenu${count}" class="form-label">Harga ${count}</label>
+                      <input type="text" class="form-control" name="hargamenu${count}" id="hargamenu${count}" placeholder="Masukkan Harga">
+                    </div>
+                    <hr>
+        `;
+        jumlahlayananContainer.setAttribute("value", count);
+        layananContainer.appendChild(newLayananContainer);
+    });
+
+    // Fungsi untuk mengurangi layanan
+    kurangButton.addEventListener("click", function() {
+        if (count > 1) {
+            var lastLayananContainer = document.getElementById("menuke" + count + "_container");
+            layananContainer.removeChild(lastLayananContainer);
+            count--; // Mengurangi jumlah layanan
+  
+            jumlahlayananContainer.setAttribute("value", count);
+        } else {
+            alert("Minimal satu Menu harus ada.");
+        }
+    });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    var biasaRadio = document.getElementById("biasa");
+    var excelRadio = document.getElementById("excel");
+    var layananContainer = document.getElementById("layanan_container");
+    var excelInput = document.getElementById("excel_input");
+    var jumlahLayananContainer = document.getElementById("jumlah_menu_container");
+    var btnLayananContainer = document.getElementById("btn_layanan_container");
+
+    biasaRadio.addEventListener("change", function() {
+        if (biasaRadio.checked) {
+            layananContainer.style.display = "block";
+            excelInput.style.display = "none";
+            jumlahLayananContainer.style.display = "block";
+            btnLayananContainer.style.display = "flex"; // Tampilkan btn_layanan_container
+        }
+    });
+
+    excelRadio.addEventListener("change", function() {
+        if (excelRadio.checked) {
+            layananContainer.style.display = "none";
+            excelInput.style.display = "block";
+            jumlahLayananContainer.style.display = "none";
+            btnLayananContainer.style.display = "none"; // Sembunyikan btn_layanan_container
+        }
+    });
+});
+  </script>
   <script>
     const stepMenuOne = document.querySelector('.formbold-step-menu1')
     const stepMenuTwo = document.querySelector('.formbold-step-menu2')

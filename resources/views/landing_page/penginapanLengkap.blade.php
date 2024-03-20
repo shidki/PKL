@@ -32,7 +32,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3>List Penginapan</h3>
+                        <h3>Daftar Penginapan</h3>
                         <span class="breadcrumb" style="font-size: 20px;"><a href="/"><i class="d-inline-block fa fa-arrow-left" style="margin-right: 5px;"></i><span><strong>Beranda</strong></span></a></span>
                     </div>
                 </div>
@@ -53,25 +53,44 @@
                     <a href="" data-filter=".htl">Hotel</a>
                 </li>
                 <li>
-                    <a href="" data-filter=".dkt">Dibawah 5km</a>
+                    <a href="" data-filter=".dkt">Di bawah 5km</a>
                 </li>
                 <li>
-                    <a href="" data-filter=".jauh">Diatas 5km</a>
+                    <a href="" data-filter=".jauh">Di atas 5km</a>
+                </li>
+                <li>
+                    <a href="" data-filter=".500k">Harga Dibawah 500.000</a>
+                </li>
+                <li>
+                    <a href="" data-filter=".1jt">Harga  500.000 - 1.000.000</a>
+                </li>
+                <li>
+                    <a href="" data-filter=".lbh1jt">Harga Diatas 1.000.000</a>
                 </li>
             </ul>
             <div class="row trending-box">
                 @if ($penginapan)
                     @foreach ($penginapan as $penginapans)
                         <div class="col-lg-3 col-md-6 align-self-center mb-30 trending-items col-md-6 {{ $penginapans->jenis }} 
-                            @if ($penginapans->jarak <= 5)
-                                dkt
-                            @else
-                                @if ($penginapans->jarak >= 5)
-                                    jauh
+                                @if ($penginapans->jarak <= 5)
+                                    dkt 
                                 @else
-                                    lbh
+                                @if ($penginapans->jarak >= 5)
+                                    jauh 
+                                @else
+                                    lbh 
                                 @endif
-                        @endif">
+                        @endif
+                        @if ($penginapans->harga_terendah <= 500000)
+                        500k 
+                    @else
+                        @if ($penginapans->harga_terendah > 1000000)
+                            lbh1jt 
+                        @else
+                            1jt 
+                        @endif
+                    @endif
+                        ">
                             <div class="item" style="height: 350px;">
                                 <div class="thumb">
                                     <a href="{{  route('detail_penginapan' ,['nama' => $penginapans->nama ]) }}">

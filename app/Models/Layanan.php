@@ -17,6 +17,7 @@ class Layanan extends Model
     protected $fillable = [
         'id', 
         'nama', 
+        'deskripsi', 
         'id_gedung'
     ] ;
 

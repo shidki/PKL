@@ -16,7 +16,7 @@ class Fasilitas extends Model
     // Menentukan kolom yang dapat diisi pada tabel
     protected $fillable = [
         'id', 
-        'nama', 
+        'id_jenis_fasiitas', 
         'id_penginapan'
     ] ;
 

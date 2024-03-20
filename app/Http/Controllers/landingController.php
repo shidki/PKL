@@ -50,8 +50,9 @@ class landingController extends Controller
         ->where("id",'=',$getId->id)
         ->first();
 
-        $fasilitas = Fasilitas::select("nama")
-        ->from("fasilitas")
+        $fasilitas = Fasilitas::select("f.*","l.nama_fasilitas")
+        ->from("fasilitas as f")
+        ->join("list_fasilitas as l",'l.id','=',"f.id_jenis_fasilitas")
         ->where("id_penginapan",'=',$getId->id)
         ->get();
         
@@ -141,5 +142,16 @@ class landingController extends Controller
         ->get();
 
         return view("landing_page.instansiLengkap",["gedung" => $gedung]);
+    }
+
+    public function detail_layanan($id, $nama){
+        $layanan = Layanan::select("l.*",'g.gambar_detail','g.judul_gambar')
+        ->from("layanan as l")
+        ->leftJoin("gambar_detail_layanan as g",'g.id_layanan','=',"l.id")
+        ->where("l.id",'=',$id)
+        ->first();
+
+        // dd($layanan);
+        return view("landing_page.detailLayanan",["layanan" => $layanan,"gedung" => $nama]);
     }
 }
